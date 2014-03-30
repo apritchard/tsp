@@ -57,13 +57,16 @@ public class MapParser {
 		
 		//Then link sectors to their neighbors
 		for(YamlSector s : yamlSectors){
-			for(Map.Entry<String, Integer> edge: s.edgeList.entrySet()){
+			for(Map.Entry<String, String> edge: s.edgeList.entrySet()){
 				if(!sectors.containsKey(edge.getKey())){
 					logger.warning("Unknown edge for " + s.name + " linking to " + edge.getKey());
 					continue;
 				}
-				//edge.key = name, edge.value = weight
-				sectors.get(s).addLink(sectors.get(edge.getKey()), edge.getValue());
+
+				Sector s1 = sectors.get(s.name);
+				Sector s2 = sectors.get(edge.getKey());
+				Integer weight = Integer.valueOf(edge.getValue());
+				s1.addLink(s2, weight);
 			}
 		}
 		
