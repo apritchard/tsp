@@ -16,7 +16,7 @@ import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import com.amp.app.Sector;
+import com.amp.mapping.Sector;
 import com.esotericsoftware.yamlbeans.YamlException;
 import com.esotericsoftware.yamlbeans.YamlReader;
 
@@ -66,7 +66,7 @@ public class MapParser {
 				Sector s1 = sectors.get(s.name);
 				Sector s2 = sectors.get(edge.getKey());
 				Integer weight = Integer.valueOf(edge.getValue());
-				s1.addLink(s2, weight);
+				s1.addEdge(s2, weight);
 			}
 		}
 		

@@ -4,6 +4,8 @@ import java.net.URL;
 import java.util.List;
 import java.util.Set;
 
+import com.amp.mapping.MapWrapper;
+import com.amp.mapping.Sector;
 import com.amp.parse.MapParser;
 
 public class App {

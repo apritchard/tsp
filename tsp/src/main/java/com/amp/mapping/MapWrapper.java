@@ -1,4 +1,4 @@
-package com.amp.app;
+package com.amp.mapping;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -47,11 +47,11 @@ public class MapWrapper {
 
 		//initialize shortest paths with neighbor values, 0 for self, and max_value for everything else
 		for(Sector s1 : sectors){
-			shortestPaths.put(s1, s1.getLinks());
+			shortestPaths.put(s1, s1.getEdgeList());
 			for(Sector s2 : sectors){
 				if(s1.equals(s2)){ 
 					shortestPaths.get(s1).put(s2, 0);
-				} else if(!s1.getLinks().containsKey(s2)){
+				} else if(!s1.getEdgeList().containsKey(s2)){
 					shortestPaths.get(s1).put(s2, 999999); //not using Integer.MAX_VALUE because it overflows during addition below
 				}
 			}
@@ -138,20 +138,14 @@ public class MapWrapper {
 			
 			Set<Sector> unvisited = new HashSet<>(sectors);
 			unvisited.removeAll(curr.getPath());
-//			int total = 0;
-//			int better = 0;
 			for(Sector s : unvisited){
-//				total++;
 				List<Sector> newPath = new ArrayList<>(curr.getPath());
 				newPath.add(s);
 				TspNode newNode = new TspNode(newPath);
 				if(newNode.getBound() <= bound){
-//					better++;
 					queue.add(newNode);
-//					System.out.println("Bound of new node: " + newNode.getBound());
 				}
 			}
-//			System.out.println(better +"/" + total + " promising");
 		}
 		
 

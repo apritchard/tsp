@@ -1,40 +1,37 @@
-package com.amp.app;
+package com.amp.mapping;
 
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * Pojo containing the name a sector and its edge list
+ * @author alex
+ *
+ */
 public class Sector {
 	String name;
-	Map<Sector,Integer> links;
+	Map<Sector,Integer> edgeList;
 	
 	@Override
 	public String toString(){
 		return name;
-//		StringBuilder sb = new StringBuilder();
-//		sb.append(name).append(":[");
-//		for(Map.Entry<Sector, Integer> entry : links.entrySet()){
-//			sb.append("(").append(entry.getKey().getName());
-//			sb.append(",").append(entry.getValue()).append(")");
-//		}
-//		sb.append("]");
-//		return sb.toString();
 	}
-	
+		
 	public String getName(){
 		return name;
 	}
 	
 	public Sector(String name){
 		this.name = name;
-		links = new HashMap<>();
+		edgeList = new HashMap<>();
 	}
 	
-	public Map<Sector, Integer> getLinks(){
-		return links;
+	public Map<Sector, Integer> getEdgeList(){
+		return edgeList;
 	}
 	
-	public void addLink(Sector sector, int cost){
-		links.put(sector, cost);
+	public void addEdge(Sector sector, int cost){
+		edgeList.put(sector, cost);
 	}
 
 	@Override
@@ -61,6 +58,5 @@ public class Sector {
 			return false;
 		return true;
 	}
-	
 	
 }
