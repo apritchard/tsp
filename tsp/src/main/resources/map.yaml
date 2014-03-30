@@ -1,0 +1,21 @@
+Z-6:
+  Tarod: 1
+  Bolarus: 1
+Tarod:
+  Z-6: 1
+  Devron: 1
+Bolarus:
+  Z-6: 1
+  Devron: 1
+  Teneebia: 2
+Devron:
+  Tarod: 1
+  Bolarus: 1
+  Sierra: 2
+Teneebia:
+  Bolarus: 2
+  Sierra: 1
+Sierra:
+  Teneebia: 1
+  Devron: 2
+ 
