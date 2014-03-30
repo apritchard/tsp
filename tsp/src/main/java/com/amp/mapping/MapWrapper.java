@@ -8,8 +8,12 @@ import java.util.Map;
 import java.util.PriorityQueue;
 import java.util.Queue;
 import java.util.Set;
+import java.util.logging.Logger;
+
+import com.amp.parse.MapParser;
 
 public class MapWrapper {
+	private static final Logger logger = Logger.getLogger(MapWrapper.class.getName());
 
 	private Set<Sector> sectors;
 	private Map<Sector, Map<Sector, Integer>> shortestPaths;
@@ -52,7 +56,7 @@ public class MapWrapper {
 				if(s1.equals(s2)){ 
 					shortestPaths.get(s1).put(s2, 0);
 				} else if(!s1.getEdgeList().containsKey(s2)){
-					shortestPaths.get(s1).put(s2, 999999); //not using Integer.MAX_VALUE because it overflows during addition below
+					shortestPaths.get(s1).put(s2, Integer.MAX_VALUE); 
 				}
 			}
 		}
@@ -64,11 +68,12 @@ public class MapWrapper {
 					int i2j = shortestPaths.get(si).get(sj);
 					int i2k = shortestPaths.get(si).get(sk);
 					int k2j = shortestPaths.get(sk).get(sj);
-					if(i2j > i2k + k2j){
-						if(i2k + k2j < 0){
-							System.out.println("wtf " + i2k + " " + k2j);
-						}
-						shortestPaths.get(si).put(sj, i2k + k2j);
+					int i2k2j = i2k + k2j;
+					if(i2k2j < 0) {
+						i2k2j = Integer.MAX_VALUE; //deal with overflow
+					}
+					if(i2j > i2k2j){
+						shortestPaths.get(si).put(sj, i2k2j);
 					}
 				}
 			}
@@ -92,7 +97,7 @@ public class MapWrapper {
 		
 		//add the seeds
 		for(TspNode seed : seeds){
-			System.out.println("Adding seed with bound " + seed.getBound());
+			logger.info("Adding seed with bound " + seed.getBound());
 			queue.add(seed);
 		}
 		
@@ -109,28 +114,28 @@ public class MapWrapper {
 			}
 			
 			if(i++%10000 == 0){
-				System.out.println("Queue size: " + queue.size());
-				System.out.println("Bound of current path: " + curr.getBound());
+				StringBuilder sb = new StringBuilder();
+				sb.append("Trace:").append(System.lineSeparator());
+				sb.append("\tQueue size: ").append(queue.size()).append(System.lineSeparator());
+				sb.append("\tCurrent bound: ").append(curr.getBound()).append(System.lineSeparator());
 				if(bestPath != null) {
-					System.out.println("Best Complete Path:");
-					System.out.println(routeString(bestPath));
+					sb.append("\tBest Complete Path: ").append(bestPath);
 				} else {
-					System.out.println("Longest Current Path (" + longestPath.size() + "/" + sectors.size() + ")");
-					System.out.println(routeString(longestPath));
+					sb.append("\tLongest Current Path: (" + longestPath.size() + "/" + sectors.size() + ") ").append(longestPath);
 				}
-				
+				logger.fine(sb.toString());
 			}
 			
 			//we're not going to have anything better than our current at this point, so return 
 			if(curr.getBound() > bound){
-				System.out.println("Worse than " + bound + ", exiting");
+				logger.info("Searched all bounds less than " + bound + ", exiting");
 				return bestPath;
 			}
 			
 			//if the current path covers all sectors, it's a full path, so set it as our new best
 			if(curr.getPath().size() == sectors.size() && curr.getBound() < bound) {
-				System.out.println("Cost " + curr.getBound() + " path found, saving");
-				System.out.println(routeString(curr.getPath()));
+				logger.info("Cost " + curr.getBound() + " path found, saving");
+				logger.info(routeString(curr.getPath()));
 				bestPath = curr.getPath();
 				bound = curr.getBound();
 				continue;
@@ -169,9 +174,12 @@ public class MapWrapper {
 		public TspNode(List<Sector> path){
 			this.path = path;
 			
+			//Immediately calculate the bound for this path
 			if(path.size() == 1){
 				bound = 0;  //don't bother to calculate bound for starting nodes 
 			} else {
+				//bound = cost of current steps + minimum edge from each unvisited node
+				
 				//sum the cost of each step so far
 				int steps = path.size() - 1;
 				for(int i = 0; i < steps; i++){

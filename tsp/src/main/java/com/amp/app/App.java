@@ -1,26 +1,41 @@
 package com.amp.app;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.net.URL;
 import java.util.List;
 import java.util.Set;
+import java.util.logging.LogManager;
+import java.util.logging.Logger;
 
 import com.amp.mapping.MapWrapper;
 import com.amp.mapping.Sector;
 import com.amp.parse.MapParser;
 
 public class App {
+	
+	private static final Logger logger = Logger.getLogger(App.class.getName());
 
 	public static void main(String[] args) {
+		
+		try{
+			InputStream is = App.class.getResourceAsStream("/logging.properties");
+			LogManager.getLogManager().readConfiguration(is);
+		} catch (IOException ioe){
+			logger.warning("Failed to find logger.properties");
+		}
 		
 		URL mapFile = App.class.getClassLoader().getResource("federation-space.yaml");
 		Set<Sector> sectors = MapParser.parseMapFile(mapFile);
 		
 		MapWrapper mw = new MapWrapper(sectors);
 		
-		System.out.println("Map:");
-		System.out.println(mw);
-		
 		StringBuilder sb = new StringBuilder();
+		sb.append("Sectors:").append(System.lineSeparator()).append(mw);
+		logger.info(sb.toString());
+		
+		sb = new StringBuilder();
+		sb.append("Edges:").append(System.lineSeparator());
 		for(Sector s1 : sectors){
 			sb.append(s1);
 			for(Sector s2 : sectors){
@@ -29,7 +44,7 @@ public class App {
 			}
 			sb.append("*****").append(System.lineSeparator());
 		}
-		System.out.println(sb.toString());
+		logger.finer(sb.toString());
 		
 //		//branch and bound traveling salesman problem
 //		String[] seed1 = {
@@ -54,6 +69,6 @@ public class App {
 		for(Sector s : route){
 			sb.append(s).append(", ");
 		}
-		System.out.println(sb.toString());
+		logger.info(sb.toString());
 	}
 }
