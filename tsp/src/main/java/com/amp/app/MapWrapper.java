@@ -84,7 +84,7 @@ public class MapWrapper {
 		Queue<TspNode> queue = new PriorityQueue<>();
 		
 		//start with adding a path beginning at each sector
-		for(Sector s : shortestPaths.keySet()){
+		for(Sector s : sectors){
 			List<Sector> l = new ArrayList<>();
 			l.add(s);
 			queue.add(new TspNode(l));
@@ -111,10 +111,11 @@ public class MapWrapper {
 			if(i++%10000 == 0){
 				System.out.println("Queue size: " + queue.size());
 				System.out.println("Bound of current path: " + curr.getBound());
-				System.out.println("Current best path (or longest if none complete):");
 				if(bestPath != null) {
+					System.out.println("Best Complete Path:");
 					System.out.println(routeString(bestPath));
 				} else {
+					System.out.println("Longest Current Path (" + longestPath.size() + "/" + sectors.size() + ")");
 					System.out.println(routeString(longestPath));
 				}
 				
@@ -127,7 +128,7 @@ public class MapWrapper {
 			}
 			
 			//if the current path covers all sectors, it's a full path, so set it as our new best
-			if(curr.getPath().size() == shortestPaths.size() && curr.getBound() < bound) {
+			if(curr.getPath().size() == sectors.size() && curr.getBound() < bound) {
 				System.out.println("Cost " + curr.getBound() + " path found, saving");
 				System.out.println(routeString(curr.getPath()));
 				bestPath = curr.getPath();
@@ -135,7 +136,7 @@ public class MapWrapper {
 				continue;
 			}
 			
-			Set<Sector> unvisited = new HashSet<>(shortestPaths.keySet());
+			Set<Sector> unvisited = new HashSet<>(sectors);
 			unvisited.removeAll(curr.getPath());
 //			int total = 0;
 //			int better = 0;

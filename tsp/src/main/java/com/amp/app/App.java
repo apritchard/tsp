@@ -10,7 +10,7 @@ public class App {
 
 	public static void main(String[] args) {
 		
-		URL mapFile = App.class.getClassLoader().getResource("map.yaml");
+		URL mapFile = App.class.getClassLoader().getResource("federation-space.yaml");
 		Set<Sector> sectors = MapParser.parseMapFile(mapFile);
 		
 		MapWrapper mw = new MapWrapper(sectors);
