@@ -63,7 +63,8 @@ public class App {
 //				"Sierra", "Vendor", "Hyralan", "Onias", "Mylasa"};
 //		mw.seedPath(seed2);
 		
-		List<Sector> route = mw.calcTsp();
+//		List<Sector> route = mw.calcTsp();
+		List<Sector> route = mw.calcTspMulti();
 		sb = new StringBuilder();
 		sb.append("Best route: ").append(System.lineSeparator());
 		for(Sector s : route){

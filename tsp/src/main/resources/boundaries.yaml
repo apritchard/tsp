@@ -24,9 +24,6 @@ edgeList: {Vendor: 2, Onias: 1, Azure: 2, Argelius: 2}
 name: Onias
 edgeList: {Hyralan: 1, Mylasa: 1, Nimbus: 2}
 ---
-name: Mylasa
-edgeList: {Onias: 1, Narendra: 2}
----
 
 #Tau Dewa Block
 name: Azure
@@ -34,9 +31,6 @@ edgeList: {Hyralan: 2, Nimbus: 1, Xarantine: 2, Celes: 2}
 ---
 name: Nimbus
 edgeList: {Azure: 1, Onias: 2, Narendra: 1, Hromi: 2}
----
-name: Narendra
-edgeList: {Nimbus: 1, Mylasa: 2, Mempa: 2}
 ---
 
 #Sirius Block
@@ -67,9 +61,6 @@ edgeList: {Kassae: 2, Azure: 2, Hromi: 1, Archanis: 2}
 ---
 name: Hromi
 edgeList: {Xarantine: 1, Nimbus: 2, Mempa: 1}
----
-name: Mempa
-edgeList: {Hromi: 1, Narendra: 2}
 ---
 
 #Eta Eridani Block

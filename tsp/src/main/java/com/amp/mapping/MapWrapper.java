@@ -1,29 +1,35 @@
 package com.amp.mapping;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.PriorityQueue;
 import java.util.Queue;
 import java.util.Set;
+import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.logging.Logger;
-
-import com.amp.parse.MapParser;
 
 public class MapWrapper {
 	private static final Logger logger = Logger.getLogger(MapWrapper.class.getName());
 
 	private Set<Sector> sectors;
 	private Map<Sector, Map<Sector, Integer>> shortestPaths;
+	
+	public Set<Sector> getSectors() {return sectors;}
+	public Map<Sector, Map<Sector, Integer>> getShortestPaths() {return shortestPaths;}
+	
 	private List<TspNode> seeds;
 	
 	public MapWrapper(Set<Sector> sectors){
 		this.sectors = sectors;
 		seeds = new ArrayList<>();
-		
-		calcShortestPaths();
+		shortestPaths = TspUtilities.calculateShorestPaths(sectors);
 	}
 	
 	public String toString(){
@@ -42,47 +48,48 @@ public class MapWrapper {
 		return shortestPaths.get(s1).get(s2);
 	}
 	
-	/**
-	 * Calculates the shortest path from all sectors to all other sectors 
-	 * using floyd-warshall algorithm.
-	 */
-	private void calcShortestPaths(){
-		shortestPaths = new HashMap<>();
+	public List<Sector> calcTspMulti(){
+		AtomicInteger bound = new AtomicInteger(Integer.MAX_VALUE);
+		AtomicReference<List<Sector>> bestPath = new AtomicReference<>();
+		AtomicReference<List<Sector>> longestPath = new AtomicReference<>();
+		longestPath.set(new ArrayList<Sector>());
 
-		//initialize shortest paths with neighbor values, 0 for self, and max_value for everything else
-		for(Sector s1 : sectors){
-			shortestPaths.put(s1, s1.getEdgeList());
-			for(Sector s2 : sectors){
-				if(s1.equals(s2)){ 
-					shortestPaths.get(s1).put(s2, 0);
-				} else if(!s1.getEdgeList().containsKey(s2)){
-					shortestPaths.get(s1).put(s2, Integer.MAX_VALUE); 
-				}
-			}
+		
+		int numProcs = Runtime.getRuntime().availableProcessors() * 2;
+		List<Queue<TspNode>> queues = new ArrayList<>();
+		for(int i = 0; i < numProcs; i++){
+			queues.add(new PriorityQueue<TspNode>());
 		}
 		
-		//floyd-warshall to update shortest paths
-		for(Sector sk : sectors){
-			for(Sector si : sectors) {
-				for(Sector sj : sectors){
-					int i2j = shortestPaths.get(si).get(sj);
-					int i2k = shortestPaths.get(si).get(sk);
-					int k2j = shortestPaths.get(sk).get(sj);
-					int i2k2j = i2k + k2j;
-					if(i2k2j < 0) {
-						i2k2j = Integer.MAX_VALUE; //deal with overflow
-					}
-					if(i2j > i2k2j){
-						shortestPaths.get(si).put(sj, i2k2j);
-					}
-				}
-			}
+		int q = 0;
+		for(Sector s : sectors){
+			List<Sector> l = new ArrayList<>();
+			l.add(s);
+			queues.get(q).add(new TspNode(l, getBoundForPath(l)));
+			q = (q + 1) % numProcs;
 		}
 		
-		//remove path to self
-		for(Sector s1 : sectors){
-			shortestPaths.get(s1).remove(s1);
+		ExecutorService executor = Executors.newFixedThreadPool(numProcs);
+		for(int i = 0; i < queues.size() ; i++){
+			TspCalculator tspCalc = new TspCalculator(bound, bestPath, longestPath, queues.get(i), i, this);
+			executor.execute(tspCalc);
 		}
+		
+		executor.shutdown();
+		try {
+			executor.awaitTermination(Long.MAX_VALUE, TimeUnit.SECONDS);
+		} catch (InterruptedException e) {
+			logger.warning("Threads prematurely interrupted; program may not have finished.");
+		}
+		
+		if(bestPath.get() == null){
+			logger.warning("No complete path found, returning longest path");
+			return longestPath.get();
+		} else {
+			logger.info("Processing finished, returning best path.");
+			return bestPath.get();
+		}
+		
 	}
 	
 	public List<Sector> calcTsp(){
@@ -92,7 +99,7 @@ public class MapWrapper {
 		for(Sector s : sectors){
 			List<Sector> l = new ArrayList<>();
 			l.add(s);
-			queue.add(new TspNode(l));
+			queue.add(new TspNode(l, getBoundForPath(l)));
 		}
 		
 		//add the seeds
@@ -123,7 +130,7 @@ public class MapWrapper {
 				} else {
 					sb.append("\tLongest Current Path: (" + longestPath.size() + "/" + sectors.size() + ") ").append(longestPath);
 				}
-				logger.fine(sb.toString());
+				logger.info(sb.toString());
 			}
 			
 			//we're not going to have anything better than our current at this point, so return 
@@ -135,7 +142,7 @@ public class MapWrapper {
 			//if the current path covers all sectors, it's a full path, so set it as our new best
 			if(curr.getPath().size() == sectors.size() && curr.getBound() < bound) {
 				logger.info("Cost " + curr.getBound() + " path found, saving");
-				logger.info(routeString(curr.getPath()));
+				logger.info(TspUtilities.routeString(curr.getPath()));
 				bestPath = curr.getPath();
 				bound = curr.getBound();
 				continue;
@@ -146,7 +153,7 @@ public class MapWrapper {
 			for(Sector s : unvisited){
 				List<Sector> newPath = new ArrayList<>(curr.getPath());
 				newPath.add(s);
-				TspNode newNode = new TspNode(newPath);
+				TspNode newNode = new TspNode(newPath, getBoundForPath(newPath));
 				if(newNode.getBound() <= bound){
 					queue.add(newNode);
 				}
@@ -157,86 +164,47 @@ public class MapWrapper {
 		return null;
 	}
 	
-
 	/**
-	 * Wrapper for a path that calculates its bound on construction
-	 * and is comparable so that it has a natural ordering for priority queuing
+	 * Calculate and return the lower bound for the cost of the provided
+	 * path on this particular map.
+	 * @param path Partial or complete path for which to calculate the lower bound.
+	 * @return
 	 */
-	private class TspNode implements Comparable<TspNode>{
-
-		private int bound = 0;
-		private List<Sector> path;
+	public int getBoundForPath(List<Sector> path){
+		int bound = 0;
 		
-		/**
-		 * @param path A list of sectors traveled so far, with the 
-		 * 		  path[0] representing the first sector to visit
-		 */
-		public TspNode(List<Sector> path){
-			this.path = path;
+		if(path.size() == 1){
+			return bound; 
+		} else {
+			//bound = cost of current steps + minimum edge from each unvisited node
 			
-			//Immediately calculate the bound for this path
-			if(path.size() == 1){
-				bound = 0;  //don't bother to calculate bound for starting nodes 
-			} else {
-				//bound = cost of current steps + minimum edge from each unvisited node
-				
-				//sum the cost of each step so far
-				int steps = path.size() - 1;
-				for(int i = 0; i < steps; i++){
-					bound += getDistance(path.get(i),path.get(i+1));
-				}
-				
-				//if this is the complete path, we're done
-				if(path.size() == shortestPaths.size()){
-					return;
-				}
-				
-				//then add the minimum distance out from each remaining nodes
-				for(Sector s1 : shortestPaths.keySet()){
-					//if we've already traveled to this sector, skip it
-					if(path.contains(s1)) continue;
-					
-					//otherwise, find the nearest sector we haven't visited
-					int lowest = Integer.MAX_VALUE;
-					for(Sector s2 : shortestPaths.get(s1).keySet()){
-						//if we've visited it, skip it unless it's the last sector in our path
-						if(!s2.equals(path.get(path.size()-1)) && path.contains(s2)) continue;
-						
-						lowest = Math.min(shortestPaths.get(s1).get(s2), lowest);
-					}
-					bound += lowest; 
-				}
+			//sum the cost of each step so far
+			int steps = path.size() - 1;
+			for(int i = 0; i < steps; i++){
+				bound += getDistance(path.get(i),path.get(i+1));
 			}
-		}
-		
-		/**
-		 * @return The bound of the path defined by this node
-		 */
-		public int getBound(){
+			
+			//if this is the complete path, we're done
+			if(path.size() == shortestPaths.size()){
+				return bound;
+			}
+			
+			//then add the minimum distance out from each remaining nodes
+			for(Sector s1 : shortestPaths.keySet()){
+				//if we've already traveled to this sector, skip it
+				if(path.contains(s1)) continue;
+				
+				//otherwise, find the nearest sector we haven't visited
+				int lowest = Integer.MAX_VALUE;
+				for(Sector s2 : shortestPaths.get(s1).keySet()){
+					//if we've visited it, skip it unless it's the last sector in our path
+					if(!s2.equals(path.get(path.size()-1)) && path.contains(s2)) continue;
+					
+					lowest = Math.min(shortestPaths.get(s1).get(s2), lowest);
+				}
+				bound += lowest; 
+			}
 			return bound;
 		}
-		
-		/**
-		 * @return The sectors traveled, in order from first to last.
-		 */
-		public List<Sector> getPath(){
-			return path;
-		}
-		
-		@Override
-		public int compareTo(TspNode other) {
-			return this.bound - other.bound;
-		}
-
 	}
-	
-	private static String routeString(List<Sector> route){
-		StringBuilder sb = new StringBuilder();
-		for(int i = 0; i < route.size() -1; i++){
-			sb.append(route.get(i)).append(", ");
-		}
-		sb.append(route.get(route.size()-1));
-		return sb.toString();
-	}
-
 }
