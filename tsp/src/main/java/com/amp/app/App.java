@@ -25,10 +25,13 @@ public class App {
 			logger.warning("Failed to find logger.properties");
 		}
 		
-		URL mapFile = App.class.getClassLoader().getResource("boundaries.yaml");
+		URL mapFile = App.class.getClassLoader().getResource("map.yaml");
 		Set<Sector> sectors = MapParser.parseMapFile(mapFile);
 		
-		MapWrapper mw = new MapWrapper(sectors);
+		URL seedFile = App.class.getClassLoader().getResource("seeds.yaml");
+		List<List<Sector>> seeds = MapParser.parseSeedFile(seedFile, sectors);
+		
+		MapWrapper mw = new MapWrapper(sectors, seeds);
 		
 		StringBuilder sb = new StringBuilder();
 		sb.append("Sectors:").append(System.lineSeparator()).append(mw);
@@ -46,22 +49,6 @@ public class App {
 		}
 		logger.finer(sb.toString());
 		
-//		//branch and bound traveling salesman problem
-//		String[] seed1 = {
-//				"Teneebia", "Bolarus", "Z-6", "Tarod", "Devron",
-//				"Sierra", "Vendor", "Hyralan", "Onias", "Mylasa",
-//				"Narendra", "Nimbus", "Azure", "Hromi", "Mempa", "Xarantine",
-//				"Archanis", "Donatu", "Aldebaren", "Kassae", "Celes","Argelius",
-//				"Vulcan", "Orion", "Kalandra", "Bajor", "Cardassia", "Deferi", "Raveh",
-//				"Kora", "Arawath", "Vanden", "Orias", "Algira", "Almatha", "Dorvan",
-//				"Risa", "Cestus", "Bellatrix", "Mutara", "Galdonterre", "Pelia"
-//		};
-//		mw.seedPath(seed1);
-//		
-//		String[] seed2 = {
-//				"Teneebia", "Bolarus", "Z-6", "Tarod", "Devron",
-//				"Sierra", "Vendor", "Hyralan", "Onias", "Mylasa"};
-//		mw.seedPath(seed2);
 		
 //		List<Sector> route = mw.calcTsp();
 		List<Sector> route = mw.calcTspMulti();

@@ -69,7 +69,6 @@ public class TspCalculator implements Runnable{
 			//we're not going to have anything better than our current at this point, so return 
 			if(curr.getBound() > bound.get()){
 				logger.info("Searched all bounds less than " + bound + ", exiting");
-				bestPath.set(curr.getPath());
 				return;
 			}
 			

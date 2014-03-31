@@ -71,7 +71,37 @@ public class MapParser {
 		}
 		
 		return new HashSet<>(sectors.values());
+	}
+	
+	public static List<List<Sector>> parseSeedFile(URL seedUrl, Set<Sector> sectors){
 		
+		List<YamlPath> yamlPaths = readYamlObjects(seedUrl, YamlPath.class);
+		
+		if(yamlPaths == null){
+			logger.warning("No seeds found in file " + seedUrl.getPath());
+			return null;
+		}
+		
+		//rebuild string/sector map for one time lookup
+		Map<String, Sector> sectorByName = new HashMap<>();
+		for(Sector s : sectors){
+			sectorByName.put(s.getName(), s);
+		}
+		
+		List<List<Sector>> paths = new ArrayList<>();
+		
+		for(YamlPath p : yamlPaths){
+			List<Sector> path = new ArrayList<>();
+			for(String name : p.path){
+				if(!sectorByName.containsKey(name)){
+					logger.warning("Invalid Seed " + name + " not found in map file; ignoring seed.");
+				} else {
+					path.add(sectorByName.get(name));
+				}
+			}
+			paths.add(path);
+		}
+		return paths;
 	}
 	
 	/**

@@ -7,7 +7,6 @@ import java.util.Map;
 import java.util.PriorityQueue;
 import java.util.Queue;
 import java.util.Set;
-import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
@@ -26,10 +25,14 @@ public class MapWrapper {
 	
 	private List<TspNode> seeds;
 	
-	public MapWrapper(Set<Sector> sectors){
+	public MapWrapper(Set<Sector> sectors, List<List<Sector>> seeds){
 		this.sectors = sectors;
-		seeds = new ArrayList<>();
-		shortestPaths = TspUtilities.calculateShorestPaths(sectors);
+		this.shortestPaths = TspUtilities.calculateShorestPaths(sectors);
+		
+		this.seeds = new ArrayList<>();
+		for(List<Sector> seed: seeds){
+			this.seeds.add(new TspNode(seed, getBoundForPath(seed)));
+		}
 	}
 	
 	public String toString(){
@@ -54,22 +57,37 @@ public class MapWrapper {
 		AtomicReference<List<Sector>> longestPath = new AtomicReference<>();
 		longestPath.set(new ArrayList<Sector>());
 
+		int numThreads = Runtime.getRuntime().availableProcessors() * 2;
 		
-		int numProcs = Runtime.getRuntime().availableProcessors() * 2;
+		if(seeds != null && seeds.size() > 0){
+			numThreads = Math.min(numThreads, seeds.size());
+		} else {
+			numThreads = Math.min(numThreads,  sectors.size()); 
+		}
+		
 		List<Queue<TspNode>> queues = new ArrayList<>();
-		for(int i = 0; i < numProcs; i++){
+		for(int i = 0; i < numThreads; i++){
 			queues.add(new PriorityQueue<TspNode>());
 		}
 		
 		int q = 0;
-		for(Sector s : sectors){
-			List<Sector> l = new ArrayList<>();
-			l.add(s);
-			queues.get(q).add(new TspNode(l, getBoundForPath(l)));
-			q = (q + 1) % numProcs;
+		if(seeds != null && seeds.size() > 0){
+			logger.info(seeds.size() + " seeds found; initializing search space.");
+			for(TspNode seed : seeds){
+				queues.get(q).add(seed);
+				q = (q + 1) % numThreads;
+			}
+		} else {
+			logger.info("No seeds found, initializing with all single sectors.");
+			for(Sector s : sectors){
+				List<Sector> l = new ArrayList<>();
+				l.add(s);
+				queues.get(q).add(new TspNode(l, getBoundForPath(l)));
+				q = (q + 1) % numThreads;
+			}
 		}
 		
-		ExecutorService executor = Executors.newFixedThreadPool(numProcs);
+		ExecutorService executor = Executors.newFixedThreadPool(numThreads);
 		for(int i = 0; i < queues.size() ; i++){
 			TspCalculator tspCalc = new TspCalculator(bound, bestPath, longestPath, queues.get(i), i, this);
 			executor.execute(tspCalc);
