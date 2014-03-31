@@ -25,7 +25,7 @@ public class App {
 			logger.warning("Failed to find logger.properties");
 		}
 		
-		URL mapFile = App.class.getClassLoader().getResource("federation-space.yaml");
+		URL mapFile = App.class.getClassLoader().getResource("boundaries.yaml");
 		Set<Sector> sectors = MapParser.parseMapFile(mapFile);
 		
 		MapWrapper mw = new MapWrapper(sectors);
