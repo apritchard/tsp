@@ -3,6 +3,7 @@ package com.amp.app;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import java.util.logging.LogManager;
@@ -25,11 +26,13 @@ public class App {
 			logger.warning("Failed to find logger.properties");
 		}
 		
-		URL mapFile = App.class.getClassLoader().getResource("map.yaml");
+		URL mapFile = App.class.getClassLoader().getResource("boundaries.yaml");
 		Set<Sector> sectors = MapParser.parseMapFile(mapFile);
 		
-		URL seedFile = App.class.getClassLoader().getResource("seeds.yaml");
+		URL seedFile = App.class.getClassLoader().getResource("seeds-boundaries.yaml");
 		List<List<Sector>> seeds = MapParser.parseSeedFile(seedFile, sectors);
+		
+//		List<List<Sector>> seeds = new ArrayList<>();
 		
 		MapWrapper mw = new MapWrapper(sectors, seeds);
 		
@@ -51,12 +54,15 @@ public class App {
 		
 		
 //		List<Sector> route = mw.calcTsp();
-		List<Sector> route = mw.calcTspMulti();
+//		List<Sector> route = mw.calcTspMulti();
+		List<Sector> route = mw.calcTspForkJoin();
+		
 		sb = new StringBuilder();
 		sb.append("Best route: ").append(System.lineSeparator());
 		for(Sector s : route){
 			sb.append(s).append(", ");
 		}
+		sb.append("Cost: ").append(mw.getBoundForPath(route));
 		logger.info(sb.toString());
 	}
 }

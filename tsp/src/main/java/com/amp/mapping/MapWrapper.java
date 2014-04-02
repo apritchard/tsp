@@ -9,6 +9,7 @@ import java.util.Queue;
 import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.ForkJoinPool;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
@@ -24,6 +25,8 @@ public class MapWrapper {
 	public Map<Sector, Map<Sector, Integer>> getShortestPaths() {return shortestPaths;}
 	
 	private List<TspNode> seeds;
+	
+	private TspNode bestPath;
 	
 	public MapWrapper(Set<Sector> sectors, List<List<Sector>> seeds){
 		this.sectors = sectors;
@@ -49,6 +52,31 @@ public class MapWrapper {
 	 */
 	public Integer getDistance(Sector s1, Sector s2){
 		return shortestPaths.get(s1).get(s2);
+	}
+	
+	private Queue<TspNode> getInitialNodes(){
+		//if we've seeded this run, just return the seeds
+		if(seeds != null && seeds.size() > 0) {
+			return new PriorityQueue<>(seeds);
+		}
+		
+		//otherwise, create one starting node for each sector
+		PriorityQueue<TspNode> nodes = new PriorityQueue<>();
+		for(Sector s : sectors){
+			List<Sector> l = new ArrayList<>();
+			l.add(s);
+			TspNode node = new TspNode(l, getBoundForPath(l));
+			nodes.add(node);
+		}
+		return nodes;
+		
+	}
+	
+	public List<Sector> calcTspForkJoin(){
+		ForkJoinPool fjp = new ForkJoinPool();
+		
+		fjp.invoke(new TspCalcAction(getInitialNodes(), this, 10));
+		return bestPath.getPath();
 	}
 	
 	public List<Sector> calcTspMulti(){
@@ -224,5 +252,15 @@ public class MapWrapper {
 			}
 			return bound;
 		}
+	}
+	
+	public synchronized void setPossibleBestPath(TspNode path){
+		if(bestPath == null	|| path.getBound() < bestPath.getBound()){
+			bestPath = path;
+		} 
+	}
+	
+	public synchronized int getBound(){
+		return bestPath == null? Integer.MAX_VALUE : bestPath.getBound();
 	}
 }
