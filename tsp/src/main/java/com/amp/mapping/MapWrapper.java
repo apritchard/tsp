@@ -10,6 +10,7 @@ import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ForkJoinPool;
+import java.util.concurrent.PriorityBlockingQueue;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
@@ -75,7 +76,7 @@ public class MapWrapper {
 	public List<Sector> calcTspForkJoin(){
 		ForkJoinPool fjp = new ForkJoinPool();
 		
-		fjp.invoke(new TspCalcAction(getInitialNodes(), this, 10));
+		fjp.invoke(new TspCalcAction(new PriorityBlockingQueue<TspNode>(getInitialNodes()), this, 20));
 		return bestPath.getPath();
 	}
 	

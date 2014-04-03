@@ -41,13 +41,14 @@ public class TspCalcAction extends RecursiveAction {
 			return;
 		}
 		
+		
 		int bound = mw.getBound();
 		
 		TspNode curr = queue.poll();
 		
 		int c = count.incrementAndGet();
-		if(c % 50000 == 0){
-			logger.info(String.format("Processed: %d Omitted: %d CurrentBound: %d", c, omitted.get(), curr.getBound()));
+		if(c % 100000 == 0){
+			logger.info(String.format("Processed: %d Omitted: %d CurrentBound: %d QueueSize: %d", c, omitted.get(), curr.getBound(), queue.size()));
 		}
 		
 //		logger.info("Evaluating: " + TspUtilities.routeString(curr.getPath()));
@@ -65,6 +66,8 @@ public class TspCalcAction extends RecursiveAction {
 			return;
 		}
 		
+		Set<TspCalcAction> tasks = new HashSet<>();
+		
 		Set<Sector> unvisited = new HashSet<>(sectors);
 		unvisited.removeAll(curr.getPath());
 		for(Sector s: unvisited){
@@ -78,8 +81,6 @@ public class TspCalcAction extends RecursiveAction {
 				} else if (unvisited.size() == depthThreshold){
 					Queue<TspNode> newQueue = new PriorityBlockingQueue<>();
 					newQueue.add(newNode);
-//					logger.info("Branching worker thread");
-//					logger.info(TspUtilities.routeString(newNode.getPath()));
 					new TspCalcAction(newQueue, mw, depthThreshold).invoke();
 				} else {
 					queue.add(newNode);
