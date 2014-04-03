@@ -38,6 +38,11 @@ class TspNode implements Comparable<TspNode>{
 	
 	@Override
 	public int compareTo(TspNode other) {
-		return this.bound - other.bound;
+		//lower bound first
+		if (this.bound != other.bound){
+			return this.bound - other.bound;
+		}
+		//for ties, longer path first
+		return other.path.size() - this.path.size();
 	}
 }

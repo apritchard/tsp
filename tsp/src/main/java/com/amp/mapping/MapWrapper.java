@@ -26,12 +26,14 @@ public class MapWrapper {
 	public Map<Sector, Map<Sector, Integer>> getShortestPaths() {return shortestPaths;}
 	
 	private List<TspNode> seeds;
+	private boolean useSeedsOnly;
 	
 	private TspNode bestPath;
 	
-	public MapWrapper(Set<Sector> sectors, List<List<Sector>> seeds){
+	public MapWrapper(Set<Sector> sectors, List<List<Sector>> seeds, boolean useSeedsOnly){
 		this.sectors = sectors;
 		this.shortestPaths = TspUtilities.calculateShorestPaths(sectors);
+		this.useSeedsOnly = useSeedsOnly;
 		
 		this.seeds = new ArrayList<>();
 		for(List<Sector> seed: seeds){
@@ -56,13 +58,19 @@ public class MapWrapper {
 	}
 	
 	private Queue<TspNode> getInitialNodes(){
+		PriorityQueue<TspNode> nodes;
 		//if we've seeded this run, just return the seeds
 		if(seeds != null && seeds.size() > 0) {
-			return new PriorityQueue<>(seeds);
+			nodes = new PriorityQueue<>(seeds);
+		} else {
+			nodes = new PriorityQueue<>();
+		}
+		
+		if(useSeedsOnly && !nodes.isEmpty()){
+			return nodes;
 		}
 		
 		//otherwise, create one starting node for each sector
-		PriorityQueue<TspNode> nodes = new PriorityQueue<>();
 		for(Sector s : sectors){
 			List<Sector> l = new ArrayList<>();
 			l.add(s);

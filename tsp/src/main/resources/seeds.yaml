@@ -1,5 +1,3 @@
-path: [Teneebia, Bolarus, Z-6, Tarod, Devron, Sierra]
----
 path: [Pelia, Mutara, Galdonterre, Bellatrix, Cestus, Risa, Dorvan]
 ---
 path: [Pelia, Mutara, Galdonterre, Bellatrix, Cestus, Risa, Orion]
@@ -13,3 +11,5 @@ path: [Mempa, Hromi, Xarantine]
 path: [Mempa, Narendra, Nimbus]
 ---
 path: [Mempa, Narendra, Mylasa]
+---
+path: [Devron, Tarod, Z-6, Bolarus, Teneebia, Sierra, Vendor, Hyralan, Onias, Mylasa, Narendra, Nimbus, Azure, Hromi, Mempa, Xarantine, Archanis, Donatu, Aldebaren, Kassae, Celes, Argelius, Vulcan, Orion, Kalandra, Bajor, Cardassia, Deferi, Raveh, Kora, Arawath, Vanden, Orias, Algira, Almatha, Dorvan, Risa, Cestus, Bellatrix, Mutara, Galdonterre, Pelia]
