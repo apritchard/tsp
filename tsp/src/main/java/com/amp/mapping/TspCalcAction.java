@@ -8,10 +8,12 @@ import java.util.Set;
 import java.util.concurrent.PriorityBlockingQueue;
 import java.util.concurrent.RecursiveAction;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicLong;
 import java.util.logging.Logger;
 
 public class TspCalcAction extends RecursiveAction {
 	
+	private static final AtomicLong lastTime = new AtomicLong(System.currentTimeMillis());
 	private static final AtomicInteger count = new AtomicInteger(0);
 	private static final AtomicInteger omitted = new AtomicInteger(0);
 
@@ -47,8 +49,10 @@ public class TspCalcAction extends RecursiveAction {
 		TspNode curr = queue.poll();
 		
 		int c = count.incrementAndGet();
-		if(c % 100000 == 0){
-			logger.info(String.format("Processed: %d Omitted: %d CurrentBound: %d QueueSize: %d", c, omitted.get(), curr.getBound(), queue.size()));
+		if(System.currentTimeMillis() - lastTime.get() > 10000){
+			lastTime.set(System.currentTimeMillis());
+			logger.info(String.format("Processed: %d Omitted: %d CurrentBound: %d QueueSize: %d", 
+					c, omitted.get(), curr.getBound(), queue.size()));
 		}
 		
 //		logger.info("Evaluating: " + TspUtilities.routeString(curr.getPath()));
@@ -75,17 +79,19 @@ public class TspCalcAction extends RecursiveAction {
 			newPath.add(s);
 			TspNode newNode = new TspNode(newPath, mw.getBoundForPath(newPath));
 			if(newNode.getBound() <= bound){
-				if(unvisited.size() > depthThreshold){
-					queue.add(newNode);
-					new TspCalcAction(queue, mw, depthThreshold).invoke();
-				} else if (unvisited.size() == depthThreshold){
-					Queue<TspNode> newQueue = new PriorityBlockingQueue<>();
-					newQueue.add(newNode);
-					new TspCalcAction(newQueue, mw, depthThreshold).invoke();
-				} else {
-					queue.add(newNode);
-					new TspCalcAction(queue, mw, depthThreshold).invoke();
-				}				
+				queue.add(newNode);
+				new TspCalcAction(queue, mw, depthThreshold).invoke();
+//				if(unvisited.size() > depthThreshold){
+//					queue.add(newNode);
+//					new TspCalcAction(queue, mw, depthThreshold).invoke();
+//				} else if (unvisited.size() == depthThreshold){
+//					Queue<TspNode> newQueue = new PriorityBlockingQueue<>();
+//					newQueue.add(newNode);
+//					new TspCalcAction(newQueue, mw, depthThreshold).invoke();
+//				} else {
+//					queue.add(newNode);
+//					new TspCalcAction(queue, mw, depthThreshold).invoke();
+//				}				
 			}
 		}
 	}

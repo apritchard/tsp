@@ -26,15 +26,15 @@ public class App {
 			logger.warning("Failed to find logger.properties");
 		}
 		
-		URL mapFile = App.class.getClassLoader().getResource("map.yaml");
+		URL mapFile = App.class.getClassLoader().getResource("boundaries.yaml");
 		Set<Sector> sectors = MapParser.parseMapFile(mapFile);
 		
-		URL seedFile = App.class.getClassLoader().getResource("seeds.yaml");
+		URL seedFile = App.class.getClassLoader().getResource("seeds-boundaries.yaml");
 		List<List<Sector>> seeds = MapParser.parseSeedFile(seedFile, sectors);
 		
 //		List<List<Sector>> seeds = new ArrayList<>();
 		
-		MapWrapper mw = new MapWrapper(sectors, seeds, false);
+		MapWrapper mw = new MapWrapper(sectors, seeds, true);
 		
 		StringBuilder sb = new StringBuilder();
 		sb.append("Sectors:").append(System.lineSeparator()).append(mw);
