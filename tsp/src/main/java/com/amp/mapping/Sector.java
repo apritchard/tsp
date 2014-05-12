@@ -4,7 +4,9 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Pojo containing the name a sector and its edge list
+ * Pojo containing the name a sector and its edge list.
+ * Sector uniqueness is determined by name only; you should not make
+ * multiple sectors with the same name and different edge lists.
  * @author alex
  *
  */

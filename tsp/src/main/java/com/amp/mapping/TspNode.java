@@ -3,8 +3,7 @@ package com.amp.mapping;
 import java.util.List;
 
 /**
- * Wrapper for a path that calculates its bound on construction
- * and is comparable so that it has a natural ordering for priority queuing
+ * Wrapper for a path that includes its bound so that it can be sorted by bound.
  */
 class TspNode implements Comparable<TspNode>{
 

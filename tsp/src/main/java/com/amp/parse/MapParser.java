@@ -21,7 +21,7 @@ import com.esotericsoftware.yamlbeans.YamlException;
 import com.esotericsoftware.yamlbeans.YamlReader;
 
 /**
- * Utility class to contain methods involving parsing map files.
+ * Utility class to contain methods involving parsing maps from yaml files.
  */
 public class MapParser {
 	private static final Logger logger = Logger.getLogger(MapParser.class.getName());
@@ -73,6 +73,19 @@ public class MapParser {
 		return new HashSet<>(sectors.values());
 	}
 	
+	/**
+	 * Parse seed files into paths represented by Lists of Sectors.  Expects input
+	 * in the following format:
+	 * 
+	 * {SectorName, SectorName, ...}
+	 * ---
+	 * {SectorName, SectorName, ...}
+	 * ---
+	 * {SectorName, SectorName, ...}
+	 * 
+	 * @param seedUrl Location of seed file.
+	 * @return List of Sector lists representing the paths with which to seed a search.
+	 */
 	public static List<List<Sector>> parseSeedFile(URL seedUrl, Set<Sector> sectors){
 		
 		List<YamlPath> yamlPaths = readYamlObjects(seedUrl, YamlPath.class);
@@ -101,31 +114,6 @@ public class MapParser {
 			}
 			paths.add(path);
 		}
-		return paths;
-	}
-	
-	/**
-	 * Parse seed files into paths represented by Lists of strings.  Expects input
-	 * in the following format:
-	 * 
-	 * {SectorName, SectorName, ...}
-	 * ---
-	 * {SectorName, SectorName, ...}
-	 * ---
-	 * {SectorName, SectorName, ...}
-	 * 
-	 * @param seedUrl
-	 * @return
-	 */
-	public static List<List<String>> parseSeedFile(URL seedUrl) {
-		
-		List<YamlPath> seeds = readYamlObjects(seedUrl, YamlPath.class); 
-				
-		List<List<String>> paths = new ArrayList<>();
-		for(YamlPath seed : seeds){
-			paths.add(seed.path);
-		}
-		
 		return paths;
 	}
 	
