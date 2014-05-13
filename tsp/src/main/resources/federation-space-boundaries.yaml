@@ -38,10 +38,10 @@ name: Vulcan
 edgeList: {Teneebia: 2, Argelius: 2, Orion: 1}
 ---
 name: Orion
-edgeList: {Vulcan: 1, Celes: 2, Risa: 1, Kalandra: 2}
+edgeList: {Vulcan: 1, Celes: 2, Risa: 1}
 ---
 name: Risa
-edgeList: {Orion: 1, Kassae: 2, Aldebaren: 2, Dorvan: 2, Cestus: 2}
+edgeList: {Orion: 1, Kassae: 2}
 ---
 
 #Regulus Block
@@ -52,12 +52,12 @@ name: Celes
 edgeList: {Orion: 2, Argelius: 1, Azure: 2, Kassae: 1}
 ---
 name: Kassae
-edgeList: {Risa: 2, Celes: 1, Xarantine: 2, Donatu: 2}
+edgeList: {Risa: 2, Celes: 1, Xarantine: 2}
 ---
 
 #Pi Canis Block
 name: Xarantine
-edgeList: {Kassae: 2, Azure: 2, Hromi: 1, Archanis: 2}
+edgeList: {Kassae: 2, Azure: 2, Hromi: 1}
 ---
 name: Hromi
 edgeList: {Xarantine: 1, Nimbus: 2}
