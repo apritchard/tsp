@@ -2,46 +2,45 @@ package com.amp.tsp;
 
 import static org.junit.Assert.assertEquals;
 
-import java.io.IOException;
-import java.io.InputStream;
 import java.net.URL;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.logging.LogManager;
 import java.util.logging.Logger;
 
 import org.junit.Before;
 import org.junit.Test;
 
-import com.amp.app.App;
 import com.amp.mapping.MapWrapper;
 import com.amp.mapping.Sector;
 import com.amp.mapping.TspUtilities;
 import com.amp.parse.MapParser;
 
+/**
+ * Test class that checks for basic correctness of the algorithms used by this project.
+ * 
+ * @author alex
+ *
+ */
 public class CorrectnessTest {
 	
-	Logger logger = Logger.getLogger(CorrectnessTest.class.getName());
+	private static final Logger logger = Logger.getLogger(CorrectnessTest.class.getName());
 
-	Set<Sector> simpleSectors, simpleIncompleteSectors, moderateSectors;
+	private Set<Sector> simpleSectors, simplePartialSectors;
+	private List<List<Sector>> simpleSeeds, simplePartialSeeds;
 
 	@Before
 	public void initialize(){
-		try{
-			InputStream is = App.class.getResourceAsStream("/logging.properties");
-			LogManager.getLogManager().readConfiguration(is);
-		} catch (IOException ioe){
-			logger.warning("Failed to find logger.properties");
-		}		
-		
 		URL simple = CorrectnessTest.class.getClassLoader().getResource("simple.yaml");
-		URL simpleIncomplete = CorrectnessTest.class.getClassLoader().getResource("simple-incomplete.yaml");
-		URL moderate = CorrectnessTest.class.getClassLoader().getResource("federation-space-boundaries.yaml");
+		URL simplePartial = CorrectnessTest.class.getClassLoader().getResource("simple-partial.yaml");
+		
+		URL seedsSimple = CorrectnessTest.class.getClassLoader().getResource("seeds-simple.yaml");
 		
 		simpleSectors = MapParser.parseMapFile(simple);
-		simpleIncompleteSectors = MapParser.parseMapFile(simpleIncomplete);
-		moderateSectors = MapParser.parseMapFile(moderate);
+		simplePartialSectors = MapParser.parseMapFile(simplePartial);
+		
+		simpleSeeds = MapParser.parseSeedFile(seedsSimple, simpleSectors);
+		simplePartialSeeds = MapParser.parseSeedFile(seedsSimple, simpleSectors);
 	}
 	
 	@Test
@@ -55,7 +54,7 @@ public class CorrectnessTest {
 	
 	@Test
 	public void testIncompleteShortestPaths(){
-		Map<Sector, Map<Sector,Integer>> m = TspUtilities.calculateShorestPaths(simpleIncompleteSectors);
+		Map<Sector, Map<Sector,Integer>> m = TspUtilities.calculateShorestPaths(simplePartialSectors);
 		Map<Sector,Integer> aEdges = m.get(new Sector("A"));
 		assertEquals(aEdges.get(new Sector("B")), new Integer(5));
 		assertEquals(aEdges.get(new Sector("C")), new Integer(4));
@@ -64,71 +63,93 @@ public class CorrectnessTest {
 	
 	@Test
 	public void testSimpleTsp() {
-
 		MapWrapper mw = new MapWrapper(simpleSectors);
-		List<Sector> route = mw.calcTsp();
+		testSimple(mw, mw.calcTsp());
 		
-		assertEquals("Incorrect bound for simple", mw.getBoundForPath(route), 6); 
-		
-		mw = new MapWrapper(simpleIncompleteSectors);
-		route = mw.calcTsp();
-
-		assertEquals("Incorrect bound for simple incomplete", mw.getBoundForPath(route), 8);
+		mw = new MapWrapper(simplePartialSectors);
+		testSimplePartial(mw, mw.calcTsp());
 	}
 	
 	@Test
 	public void testSimpleTspMulti(){
 		MapWrapper mw = new MapWrapper(simpleSectors);
-		List<Sector> route = mw.calcTspMulti();
+		testSimple(mw, mw.calcTspMulti()); 
 		
-		assertEquals("Incorrect bound for simple", mw.getBoundForPath(route), 6); 
-		
-		mw = new MapWrapper(simpleIncompleteSectors);
-		route = mw.calcTspMulti();
-		
-		assertEquals("Incorrect bound for simple incomplete", mw.getBoundForPath(route), 8);
+		mw = new MapWrapper(simplePartialSectors);
+		testSimplePartial(mw, mw.calcTspMulti());
 	}
 	
 	@Test
 	public void testSimpleTspForkJoin(){
 		MapWrapper mw = new MapWrapper(simpleSectors);
-		List<Sector> route = mw.calcTspForkJoin();
+		testSimple(mw, mw.calcTspForkJoin());
 		
-		assertEquals("Incorrect bound for simple", mw.getBoundForPath(route), 6); 
-		
-		mw = new MapWrapper(simpleIncompleteSectors);
-		route = mw.calcTspForkJoin();
-		
-		assertEquals("Incorrect bound for simple incomplete", mw.getBoundForPath(route), 8);
+		mw = new MapWrapper(simplePartialSectors);
+		testSimplePartial(mw, mw.calcTspForkJoin());		
 	}
 	
 	@Test
-	public void testModerateLength(){
-		MapWrapper mw = new MapWrapper(moderateSectors);
+	public void testSeedTsp(){
+		MapWrapper mw = new MapWrapper(simpleSectors, simpleSeeds, false);
+		testSimple(mw, mw.calcTsp());
 		
-		long tsp, multi, fj;
-		long start; 
-				
-		start = System.nanoTime();
-		List<Sector> routeTsp = mw.calcTsp();
-		tsp = System.nanoTime() - start;
+		mw = new MapWrapper(simpleSectors, simpleSeeds, true);
+		testSimpleSeedsOnly(mw, mw.calcTsp());
 		
-		start = System.nanoTime();
-		List<Sector> routeTspMulti = mw.calcTspMulti();
-		multi = System.nanoTime() - start;
+		mw = new MapWrapper(simplePartialSectors, simpleSeeds, false);
+		testSimplePartial(mw, mw.calcTsp());
 		
-		start = System.nanoTime();
-		List<Sector> routeTspFJ = mw.calcTspForkJoin();
-		fj = System.nanoTime() - start;
-		
-		logger.info(String.format("Moderate Length times milli: tsp(%d) multi(%d) fj(%d)", tsp/1000000, multi/1000000, fj/1000000));
-		
-		final int MIN_BOUND = 23;
-		
-		assertEquals("Incorrect bound for moderate tsp", mw.getBoundForPath(routeTsp), MIN_BOUND);
-		assertEquals("Incorrect bound for moderate tspMulti", mw.getBoundForPath(routeTspMulti), MIN_BOUND);
-		assertEquals("Incorrect bound for moderate tspFJ", mw.getBoundForPath(routeTspFJ), MIN_BOUND);
-		
+		mw = new MapWrapper(simplePartialSectors, simpleSeeds, true);
+		testSimplePartialSeedsOnly(mw, mw.calcTsp());
 	}
-
+	
+	@Test
+	public void testSeedTspMulti(){
+		MapWrapper mw = new MapWrapper(simpleSectors, simpleSeeds, false);
+		testSimple(mw, mw.calcTspMulti());
+		
+		mw = new MapWrapper(simpleSectors, simpleSeeds, true);
+		testSimpleSeedsOnly(mw, mw.calcTspMulti());
+		
+		mw = new MapWrapper(simplePartialSectors, simpleSeeds, false);
+		testSimplePartial(mw, mw.calcTspMulti());
+		
+		mw = new MapWrapper(simplePartialSectors, simpleSeeds, true);
+		testSimplePartialSeedsOnly(mw, mw.calcTspMulti());
+	}
+	
+	@Test
+	public void testSeedTspForkJoin(){
+		MapWrapper mw = new MapWrapper(simpleSectors, simpleSeeds, false);
+		testSimple(mw, mw.calcTspForkJoin());
+		
+		mw = new MapWrapper(simpleSectors, simpleSeeds, true);
+		testSimpleSeedsOnly(mw, mw.calcTspForkJoin());
+		
+		mw = new MapWrapper(simplePartialSectors, simpleSeeds, false);
+		testSimplePartial(mw, mw.calcTspForkJoin());
+		
+		mw = new MapWrapper(simplePartialSectors, simpleSeeds, true);
+		testSimplePartialSeedsOnly(mw, mw.calcTspForkJoin());
+	}
+	
+	private void testSimple(MapWrapper mw, List<Sector> route){
+		final int LENGTH = 6;
+		assertEquals("Incorrect bound for simple", mw.getBoundForPath(route), LENGTH);
+	}
+	
+	private void testSimplePartial(MapWrapper mw, List<Sector> route){
+		final int LENGTH = 8;
+		assertEquals("Incorrect bound for simple incomplete", mw.getBoundForPath(route), LENGTH);
+	}
+	
+	private void testSimpleSeedsOnly(MapWrapper mw, List<Sector> route){
+		final int LENGTH = 6;
+		assertEquals("Incorrect bound for simple with starting seeds only", mw.getBoundForPath(route), LENGTH);
+	}
+	
+	private void testSimplePartialSeedsOnly(MapWrapper mw, List<Sector> route){
+		final int LENGTH = 9;
+		assertEquals("Incorrect bound for simple partial with starting seeds only", mw.getBoundForPath(route), LENGTH);
+	}
 }
