@@ -84,6 +84,8 @@ public class MapParser {
 	 * {SectorName, SectorName, ...}
 	 * 
 	 * @param seedUrl Location of seed file.
+	 * @param sectors Set of sectors from which to retrieve object references by their names
+	 * 				  in the seed file.
 	 * @return List of Sector lists representing the paths with which to seed a search.
 	 */
 	public static List<List<Sector>> parseSeedFile(URL seedUrl, Set<Sector> sectors){

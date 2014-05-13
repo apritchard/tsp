@@ -125,21 +125,12 @@ public class MapWrapper {
 			queues.add(new PriorityQueue<TspNode>());
 		}
 		
+		Queue<TspNode> initialQueue = getInitialNodes();
+		
 		int q = 0;
-		if(seeds != null && seeds.size() > 0){
-			logger.info(seeds.size() + " seeds found; initializing search space.");
-			for(TspNode seed : seeds){
-				queues.get(q).add(seed);
-				q = (q + 1) % numThreads;
-			}
-		} else {
-			logger.info("No seeds found, initializing with all single sectors.");
-			for(Sector s : sectors){
-				List<Sector> l = new ArrayList<>();
-				l.add(s);
-				queues.get(q).add(new TspNode(l, getBoundForPath(l)));
-				q = (q + 1) % numThreads;
-			}
+		for(TspNode node : initialQueue){
+			queues.get(q).add(node);
+			q = (q + 1) % numThreads;
 		}
 		
 		ExecutorService executor = Executors.newFixedThreadPool(numThreads);
@@ -166,20 +157,7 @@ public class MapWrapper {
 	}
 	
 	public List<Sector> calcTsp(){
-		Queue<TspNode> queue = new PriorityQueue<>();
-		
-		//start with adding a path beginning at each sector
-		for(Sector s : sectors){
-			List<Sector> l = new ArrayList<>();
-			l.add(s);
-			queue.add(new TspNode(l, getBoundForPath(l)));
-		}
-		
-		//add the seeds
-		for(TspNode seed : seeds){
-			logger.info("Adding seed with bound " + seed.getBound());
-			queue.add(seed);
-		}
+		Queue<TspNode> queue = getInitialNodes();
 		
 		int bound = Integer.MAX_VALUE;
 		List<Sector> bestPath = null;
