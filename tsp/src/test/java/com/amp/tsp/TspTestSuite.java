@@ -10,7 +10,7 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
 
-import com.amp.app.App;
+import com.amp.tsp.app.App;
 
 @RunWith(Suite.class)
 @SuiteClasses({ CorrectnessTest.class, PerformanceTest.class })

@@ -1,4 +1,4 @@
-package com.amp.parse;
+package com.amp.tsp.parse;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
@@ -16,7 +16,7 @@ import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import com.amp.mapping.Sector;
+import com.amp.tsp.mapping.Sector;
 import com.esotericsoftware.yamlbeans.YamlException;
 import com.esotericsoftware.yamlbeans.YamlReader;
 

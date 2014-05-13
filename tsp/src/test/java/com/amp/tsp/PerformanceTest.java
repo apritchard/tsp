@@ -12,9 +12,9 @@ import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runners.MethodSorters;
 
-import com.amp.mapping.MapWrapper;
-import com.amp.mapping.Sector;
-import com.amp.parse.MapParser;
+import com.amp.tsp.mapping.MapWrapper;
+import com.amp.tsp.mapping.Sector;
+import com.amp.tsp.parse.MapParser;
 
 /**
  * This class tests longer running examples and measures their performance

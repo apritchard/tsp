@@ -1,4 +1,4 @@
-package com.amp.mapping;
+package com.amp.tsp.mapping;
 
 import java.util.ArrayList;
 import java.util.HashSet;

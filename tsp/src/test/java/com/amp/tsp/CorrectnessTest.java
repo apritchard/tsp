@@ -11,10 +11,10 @@ import java.util.logging.Logger;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.amp.mapping.MapWrapper;
-import com.amp.mapping.Sector;
-import com.amp.mapping.TspUtilities;
-import com.amp.parse.MapParser;
+import com.amp.tsp.mapping.MapWrapper;
+import com.amp.tsp.mapping.Sector;
+import com.amp.tsp.mapping.TspUtilities;
+import com.amp.tsp.parse.MapParser;
 
 /**
  * Test class that checks for basic correctness of the algorithms used by this project.
