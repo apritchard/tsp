@@ -1,0 +1,11 @@
+name: A
+edgeList: {B: 2, C: 4, D: 3}
+---
+name: B
+edgeList: {A: 2, C: 1, D: 4}
+---
+name: C
+edgeList: {A: 4, B: 1, D: 5}
+---
+name: D
+edgeList: {A: 3, B: 4, C: 5}

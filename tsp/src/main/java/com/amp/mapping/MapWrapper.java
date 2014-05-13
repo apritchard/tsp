@@ -30,6 +30,24 @@ public class MapWrapper {
 	
 	private TspNode bestPath;
 	
+	/**
+	 * Creates a new map represented by the provided sectors and calculates the
+	 * shortest paths between them.  Does not provide any seed paths.
+	 * @param sectors
+	 */
+	public MapWrapper(Set<Sector> sectors){
+		this.sectors = sectors;
+		this.shortestPaths = TspUtilities.calculateShorestPaths(sectors);
+		this.seeds = new ArrayList<>();
+	}
+	
+	/**
+	 * Creates a new map represented by the provided sectors and calculates the
+	 * shortest paths between them.  Uses the provided seed paths as starting points
+	 * for possible optimal routes.
+	 * @param sectors
+	 * @param seeds
+	 */
 	public MapWrapper(Set<Sector> sectors, List<List<Sector>> seeds, boolean useSeedsOnly){
 		this.sectors = sectors;
 		this.shortestPaths = TspUtilities.calculateShorestPaths(sectors);
