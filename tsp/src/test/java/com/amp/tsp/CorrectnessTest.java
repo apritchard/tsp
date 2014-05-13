@@ -74,11 +74,6 @@ public class CorrectnessTest {
 		route = mw.calcTsp();
 
 		assertEquals("Incorrect bound for simple incomplete", mw.getBoundForPath(route), 8);
-		
-		mw = new MapWrapper(moderateSectors);
-		route = mw.calcTsp();
-
-		assertEquals("Incorrect bound for moderate", mw.getBoundForPath(route), 23);
 	}
 	
 	@Test
@@ -92,11 +87,6 @@ public class CorrectnessTest {
 		route = mw.calcTspMulti();
 		
 		assertEquals("Incorrect bound for simple incomplete", mw.getBoundForPath(route), 8);
-		
-		mw = new MapWrapper(moderateSectors);
-		route = mw.calcTsp();
-
-		assertEquals("Incorrect bound for moderate", mw.getBoundForPath(route), 23);
 	}
 	
 	@Test
@@ -110,11 +100,35 @@ public class CorrectnessTest {
 		route = mw.calcTspForkJoin();
 		
 		assertEquals("Incorrect bound for simple incomplete", mw.getBoundForPath(route), 8);
+	}
+	
+	@Test
+	public void testModerateLength(){
+		MapWrapper mw = new MapWrapper(moderateSectors);
 		
-		mw = new MapWrapper(moderateSectors);
-		route = mw.calcTsp();
-
-		assertEquals("Incorrect bound for moderate", mw.getBoundForPath(route), 23);
+		long tsp, multi, fj;
+		long start; 
+				
+		start = System.nanoTime();
+		List<Sector> routeTsp = mw.calcTsp();
+		tsp = System.nanoTime() - start;
+		
+		start = System.nanoTime();
+		List<Sector> routeTspMulti = mw.calcTspMulti();
+		multi = System.nanoTime() - start;
+		
+		start = System.nanoTime();
+		List<Sector> routeTspFJ = mw.calcTspForkJoin();
+		fj = System.nanoTime() - start;
+		
+		logger.info(String.format("Moderate Length times milli: tsp(%d) multi(%d) fj(%d)", tsp/1000000, multi/1000000, fj/1000000));
+		
+		final int MIN_BOUND = 23;
+		
+		assertEquals("Incorrect bound for moderate tsp", mw.getBoundForPath(routeTsp), MIN_BOUND);
+		assertEquals("Incorrect bound for moderate tspMulti", mw.getBoundForPath(routeTspMulti), MIN_BOUND);
+		assertEquals("Incorrect bound for moderate tspFJ", mw.getBoundForPath(routeTspFJ), MIN_BOUND);
+		
 	}
 
 }
