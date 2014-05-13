@@ -71,33 +71,33 @@ public class CorrectnessTest {
 		mw = new MapWrapper(simpleIncompleteSectors);
 		route = mw.calcTsp();
 
-		assertEquals("Incorrect bound for simple incomplete", mw.getBoundForPath(route), 7);
+		assertEquals("Incorrect bound for simple incomplete", mw.getBoundForPath(route), 8);
 	}
 	
-//	@Test
-//	public void testSimpleTspMulti(){
-//		MapWrapper mw = new MapWrapper(simpleSectors);
-//		List<Sector> route = mw.calcTspMulti();
-//		
-//		assertEquals("Incorrect bound for simple", mw.getBoundForPath(route), 6); 
-//		
-//		mw = new MapWrapper(simpleIncompleteSectors);
-//		route = mw.calcTspMulti();
-//		
-//		assertEquals("Incorrect bound for simple incomplete", mw.getBoundForPath(route), 7);
-//	}
-//	
-//	@Test
-//	public void testSimpleTspForkJoin(){
-//		MapWrapper mw = new MapWrapper(simpleSectors);
-//		List<Sector> route = mw.calcTspForkJoin();
-//		
-//		assertEquals("Incorrect bound for simple", mw.getBoundForPath(route), 6); 
-//		
-//		mw = new MapWrapper(simpleIncompleteSectors);
-//		route = mw.calcTspForkJoin();
-//		
-//		assertEquals("Incorrect bound for simple incomplete", mw.getBoundForPath(route), 7);
-//	}
+	@Test
+	public void testSimpleTspMulti(){
+		MapWrapper mw = new MapWrapper(simpleSectors);
+		List<Sector> route = mw.calcTspMulti();
+		
+		assertEquals("Incorrect bound for simple", mw.getBoundForPath(route), 6); 
+		
+		mw = new MapWrapper(simpleIncompleteSectors);
+		route = mw.calcTspMulti();
+		
+		assertEquals("Incorrect bound for simple incomplete", mw.getBoundForPath(route), 8);
+	}
+	
+	@Test
+	public void testSimpleTspForkJoin(){
+		MapWrapper mw = new MapWrapper(simpleSectors);
+		List<Sector> route = mw.calcTspForkJoin();
+		
+		assertEquals("Incorrect bound for simple", mw.getBoundForPath(route), 6); 
+		
+		mw = new MapWrapper(simpleIncompleteSectors);
+		route = mw.calcTspForkJoin();
+		
+		assertEquals("Incorrect bound for simple incomplete", mw.getBoundForPath(route), 8);
+	}
 
 }
