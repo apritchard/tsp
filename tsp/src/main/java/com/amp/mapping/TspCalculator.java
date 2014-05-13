@@ -73,12 +73,14 @@ public class TspCalculator implements Runnable{
 			}
 			
 			//if the current path covers all sectors, it's a full path, so set it as our new best
-			if(curr.getPath().size() == sectors.size() && curr.getBound() < bound.get()) {
-				logger.info("Cost " + curr.getBound() + " path found, saving");
-				logger.info(TspUtilities.routeString(curr.getPath()));
-				bestPath.set(curr.getPath());
-				bound.set(curr.getBound());
-				continue;
+			synchronized(mw){
+				if(curr.getPath().size() == sectors.size() && curr.getBound() < bound.get()) {
+					logger.info("Cost " + curr.getBound() + " path found, saving");
+					logger.info(TspUtilities.routeString(curr.getPath()));
+					bestPath.set(curr.getPath());
+					bound.set(curr.getBound());
+					continue;
+				}
 			}
 			
 			Set<Sector> unvisited = new HashSet<>(sectors);
