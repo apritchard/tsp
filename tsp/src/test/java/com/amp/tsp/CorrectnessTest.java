@@ -24,7 +24,7 @@ public class CorrectnessTest {
 	
 	Logger logger = Logger.getLogger(CorrectnessTest.class.getName());
 
-	Set<Sector> simpleSectors, simpleIncompleteSectors;
+	Set<Sector> simpleSectors, simpleIncompleteSectors, moderateSectors;
 
 	@Before
 	public void initialize(){
@@ -37,9 +37,11 @@ public class CorrectnessTest {
 		
 		URL simple = CorrectnessTest.class.getClassLoader().getResource("simple.yaml");
 		URL simpleIncomplete = CorrectnessTest.class.getClassLoader().getResource("simple-incomplete.yaml");
+		URL moderate = CorrectnessTest.class.getClassLoader().getResource("federation-space-boundaries.yaml");
 		
 		simpleSectors = MapParser.parseMapFile(simple);
 		simpleIncompleteSectors = MapParser.parseMapFile(simpleIncomplete);
+		moderateSectors = MapParser.parseMapFile(moderate);
 	}
 	
 	@Test
@@ -72,6 +74,11 @@ public class CorrectnessTest {
 		route = mw.calcTsp();
 
 		assertEquals("Incorrect bound for simple incomplete", mw.getBoundForPath(route), 8);
+		
+		mw = new MapWrapper(moderateSectors);
+		route = mw.calcTsp();
+
+		assertEquals("Incorrect bound for moderate", mw.getBoundForPath(route), 23);
 	}
 	
 	@Test
@@ -85,6 +92,11 @@ public class CorrectnessTest {
 		route = mw.calcTspMulti();
 		
 		assertEquals("Incorrect bound for simple incomplete", mw.getBoundForPath(route), 8);
+		
+		mw = new MapWrapper(moderateSectors);
+		route = mw.calcTsp();
+
+		assertEquals("Incorrect bound for moderate", mw.getBoundForPath(route), 23);
 	}
 	
 	@Test
@@ -98,6 +110,11 @@ public class CorrectnessTest {
 		route = mw.calcTspForkJoin();
 		
 		assertEquals("Incorrect bound for simple incomplete", mw.getBoundForPath(route), 8);
+		
+		mw = new MapWrapper(moderateSectors);
+		route = mw.calcTsp();
+
+		assertEquals("Incorrect bound for moderate", mw.getBoundForPath(route), 23);
 	}
 
 }
