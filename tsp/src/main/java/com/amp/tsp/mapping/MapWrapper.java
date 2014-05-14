@@ -1,6 +1,7 @@
 package com.amp.tsp.mapping;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -19,16 +20,18 @@ import java.util.logging.Logger;
 public class MapWrapper {
 	private static final Logger logger = Logger.getLogger(MapWrapper.class.getName());
 
-	private Set<Sector> sectors;
-	private Map<Sector, Map<Sector, Integer>> shortestPaths;
+	private final Set<Sector> sectors;
+	private final Map<Sector, Map<Sector, Integer>> shortestPaths;
+	
+	private final List<TspNode> seeds;
+	private final boolean useSeedsOnly;
+	
+	private TspNode bestPath;
+	
+	private final Map<CacheKey, List<Sector>> cachedRoutes = new HashMap<>();
 	
 	public Set<Sector> getSectors() {return sectors;}
 	public Map<Sector, Map<Sector, Integer>> getShortestPaths() {return shortestPaths;}
-	
-	private List<TspNode> seeds;
-	private boolean useSeedsOnly;
-	
-	private TspNode bestPath;
 	
 	/**
 	 * Creates a new map represented by the provided sectors and calculates the
@@ -39,6 +42,7 @@ public class MapWrapper {
 		this.sectors = sectors;
 		this.shortestPaths = TspUtilities.calculateShorestPaths(sectors);
 		this.seeds = new ArrayList<>();
+		useSeedsOnly = false;
 	}
 	
 	/**
@@ -102,7 +106,12 @@ public class MapWrapper {
 	public List<Sector> calcTspForkJoin(){
 		ForkJoinPool fjp = new ForkJoinPool();
 		
-		fjp.invoke(new TspCalcAction(new PriorityBlockingQueue<TspNode>(getInitialNodes()), this, 20));
+		//TODO for some reason, tspcalcaction produce incorrect value when depth_threshold = 20, but nothing else?  seems reproducable 
+		//TODO the performance seems dependent on how many threads a given depth will result in making, so perhaps 
+		//     this value should depend on the size of the search space
+		final int DEPTH_THRESHOLD = 19;
+		
+		fjp.invoke(new TspCalcAction(new PriorityBlockingQueue<TspNode>(getInitialNodes()), this, DEPTH_THRESHOLD));
 		return bestPath.getPath();
 	}
 	
@@ -196,11 +205,33 @@ public class MapWrapper {
 				logger.info(TspUtilities.routeString(curr.getPath()));
 				bestPath = curr.getPath();
 				bound = curr.getBound();
+				TspUtilities.cachePaths(cachedRoutes, bestPath);
 				continue;
 			}
 			
 			Set<Sector> unvisited = new HashSet<>(sectors);
 			unvisited.removeAll(curr.getPath());
+			
+			//cache lookup
+			Sector lastSector = curr.getPath().get(curr.getPath().size()-1);
+			CacheKey ck = new CacheKey(lastSector, unvisited);
+			if(cachedRoutes.containsKey(ck)){
+				List<Sector> optimalSubPath = cachedRoutes.get(ck);
+				List<Sector> newPath = new ArrayList<>(curr.getPath());
+				newPath.addAll(optimalSubPath);
+				int newBound = getBoundForPath(bestPath);
+				if(newBound < bound){
+					bestPath = newPath;
+					bound = newBound;
+					TspUtilities.cachePaths(cachedRoutes, newPath);
+				}
+
+//				logger.info("Found cached result for " + unvisited);
+//				logger.info("\t" + TspUtilities.routeString(bestPath));
+				continue;
+			}
+			
+			
 			for(Sector s : unvisited){
 				List<Sector> newPath = new ArrayList<>(curr.getPath());
 				newPath.add(s);
@@ -232,7 +263,12 @@ public class MapWrapper {
 			//sum the cost of each step so far
 			int steps = path.size() - 1;
 			for(int i = 0; i < steps; i++){
-				bound += getDistance(path.get(i),path.get(i+1));
+				try{
+					bound += getDistance(path.get(i),path.get(i+1));
+				} catch (Exception e){
+					System.out.println("hmm");
+					throw e;
+				}
 			}
 			
 			//if this is the complete path, we're done

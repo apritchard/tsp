@@ -9,14 +9,21 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.logging.Logger;
 
+/**
+ * Concurrently runnable tsp calculator.  Each instance
+ * has its own queue, but checks against a shared bound so that
+ * it can take advantage of improvements made by other instances.
+ * @author alex
+ *
+ */
 public class TspCalculator implements Runnable{
 	private final Logger logger;
+
+	private final Queue<TspNode> queue;
 	
-	
-	AtomicInteger bound;
-	AtomicReference<List<Sector>> bestPath;
-	AtomicReference<List<Sector>> longestPath;
-	Queue<TspNode> queue;
+	private final AtomicInteger bound;
+	private final AtomicReference<List<Sector>> bestPath;
+	private final AtomicReference<List<Sector>> longestPath;
 	
 	private final Set<Sector> sectors;
 	private final MapWrapper mw;

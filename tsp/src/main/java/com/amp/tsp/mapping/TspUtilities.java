@@ -1,12 +1,14 @@
 package com.amp.tsp.mapping;
 
-import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.logging.Logger;
 
 public class TspUtilities {
+	private final static Logger logger = Logger.getLogger(TspUtilities.class.getName());
 	
 	/**
 	 * Calculates the distance from all Sectors to all other Sectors
@@ -53,6 +55,20 @@ public class TspUtilities {
 		}
 		
 		return shortestPaths;
+	}
+	
+	public static void cachePaths(Map<CacheKey, List<Sector>> cache, List<Sector> currentBestPath){
+		int size = currentBestPath.size();
+		logger.info("Caching " + routeString(currentBestPath));
+		for(int i = 1; i < size; i++){
+			//get the last i sectors in the path and cache them
+			List<Sector> cachedValue = currentBestPath.subList(size-i, size);
+			CacheKey cachedKey = new CacheKey(currentBestPath.get(i), new HashSet<>(cachedValue));
+			logger.info("Best solution to " + cachedKey + ": " + routeString(cachedValue));
+			if(!cache.containsKey(cachedKey)){
+				cache.put(cachedKey, cachedValue);
+			}
+		}
 	}
 	
 	public static String routeString(List<Sector> route){

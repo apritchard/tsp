@@ -26,17 +26,17 @@ public class App {
 			logger.warning("Failed to find logger.properties");
 		}
 		
-//		URL mapFile = App.class.getClassLoader().getResource("boundaries.yaml");
-		URL mapFile = App.class.getClassLoader().getResource("federation-space-boundaries.yaml");
+		URL mapFile = App.class.getClassLoader().getResource("boundaries.yaml");
+//		URL mapFile = App.class.getClassLoader().getResource("federation-space-boundaries.yaml");
 		Set<Sector> sectors = MapParser.parseMapFile(mapFile);
 		
-//		URL seedFile = App.class.getClassLoader().getResource("seeds-boundaries.yaml");
-//		List<List<Sector>> seeds = MapParser.parseSeedFile(seedFile, sectors);
+		URL seedFile = App.class.getClassLoader().getResource("seeds-boundaries.yaml");
+		List<List<Sector>> seeds = MapParser.parseSeedFile(seedFile, sectors);
 		
 //		List<List<Sector>> seeds = new ArrayList<>();
 		
-//		MapWrapper mw = new MapWrapper(sectors, seeds, true);
-		MapWrapper mw = new MapWrapper(sectors);
+		MapWrapper mw = new MapWrapper(sectors, seeds, true);
+//		MapWrapper mw = new MapWrapper(sectors);
 		
 		StringBuilder sb = new StringBuilder();
 		sb.append("Sectors:").append(System.lineSeparator()).append(mw);
