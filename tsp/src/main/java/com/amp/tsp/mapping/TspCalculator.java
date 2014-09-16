@@ -10,9 +10,9 @@ import java.util.concurrent.atomic.AtomicReference;
 import java.util.logging.Logger;
 
 /**
- * Concurrently runnable tsp calculator.  Each instance
- * has its own queue, but checks against a shared bound so that
- * it can take advantage of improvements made by other instances.
+ * Concurrently runnable tsp calculator.  Each instance has its
+ * own queue, but checks against a shared bound so that it can
+ * take advantage of improvements to the bound made by other instances.
  * @author alex
  *
  */
@@ -60,6 +60,7 @@ public class TspCalculator implements Runnable{
 				longestSize = curr.getPath().size();
 			}
 			
+			//TODO Still more logging that could be moved
 			if(i++%10000 == 0){
 				StringBuilder sb = new StringBuilder();
 				sb.append("Trace:").append(System.lineSeparator());
@@ -90,6 +91,7 @@ public class TspCalculator implements Runnable{
 				}
 			}
 			
+			//Expand search to the next step and add to queue
 			Set<Sector> unvisited = new HashSet<>(sectors);
 			unvisited.removeAll(curr.getPath());
 			for(Sector s : unvisited){

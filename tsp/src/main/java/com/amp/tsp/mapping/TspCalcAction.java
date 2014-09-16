@@ -49,6 +49,7 @@ public class TspCalcAction extends RecursiveAction {
 		
 		TspNode curr = queue.poll();
 		
+		//TODO move logging out of implementation
 		int c = count.incrementAndGet();
 		if(System.currentTimeMillis() - lastTime.get() > 10000){
 			lastTime.set(System.currentTimeMillis());
@@ -56,11 +57,13 @@ public class TspCalcAction extends RecursiveAction {
 					c, omitted.get(), curr.getBound(), queue.size()));
 		}
 		
+		//We've found the best path already, bail out of this Action.
 		if(curr.getBound() >= bound){
 			omitted.incrementAndGet();
 			return;
 		}
 		
+		//If current path is complete, submit it as a possible best path and bail
 		if(curr.getPath().size() == sectors.size()){
 			logger.info("Cost " + curr.getBound() + " path found, saving");
 			logger.info(TspUtilities.routeString(curr.getPath()));
@@ -83,6 +86,7 @@ public class TspCalcAction extends RecursiveAction {
 					newQueue.add(newNode);
 					tasks.add(new TspCalcAction(newQueue, mw, depthThreshold));
 				} else {
+					//otherwise just add this node to the queue and recurse
 					queue.add(newNode);
 					new TspCalcAction(queue, mw, depthThreshold).invoke();
 				}

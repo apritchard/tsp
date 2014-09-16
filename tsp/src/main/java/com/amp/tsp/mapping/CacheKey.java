@@ -2,6 +2,14 @@ package com.amp.tsp.mapping;
 
 import java.util.Set;
 
+/**
+ * Lookup key for route cache. Consists of a starting sector and a set of possible other
+ * sectors. For example, a key could represent a path starting from A and traveling through BCD
+ * in an unspecified order.
+ * 
+ * @author alex
+ *
+ */
 public class CacheKey {
 	private Sector start;
 	private Set<Sector> others;

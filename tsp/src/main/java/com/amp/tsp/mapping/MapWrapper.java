@@ -199,14 +199,19 @@ public class MapWrapper {
 		
 	}
 	
+	/**
+	 * Calculate shortest route using a single-threaded branch and bound algorithm.
+	 * @return The optimal path
+	 */
 	public List<Sector> calcTsp(){
 		Queue<TspNode> queue = getInitialNodes();
 		
+		//start with max bound and no best path
 		int bound = Integer.MAX_VALUE;
 		List<Sector> bestPath = null;
 		
 		int i = 0;
-		List<Sector> longestPath = new ArrayList<>();
+		List<Sector> longestPath = new ArrayList<>(); //this is just to view partial progress in logging
 		while(!queue.isEmpty()){
 			TspNode curr = queue.poll();
 			
@@ -214,6 +219,7 @@ public class MapWrapper {
 				longestPath = curr.getPath();
 			}
 			
+			//TODO Extract logging code from individual implementations
 			if(i++%10000 == 0){
 				StringBuilder sb = new StringBuilder();
 				sb.append("Trace:").append(System.lineSeparator());
@@ -239,32 +245,14 @@ public class MapWrapper {
 				logger.info(TspUtilities.routeString(curr.getPath()));
 				bestPath = curr.getPath();
 				bound = curr.getBound();
-				TspUtilities.cachePaths(cachedRoutes, bestPath);
 				continue;
 			}
 			
+			//TODO investigate dynamic programming-style caching further
+
+			//Add all next steps to queue (which will sort them by bound)
 			Set<Sector> unvisited = new HashSet<>(sectors);
 			unvisited.removeAll(curr.getPath());
-			
-			//cache lookup
-			Sector lastSector = curr.getPath().get(curr.getPath().size()-1);
-			CacheKey ck = new CacheKey(lastSector, unvisited);
-			if(cachedRoutes.containsKey(ck)){
-				List<Sector> optimalSubPath = cachedRoutes.get(ck);
-				List<Sector> newPath = new ArrayList<>(curr.getPath());
-				newPath.addAll(optimalSubPath);
-				int newBound = getBoundForPath(bestPath);
-				if(newBound < bound){
-					bestPath = newPath;
-					bound = newBound;
-					TspUtilities.cachePaths(cachedRoutes, newPath);
-				}
-
-//				logger.info("Found cached result for " + unvisited);
-//				logger.info("\t" + TspUtilities.routeString(bestPath));
-				continue;
-			}
-			
 			
 			for(Sector s : unvisited){
 				List<Sector> newPath = new ArrayList<>(curr.getPath());
@@ -276,8 +264,10 @@ public class MapWrapper {
 			}
 		}
 		
-
-		return null;
+		//if queue is empty and we haven't returned, then either we found no complete paths
+		// (bestPath will be null), or the very last path we checked is the best path
+		// (unlikely, but possible), in which case return it.
+		return bestPath;
 	}
 	
 	/**

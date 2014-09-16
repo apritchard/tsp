@@ -57,6 +57,14 @@ public class TspUtilities {
 		return shortestPaths;
 	}
 	
+	
+	/**
+	 * Save each ordered list of Sectors as the current best subpaths following a given Sector.
+	 * For example, if the currentBestPath is A,B,C,D, we will save BCD as the path following A,
+	 * CD as a path following B, and D as a path following C.  
+	 * @param cache The subpath cache
+	 * @param currentBestPath A complete path representing the current best path
+	 */
 	public static void cachePaths(Map<CacheKey, List<Sector>> cache, List<Sector> currentBestPath){
 		int size = currentBestPath.size();
 		logger.info("Caching " + routeString(currentBestPath));
@@ -71,6 +79,11 @@ public class TspUtilities {
 		}
 	}
 	
+	/**
+	 * Returns a readable string representation of a route
+	 * @param route
+	 * @return
+	 */
 	public static String routeString(List<Sector> route){
 		StringBuilder sb = new StringBuilder();
 		for(int i = 0; i < route.size() -1; i++){
