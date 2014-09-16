@@ -88,15 +88,24 @@ public class MapWrapper {
 		return shortestPaths.get(s1).get(s2);
 	}
 	
+	/**
+	 * Creates the initial queue of paths. This queue consists of
+	 * a single one-node path for each second, as well as any seeds
+	 * that were provided on Map creation.
+	 * 
+	 * @return A queue of possible paths, ordered by their lower bound cost
+	 */
 	private Queue<TspNode> getInitialNodes(){
 		PriorityQueue<TspNode> nodes;
-		//if we've seeded this run, just return the seeds
+		
+		//if we've seeded this run, initialize the queue with the seeds
 		if(seeds != null && seeds.size() > 0) {
 			nodes = new PriorityQueue<>(seeds);
 		} else {
 			nodes = new PriorityQueue<>();
 		}
 		
+		//return only the seeds if useSeedsOnly
 		if(useSeedsOnly && !nodes.isEmpty()){
 			return nodes;
 		}
@@ -112,50 +121,67 @@ public class MapWrapper {
 		
 	}
 	
+	/**
+	 * Solve using a multi-threaded fork-join pool implementation. Uses
+	 * a default depthThreshold.
+	 * @return The optimal path
+	 */
 	public List<Sector> calcTspForkJoin(){
 		//Performance seems fairly constant across depths, as long as >1
 		int depthThreshold = 19;
 		return calcTspForkJoin(depthThreshold);
 	}
+	
+	/**
+	 * Solve using a multi-threaded fork-join pool implementation.
+	 * @param depthThreshold The path size at which to begin independent solutions in their own threads.
+	 * @return The optimal path
+	 */
 	public List<Sector> calcTspForkJoin(int depthThreshold){
 		ForkJoinPool fjp = new ForkJoinPool();
 		fjp.invoke(new TspCalcAction(new PriorityBlockingQueue<TspNode>(getInitialNodes()), this, depthThreshold));
 		return bestPath.getPath();
 	}
 	
+	/**
+	 * Solve using a multi-threaded approach by creating two threads for each available
+	 * processor and dividing the queue of paths amongst them.
+	 * @return The optimal path
+	 */
 	public List<Sector> calcTspMulti(){
+		//create atomic references for use across threads
 		AtomicInteger bound = new AtomicInteger(Integer.MAX_VALUE);
 		AtomicReference<List<Sector>> bestPath = new AtomicReference<>();
 		AtomicReference<List<Sector>> longestPath = new AtomicReference<>();
 		longestPath.set(new ArrayList<Sector>());
 
 		int numThreads = Runtime.getRuntime().availableProcessors() * 2;
+		Queue<TspNode> initialQueue = getInitialNodes();
+
+		//Number of threads minimum of 2x processors or size of initial queue.
+		numThreads = Math.min(numThreads, initialQueue.size());
 		
-		if(seeds != null && seeds.size() > 0){
-			numThreads = Math.min(numThreads, seeds.size());
-		} else {
-			numThreads = Math.min(numThreads,  sectors.size()); 
-		}
-		
+		//Create one queue per thread
 		List<Queue<TspNode>> queues = new ArrayList<>();
 		for(int i = 0; i < numThreads; i++){
 			queues.add(new PriorityQueue<TspNode>());
 		}
 		
-		Queue<TspNode> initialQueue = getInitialNodes();
-		
+		//Split the paths amongst the queues
 		int q = 0;
 		for(TspNode node : initialQueue){
 			queues.get(q).add(node);
 			q = (q + 1) % numThreads;
 		}
 		
+		//Start all the calculator threads
 		ExecutorService executor = Executors.newFixedThreadPool(numThreads);
 		for(int i = 0; i < queues.size() ; i++){
 			TspCalculator tspCalc = new TspCalculator(bound, bestPath, longestPath, queues.get(i), i, this);
 			executor.execute(tspCalc);
 		}
 		
+		//Wait for them to finish
 		executor.shutdown();
 		try {
 			executor.awaitTermination(Long.MAX_VALUE, TimeUnit.SECONDS);
