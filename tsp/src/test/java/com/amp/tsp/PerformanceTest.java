@@ -3,7 +3,10 @@ package com.amp.tsp;
 import static org.junit.Assert.assertEquals;
 
 import java.net.URL;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 import java.util.logging.Logger;
 
@@ -18,8 +21,11 @@ import com.amp.tsp.parse.MapParser;
 
 /**
  * This class tests longer running examples and measures their performance
- * in addition to correctness.  It fixes the method order to enforce
- * increasing time cost in case you want to bail early for partial results.
+ * in addition to correctness.  
+ * 
+ * Looks like the simplest way to control sort order is by method name. If this class
+ * (heaven forbid) has more than 100 methods, naming convention should be adjusted.
+ * 
  * @author alex
  *
  */
@@ -30,6 +36,9 @@ public class PerformanceTest {
 	
 	private Set<Sector> moderateSectors, longSectors;
 	private List<List<Sector>> longSeeds;
+	
+	final int MODERATE_MIN_BOUND = 23;
+	final int LONG_MIN_BOUND = 38;
 	
 	@Before
 	public void initialize(){
@@ -43,37 +52,40 @@ public class PerformanceTest {
 	}
 	
 	/**
-	 * Looks like the simplest way to control sort order is by method name. If this class
-	 * (heaven forbid) has more than 100 methods, naming convention should be adjusted.
+	 * Compare performance of tsp implementations on a map of moderate size.
 	 */
 	@Test
 	public void test00Moderate(){
-		MapWrapper mw = new MapWrapper(moderateSectors);
+		MapWrapper mw;
 		
 		long tsp, multi, fj;
 		long start; 
 				
 		start = System.nanoTime();
+		mw = new MapWrapper(moderateSectors);
 		List<Sector> routeTsp = mw.calcTsp();
 		tsp = System.nanoTime() - start;
 		
 		start = System.nanoTime();
+		mw = new MapWrapper(moderateSectors);
 		List<Sector> routeTspMulti = mw.calcTspMulti();
 		multi = System.nanoTime() - start;
 		
 		start = System.nanoTime();
+		mw = new MapWrapper(moderateSectors);
 		List<Sector> routeTspFJ = mw.calcTspForkJoin();
 		fj = System.nanoTime() - start;
 		
 		logger.info(String.format("Moderate Length times milli: tsp(%d) multi(%d) fj(%d)", tsp/1000000, multi/1000000, fj/1000000));
 		
-		final int MIN_BOUND = 23;
-		
-		assertEquals("Incorrect bound for moderate tsp", mw.getBoundForPath(routeTsp), MIN_BOUND);
-		assertEquals("Incorrect bound for moderate tspMulti", mw.getBoundForPath(routeTspMulti), MIN_BOUND);
-		assertEquals("Incorrect bound for moderate tspFJ", mw.getBoundForPath(routeTspFJ), MIN_BOUND);
+		assertEquals("Incorrect bound for moderate tsp", MODERATE_MIN_BOUND, mw.getBoundForPath(routeTsp));
+		assertEquals("Incorrect bound for moderate tspMulti", MODERATE_MIN_BOUND, mw.getBoundForPath(routeTspMulti));
+		assertEquals("Incorrect bound for moderate tspFJ", MODERATE_MIN_BOUND, mw.getBoundForPath(routeTspFJ));
 	}
 	
+	/**
+	 * Test standard implementation on a long route.
+	 */
 	@Test
 	public void test50LongTsp(){
 		MapWrapper mw = new MapWrapper(longSectors, longSeeds, true);
@@ -86,11 +98,12 @@ public class PerformanceTest {
 		
 		logger.info("Long Length times milli (tsp):" + timeCost/1000000);
 		
-		final int MIN_BOUND = 38;
-		
-		assertEquals("Incorrect bound for long tsp", mw.getBoundForPath(routeTsp), MIN_BOUND);
+		assertEquals("Incorrect bound for long tsp", LONG_MIN_BOUND, mw.getBoundForPath(routeTsp));
 	}
 	
+	/**
+	 * Test multi-threaded implementation on a long route.
+	 */
 	@Test
 	public void test51LongTspMulti(){
 		MapWrapper mw = new MapWrapper(longSectors, longSeeds, true);
@@ -103,25 +116,75 @@ public class PerformanceTest {
 		
 		logger.info("Long Length times milli (tspMulti):" + timeCost/1000000);
 		
-		final int MIN_BOUND = 38;
-		
-		assertEquals("Incorrect bound for long tspMulti", mw.getBoundForPath(route), MIN_BOUND);
+		assertEquals("Incorrect bound for long tspMulti", LONG_MIN_BOUND, mw.getBoundForPath(route));
 	}
 	
+	/*
+	 * Test fork-join implementation on a long route
+	 */
 	@Test
 	public void test52LongTspForkJoin(){
 		MapWrapper mw = new MapWrapper(longSectors, longSeeds, true);
 		
-		long start, timeCost; 
+		long start, timeCost;
 		
 		start = System.nanoTime();
-		List<Sector> route = mw.calcTspForkJoin();
+		List<Sector> route = mw.calcTspForkJoin(18);
 		timeCost = System.nanoTime() - start;
 		
 		logger.info("Long Length times milli (tspFj):" + timeCost/1000000);
 		
-		final int MIN_BOUND = 38;
+		assertEquals("Incorrect bound for long tspForkJoin", LONG_MIN_BOUND, mw.getBoundForPath(route));		
+	}
+	
+	/**
+	 * Test performance of depth threshold on fork-join solution to moderate route
+	 */
+	@Test
+	public void test70ForkJoinDepth(){
+		MapWrapper mw;
 		
-		assertEquals("Incorrect bound for long tspForkJoin", mw.getBoundForPath(route), MIN_BOUND);		
+		Map<Integer, Long> times = new HashMap<>();
+		long start, total;
+		for(int i = 0; i < moderateSectors.size(); i++){
+			start = System.nanoTime();
+			mw = new MapWrapper(moderateSectors);
+			List<Sector> routeTsp = mw.calcTspForkJoin(i);
+			total = System.nanoTime() - start;
+			times.put(i, total);
+			assertEquals("Incorrect bound for forkJoin with depth of " + i, MODERATE_MIN_BOUND, mw.getBoundForPath(routeTsp));
+		}
+		
+		StringBuilder sb = new StringBuilder();
+		for(Entry<Integer, Long> entry : times.entrySet()){
+			sb.append("(").append(entry.getKey()).append(", ").append(entry.getValue()/1000000).append("ms)");
+		}
+		logger.info(sb.toString());
+	}
+	
+	/**
+	 * Test performance of depth threshold on fork-join solution to long route.
+	 * Conclusion: it doesn't really make a difference as long as it's greater than 1.
+	 */
+	@Test
+	public void test71ForkJoinDepthLong(){
+		MapWrapper mw;
+		
+		Map<Integer, Long> times = new HashMap<>();
+		long start, total;
+		for(int i = 1; i < 23; i++){
+			start = System.nanoTime();
+			mw = new MapWrapper(longSectors, longSeeds, true);
+			List<Sector> routeTsp = mw.calcTspForkJoin(i);
+			total = System.nanoTime() - start;
+			times.put(i, total);
+			assertEquals("Incorrect bound for forkJoin with depth of " + i, LONG_MIN_BOUND, mw.getBoundForPath(routeTsp));
+		}
+		
+		StringBuilder sb = new StringBuilder();
+		for(Entry<Integer, Long> entry : times.entrySet()){
+			sb.append("(").append(entry.getKey()).append(", ").append(entry.getValue()/1000000).append("ms)");
+		}
+		logger.info(sb.toString());
 	}
 }
