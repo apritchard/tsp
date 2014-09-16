@@ -17,14 +17,23 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.logging.Logger;
 
+/**
+ * Class containing information about the map to be solved. Currently contains
+ * TSP logic as well, accessed via various method calls.
+ * 
+ * TODO Break different types of TSP solutions into their own classes
+ * 
+ * @author alex
+ *
+ */
 public class MapWrapper {
 	private static final Logger logger = Logger.getLogger(MapWrapper.class.getName());
 
 	private final Set<Sector> sectors;
 	private final Map<Sector, Map<Sector, Integer>> shortestPaths;
 	
-	private final List<TspNode> seeds;
-	private final boolean useSeedsOnly;
+	private final List<TspNode> seeds; //each seed is a path used to initialize the search for an optimal path
+	private final boolean useSeedsOnly; //if true, all solutions considered will derive from seed paths
 	
 	private TspNode bestPath;
 	
@@ -104,14 +113,13 @@ public class MapWrapper {
 	}
 	
 	public List<Sector> calcTspForkJoin(){
+		//Performance seems fairly constant across depths, as long as >1
+		int depthThreshold = 19;
+		return calcTspForkJoin(depthThreshold);
+	}
+	public List<Sector> calcTspForkJoin(int depthThreshold){
 		ForkJoinPool fjp = new ForkJoinPool();
-		
-		//TODO for some reason, tspcalcaction produce incorrect value when depth_threshold = 20, but nothing else?  seems reproducable 
-		//TODO the performance seems dependent on how many threads a given depth will result in making, so perhaps 
-		//     this value should depend on the size of the search space
-		final int DEPTH_THRESHOLD = 19;
-		
-		fjp.invoke(new TspCalcAction(new PriorityBlockingQueue<TspNode>(getInitialNodes()), this, DEPTH_THRESHOLD));
+		fjp.invoke(new TspCalcAction(new PriorityBlockingQueue<TspNode>(getInitialNodes()), this, depthThreshold));
 		return bestPath.getPath();
 	}
 	
@@ -295,12 +303,24 @@ public class MapWrapper {
 		}
 	}
 	
+	/**
+	 * If the provided path has a lower bound than the current best path,
+	 * sets the best path to the provided path.
+	 * 
+	 * Used to update MapWrapper from external threads.
+	 * @param path
+	 */
 	public synchronized void setPossibleBestPath(TspNode path){
 		if(bestPath == null	|| path.getBound() < bestPath.getBound()){
 			bestPath = path;
 		} 
 	}
 	
+	/**
+	 * Synchronized for use by external threads.
+	 * 
+	 * @return the bound of the current best path for this map.
+	 */
 	public synchronized int getBound(){
 		return bestPath == null? Integer.MAX_VALUE : bestPath.getBound();
 	}

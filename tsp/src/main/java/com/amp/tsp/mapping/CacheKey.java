@@ -21,6 +21,9 @@ public class CacheKey {
 		return start.toString() + others.toString();
 	}
 	
+	/**
+	 * Auto-generated
+	 */
 	@Override
 	public int hashCode() {
 		final int prime = 31;
