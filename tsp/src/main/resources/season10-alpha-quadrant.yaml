@@ -1,0 +1,168 @@
+!com.amp.tsp.parse.YamlSector
+name: DS9
+edgeList: 
+   Algira: 241
+   Arawath: 420
+   Betazed: 428
+   Tellar: 586
+   Defera: 234
+   Tzenketh: 235
+   Corwin: 240
+   Ferenginar: 540
+   Chapel: 454
+   Breen: 660
+   Mizar: 309
+--- !com.amp.tsp.parse.YamlSector
+name: Mizar
+edgeList: 
+   DS9: 309
+   Algira: 551
+   Arawath: 683
+   Betazed: 393
+   Tellar: 277
+   Defera: 354
+   Tzenketh: 135
+   Corwin: 285
+   Ferenginar: 401
+   Chapel: 266
+   Breen: 705
+--- !com.amp.tsp.parse.YamlSector
+name: Algira
+edgeList: 
+   DS9: 241
+   Arawath: 290
+   Betazed: 582
+   Tellar: 828
+   Defera: 366
+   Tzenketh: 466
+   Corwin: 414
+   Ferenginar: 726
+   Chapel: 667
+   Breen: 723
+   Mizar: 551
+--- !com.amp.tsp.parse.YamlSector
+name: Tellar
+edgeList: 
+   DS9: 586
+   Algira: 828
+   Arawath: 952
+   Betazed: 512
+   Defera: 606
+   Tzenketh: 393
+   Corwin: 499
+   Ferenginar: 487
+   Chapel: 306
+   Breen: 874
+   Mizar: 277
+--- !com.amp.tsp.parse.YamlSector
+name: Defera
+edgeList: 
+   DS9: 234
+   Algira: 366
+   Arawath: 357
+   Betazed: 629
+   Tellar: 606
+   Tzenketh: 219
+   Corwin: 447
+   Ferenginar: 364
+   Chapel: 591
+   Breen: 427
+   Mizar: 354
+--- !com.amp.tsp.parse.YamlSector
+name: Betazed
+edgeList: 
+   DS9: 428
+   Algira: 582
+   Arawath: 835
+   Tellar: 512
+   Defera: 629
+   Tzenketh: 474
+   Corwin: 188
+   Ferenginar: 792
+   Chapel: 208
+   Breen: 1046
+   Mizar: 393
+--- !com.amp.tsp.parse.YamlSector
+name: Chapel
+edgeList: 
+   DS9: 454
+   Algira: 667
+   Arawath: 872
+   Betazed: 208
+   Tellar: 306
+   Defera: 591
+   Tzenketh: 388
+   Corwin: 261
+   Ferenginar: 655
+   Breen: 970
+   Mizar: 266
+--- !com.amp.tsp.parse.YamlSector
+name: Arawath
+edgeList: 
+   DS9: 420
+   Algira: 290
+   Betazed: 835
+   Tellar: 952
+   Defera: 357
+   Tzenketh: 558
+   Corwin: 651
+   Ferenginar: 688
+   Chapel: 872
+   Breen: 528
+   Mizar: 683
+--- !com.amp.tsp.parse.YamlSector
+name: Tzenketh
+edgeList: 
+   DS9: 235
+   Algira: 466
+   Arawath: 558
+   Betazed: 474
+   Tellar: 393
+   Defera: 219
+   Corwin: 320
+   Ferenginar: 337
+   Chapel: 388
+   Breen: 584
+   Mizar: 135
+--- !com.amp.tsp.parse.YamlSector
+name: Ferenginar
+edgeList: 
+   DS9: 540
+   Algira: 726
+   Arawath: 688
+   Betazed: 792
+   Tellar: 487
+   Defera: 364
+   Tzenketh: 337
+   Corwin: 655
+   Chapel: 655
+   Breen: 405
+   Mizar: 401
+--- !com.amp.tsp.parse.YamlSector
+name: Breen
+edgeList: 
+   DS9: 660
+   Algira: 723
+   Arawath: 528
+   Betazed: 1046
+   Tellar: 874
+   Defera: 427
+   Tzenketh: 584
+   Corwin: 870
+   Ferenginar: 405
+   Chapel: 970
+   Mizar: 705
+--- !com.amp.tsp.parse.YamlSector
+name: Corwin
+edgeList: 
+   DS9: 240
+   Algira: 414
+   Arawath: 651
+   Betazed: 188
+   Tellar: 499
+   Defera: 447
+   Tzenketh: 320
+   Ferenginar: 655
+   Chapel: 261
+   Breen: 870
+   Mizar: 285

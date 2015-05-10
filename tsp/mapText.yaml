@@ -1,0 +1,63 @@
+!com.amp.tsp.parse.YamlSector
+name: bam
+edgeList: 
+   bo: 205
+   baz: 344
+   start: 78
+   foo: 478
+   bar: 219
+   nim: 357
+--- !com.amp.tsp.parse.YamlSector
+name: bo
+edgeList: 
+   bam: 205
+   baz: 524
+   start: 263
+   foo: 676
+   bar: 418
+   nim: 563
+--- !com.amp.tsp.parse.YamlSector
+name: baz
+edgeList: 
+   bam: 344
+   bo: 524
+   start: 268
+   foo: 180
+   bar: 285
+   nim: 210
+--- !com.amp.tsp.parse.YamlSector
+name: start
+edgeList: 
+   bam: 78
+   bo: 263
+   baz: 268
+   foo: 412
+   bar: 203
+   nim: 310
+--- !com.amp.tsp.parse.YamlSector
+name: foo
+edgeList: 
+   bam: 478
+   bo: 676
+   baz: 180
+   start: 412
+   bar: 336
+   nim: 176
+--- !com.amp.tsp.parse.YamlSector
+name: nim
+edgeList: 
+   bam: 357
+   bo: 563
+   baz: 210
+   start: 310
+   foo: 176
+   bar: 171
+--- !com.amp.tsp.parse.YamlSector
+name: bar
+edgeList: 
+   bam: 219
+   bo: 418
+   baz: 285
+   start: 203
+   foo: 336
+   nim: 171

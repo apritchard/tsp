@@ -26,11 +26,14 @@ public class App {
 			logger.warning("Failed to find logger.properties");
 		}
 		
-		URL mapFile = App.class.getClassLoader().getResource("boundaries.yaml");
+//		URL mapFile = App.class.getClassLoader().getResource("boundaries.yaml");
 //		URL mapFile = App.class.getClassLoader().getResource("federation-space-boundaries.yaml");
+//		URL mapFile = App.class.getClassLoader().getResource("Season10-Alpha.yaml");
+		URL mapFile = App.class.getClassLoader().getResource("season10-alpha-quadrant.yaml");
+		
 		Set<Sector> sectors = MapParser.parseMapFile(mapFile);
 		
-		URL seedFile = App.class.getClassLoader().getResource("seeds-boundaries.yaml");
+		URL seedFile = App.class.getClassLoader().getResource("seeds-season10-alpha.yaml");
 		List<List<Sector>> seeds = MapParser.parseSeedFile(seedFile, sectors);
 		
 //		List<List<Sector>> seeds = new ArrayList<>();
@@ -55,9 +58,9 @@ public class App {
 		logger.finer(sb.toString());
 		
 		
-//		List<Sector> route = mw.calcTsp();
+		List<Sector> route = mw.calcTsp();
 //		List<Sector> route = mw.calcTspMulti();
-		List<Sector> route = mw.calcTspForkJoin();
+//		List<Sector> route = mw.calcTspForkJoin();
 		
 		sb = new StringBuilder();
 		sb.append("Best route: ").append(System.lineSeparator());

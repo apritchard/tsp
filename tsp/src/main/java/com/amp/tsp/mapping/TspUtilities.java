@@ -1,9 +1,12 @@
 package com.amp.tsp.mapping;
 
+import java.awt.Point;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 import java.util.logging.Logger;
 
@@ -91,6 +94,36 @@ public class TspUtilities {
 		}
 		sb.append(route.get(route.size()-1));
 		return sb.toString();
+	}
+	
+	public static Set<Sector> pointsToSectors(Map<String, Point> points){
+		Set<Sector> sectors = new HashSet<>();
+		for(Entry<String, Point> entry : points.entrySet()){
+			sectors.add(new Sector(entry.getKey()));
+		}
+		for(Sector s : sectors){
+			for(Sector s2 : sectors){
+				if(s.equals(s2)){
+					continue;
+				}
+				s.addEdge(s2, (int)points.get(s.getName()).distance(points.get(s2.getName())));
+			}
+		}
+		return sectors;
+	}
+	
+	public static List<List<Sector>> stringsToSeeds(List<String> strings, Set<Sector> sectors){
+		List<List<Sector>> seeds = new ArrayList<>();
+		Map<Sector, Sector> lookup = new HashMap<>();
+		for(Sector s : sectors){
+			lookup.put(s, s);
+		}
+		for(String seed : strings){
+			List<Sector> l = new ArrayList<>();
+			l.add(lookup.get(new Sector(seed)));
+			seeds.add(l);
+		}
+		return seeds;
 	}
 
 }

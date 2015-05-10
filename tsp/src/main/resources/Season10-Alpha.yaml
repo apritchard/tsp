@@ -1,0 +1,36 @@
+name: Breen
+edgeList: {Ferenginar: 89, Tellar: 192, Defera: 93, Tzenketh: 127, Mizar: 153, Arawath: 115, DS9: 144, Chapel: 213, Algira: 156, Corwin: 190, Betazed: 233 }
+---
+name: Ferenginar
+edgeList: {Breen: 89, Tellar: 108, Defera: 89, Tzenketh: 73, Mizar: 89, Arawath: 151, DS9: 118, Chapel: 144, Algira: 157, Corwin: 144, Betazed: 175}
+---
+name: Tellar
+edgeList: {Breen: 192, Ferenginar: 108, Defera: 133, Tzenketh: 87, Mizar: 63, Arawath: 210, DS9: 130, Chapel: 67, Algira: 182, Corwin: 111, Betazed: 113}
+---
+name: Defera
+edgeList: {Breen: 93, Ferenginar: 89, Tellar: 133, Tzenketh: 49, Mizar: 77, Arawath: 89, DS9: 52, Chapel: 129, Algira: 81, Corwin: 98, Betazed: 138}
+---
+name: Tzenketh
+edgeList: {Breen: 127, Ferenginar: 73, Tellar: 87, Defera: 49, Mizar: 29, Arawath: 122, DS9: 53, Chapel: 86, Algira: 102, Corwin: 70, Betazed: 104}
+---
+name: Mizar
+edgeList: {Breen: 153, Ferenginar: 89, Tellar: 63, Defera: 77, Tzenketh: 29, Arawath: 149, DS9: 68, Chapel: 58, Algira: 121, Corwin: 62, Betazed: 87}
+---
+name: Arawath
+edgeList: {Breen: 115, Ferenginar: 151, Tellar: 210, Defera: 89, Tzenketh: 122, Mizar: 149,DS9: 92, Chapel: 191, Algira: 64, Corwin: 143, Betazed: 184}
+---
+name: DS9
+edgeList: {Breen: 144, Ferenginar: 118, Tellar: 130, Defera: 52, Tzenketh: 53, Mizar: 68, Arawath: 92, Chapel: 100, Algira: 53, Corwin: 53, Betazed: 96}
+---
+name: Chapel
+edgeList: {Breen: 213, Ferenginar: 144, Tellar: 67, Defera: 129, Tzenketh: 86, Mizar: 58, Arawath: 191, DS9: 100, Algira: 147, Corwin: 57, Betazed: 48}
+---
+name: Algira
+edgeList: {Breen: 156, Ferenginar: 157, Tellar: 182, Defera: 81, Tzenketh: 102, Mizar: 121, Arawath: 64, DS9: 53, Chapel: 147, Corwin: 91, Betazed: 43}
+---
+name: Corwin
+edgeList: {Breen: 190, Ferenginar: 144, Tellar: 111, Defera: 98, Tzenketh: 70, Mizar: 62, Arawath: 143, DS9: 53, Chapel: 57, Algira: 91, Betazed: 43}
+---
+name: Betazed
+edgeList: {Breen: 233, Ferenginar: 175, Tellar: 113, Defera: 138, Tzenketh: 104, Mizar: 87, Arawath: 184, DS9: 96, Chapel: 48, Algira: 128, Corwin: 43}
+---

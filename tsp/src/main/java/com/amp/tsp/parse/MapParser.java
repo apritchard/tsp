@@ -8,10 +8,12 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -19,6 +21,7 @@ import java.util.logging.Logger;
 import com.amp.tsp.mapping.Sector;
 import com.esotericsoftware.yamlbeans.YamlException;
 import com.esotericsoftware.yamlbeans.YamlReader;
+import com.esotericsoftware.yamlbeans.YamlWriter;
 
 /**
  * Utility class to contain methods involving parsing maps from yaml files.
@@ -117,6 +120,38 @@ public class MapParser {
 			paths.add(path);
 		}
 		return paths;
+	}
+	
+	public static void writeMapFile(String path, Set<Sector> sectors){
+		List<YamlSector> yamlSectors = new ArrayList<>();
+		
+		for(Sector s : sectors){
+			YamlSector ys = new YamlSector();
+			ys.name = s.getName();
+			Map<String, String> edgeList = new HashMap<>();
+			for(Entry<Sector, Integer> entry : s.getEdgeList().entrySet()){
+				edgeList.put(entry.getKey().getName(), entry.getValue().toString());
+			}
+			ys.edgeList = edgeList;
+			yamlSectors.add(ys);
+		}
+		
+		writeYamlObjects(path, yamlSectors);
+	}
+	
+	private static void writeYamlObjects(String path, Collection<? extends Object> objects) {
+		logger.info("Writing objects to " + path);
+		
+		try {
+			YamlWriter writer = new YamlWriter(Files.newBufferedWriter(Paths.get(path), Charset.defaultCharset()));
+			for(Object o : objects){
+				writer.write(o);
+			}
+			writer.close();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 	
 	/**

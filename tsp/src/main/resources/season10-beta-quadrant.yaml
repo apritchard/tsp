@@ -1,0 +1,483 @@
+!com.amp.tsp.parse.YamlSector
+name: Alini
+edgeList: 
+   Pheben: 594
+   New Romulus: 477
+   Qo'noS: 784
+   Drozana: 939
+   Khitomer: 620
+   Iconia: 384
+   Sanek: 907
+   Archanis: 811
+   Virinat: 574
+   Nimbus: 522
+   Vendor: 383
+   Vorn: 210
+   Gamma Eridon: 462
+   Orion: 774
+   Traelus: 1110
+   Lirss: 204
+   Risa: 862
+   Mylasa: 344
+   Argelius: 564
+   Teneebia: 675
+--- !com.amp.tsp.parse.YamlSector
+name: Qo'noS
+edgeList: 
+   Pheben: 288
+   New Romulus: 319
+   Alini: 784
+   Drozana: 379
+   Khitomer: 168
+   Iconia: 521
+   Sanek: 239
+   Archanis: 246
+   Virinat: 350
+   Nimbus: 908
+   Vendor: 616
+   Vorn: 675
+   Gamma Eridon: 332
+   Orion: 649
+   Traelus: 504
+   Lirss: 791
+   Risa: 583
+   Mylasa: 440
+   Argelius: 541
+   Teneebia: 795
+--- !com.amp.tsp.parse.YamlSector
+name: Pheben
+edgeList: 
+   New Romulus: 271
+   Alini: 594
+   Qo'noS: 288
+   Drozana: 632
+   Khitomer: 226
+   Iconia: 253
+   Sanek: 318
+   Archanis: 480
+   Virinat: 423
+   Nimbus: 880
+   Vendor: 579
+   Vorn: 435
+   Gamma Eridon: 165
+   Orion: 775
+   Traelus: 778
+   Lirss: 670
+   Risa: 759
+   Mylasa: 289
+   Argelius: 596
+   Teneebia: 850
+--- !com.amp.tsp.parse.YamlSector
+name: New Romulus
+edgeList: 
+   Pheben: 271
+   Alini: 477
+   Qo'noS: 319
+   Drozana: 494
+   Khitomer: 151
+   Iconia: 330
+   Sanek: 499
+   Archanis: 349
+   Virinat: 174
+   Nimbus: 626
+   Vendor: 322
+   Vorn: 414
+   Gamma Eridon: 129
+   Orion: 519
+   Traelus: 663
+   Lirss: 472
+   Risa: 529
+   Mylasa: 144
+   Argelius: 327
+   Teneebia: 579
+--- !com.amp.tsp.parse.YamlSector
+name: Risa
+edgeList: 
+   Pheben: 759
+   New Romulus: 529
+   Alini: 862
+   Qo'noS: 583
+   Drozana: 289
+   Khitomer: 534
+   Iconia: 858
+   Sanek: 820
+   Archanis: 344
+   Virinat: 355
+   Nimbus: 610
+   Vendor: 487
+   Vorn: 898
+   Gamma Eridon: 656
+   Orion: 144
+   Traelus: 385
+   Lirss: 727
+   Mylasa: 643
+   Argelius: 299
+   Teneebia: 372
+--- !com.amp.tsp.parse.YamlSector
+name: Gamma Eridon
+edgeList: 
+   Pheben: 165
+   New Romulus: 129
+   Alini: 462
+   Qo'noS: 332
+   Drozana: 591
+   Khitomer: 186
+   Iconia: 217
+   Sanek: 451
+   Archanis: 439
+   Virinat: 301
+   Nimbus: 715
+   Vendor: 415
+   Vorn: 345
+   Orion: 648
+   Traelus: 754
+   Lirss: 511
+   Risa: 656
+   Mylasa: 129
+   Argelius: 451
+   Teneebia: 698
+--- !com.amp.tsp.parse.YamlSector
+name: Drozana
+edgeList: 
+   Pheben: 632
+   New Romulus: 494
+   Alini: 939
+   Qo'noS: 379
+   Khitomer: 416
+   Iconia: 808
+   Sanek: 591
+   Archanis: 154
+   Virinat: 365
+   Nimbus: 835
+   Vendor: 622
+   Vorn: 908
+   Gamma Eridon: 591
+   Orion: 416
+   Traelus: 171
+   Lirss: 859
+   Risa: 289
+   Mylasa: 637
+   Argelius: 454
+   Teneebia: 631
+--- !com.amp.tsp.parse.YamlSector
+name: Virinat
+edgeList: 
+   Pheben: 423
+   New Romulus: 174
+   Alini: 574
+   Qo'noS: 350
+   Drozana: 365
+   Khitomer: 222
+   Iconia: 502
+   Sanek: 577
+   Archanis: 249
+   Nimbus: 562
+   Vendor: 286
+   Vorn: 561
+   Gamma Eridon: 301
+   Orion: 352
+   Traelus: 536
+   Lirss: 505
+   Risa: 355
+   Mylasa: 294
+   Argelius: 193
+   Teneebia: 452
+--- !com.amp.tsp.parse.YamlSector
+name: Teneebia
+edgeList: 
+   Pheben: 850
+   New Romulus: 579
+   Alini: 675
+   Qo'noS: 795
+   Drozana: 631
+   Khitomer: 673
+   Iconia: 837
+   Sanek: 1027
+   Archanis: 615
+   Virinat: 452
+   Nimbus: 257
+   Vendor: 321
+   Vorn: 794
+   Gamma Eridon: 698
+   Orion: 228
+   Traelus: 754
+   Lirss: 487
+   Risa: 372
+   Mylasa: 617
+   Argelius: 259
+--- !com.amp.tsp.parse.YamlSector
+name: Archanis
+edgeList: 
+   Pheben: 480
+   New Romulus: 349
+   Alini: 811
+   Qo'noS: 246
+   Drozana: 154
+   Khitomer: 261
+   Iconia: 655
+   Sanek: 477
+   Virinat: 249
+   Nimbus: 782
+   Vendor: 531
+   Vorn: 763
+   Gamma Eridon: 439
+   Orion: 432
+   Traelus: 316
+   Lirss: 754
+   Risa: 344
+   Mylasa: 493
+   Argelius: 391
+   Teneebia: 615
+--- !com.amp.tsp.parse.YamlSector
+name: Nimbus
+edgeList: 
+   Pheben: 880
+   New Romulus: 626
+   Alini: 522
+   Qo'noS: 908
+   Drozana: 835
+   Khitomer: 757
+   Iconia: 791
+   Sanek: 1120
+   Archanis: 782
+   Virinat: 562
+   Vendor: 303
+   Vorn: 691
+   Gamma Eridon: 715
+   Orion: 470
+   Traelus: 978
+   Lirss: 318
+   Risa: 610
+   Mylasa: 602
+   Argelius: 391
+   Teneebia: 257
+--- !com.amp.tsp.parse.YamlSector
+name: Traelus
+edgeList: 
+   Pheben: 778
+   New Romulus: 663
+   Alini: 1110
+   Qo'noS: 504
+   Drozana: 171
+   Khitomer: 573
+   Iconia: 971
+   Sanek: 680
+   Archanis: 316
+   Virinat: 536
+   Nimbus: 978
+   Vendor: 786
+   Vorn: 1078
+   Gamma Eridon: 754
+   Orion: 528
+   Lirss: 1026
+   Risa: 385
+   Mylasa: 807
+   Argelius: 610
+   Teneebia: 754
+--- !com.amp.tsp.parse.YamlSector
+name: Vorn
+edgeList: 
+   Pheben: 435
+   New Romulus: 414
+   Alini: 210
+   Qo'noS: 675
+   Drozana: 908
+   Khitomer: 528
+   Iconia: 192
+   Sanek: 753
+   Archanis: 763
+   Virinat: 561
+   Nimbus: 691
+   Vendor: 475
+   Gamma Eridon: 345
+   Orion: 840
+   Traelus: 1078
+   Lirss: 384
+   Risa: 898
+   Mylasa: 271
+   Argelius: 620
+   Teneebia: 794
+--- !com.amp.tsp.parse.YamlSector
+name: Vendor
+edgeList: 
+   Pheben: 579
+   New Romulus: 322
+   Alini: 383
+   Qo'noS: 616
+   Drozana: 622
+   Khitomer: 457
+   Iconia: 522
+   Sanek: 818
+   Archanis: 531
+   Virinat: 286
+   Nimbus: 303
+   Vorn: 475
+   Gamma Eridon: 415
+   Orion: 391
+   Traelus: 786
+   Lirss: 243
+   Risa: 487
+   Mylasa: 311
+   Argelius: 189
+   Teneebia: 321
+--- !com.amp.tsp.parse.YamlSector
+name: Lirss
+edgeList: 
+   Pheben: 670
+   New Romulus: 472
+   Alini: 204
+   Qo'noS: 791
+   Drozana: 859
+   Khitomer: 623
+   Iconia: 516
+   Sanek: 959
+   Archanis: 754
+   Virinat: 505
+   Nimbus: 318
+   Vendor: 243
+   Vorn: 384
+   Gamma Eridon: 511
+   Orion: 619
+   Traelus: 1026
+   Risa: 727
+   Mylasa: 382
+   Argelius: 431
+   Teneebia: 487
+--- !com.amp.tsp.parse.YamlSector
+name: Sanek
+edgeList: 
+   Pheben: 318
+   New Romulus: 499
+   Alini: 907
+   Qo'noS: 239
+   Drozana: 591
+   Khitomer: 363
+   Iconia: 567
+   Archanis: 477
+   Virinat: 577
+   Nimbus: 1120
+   Vendor: 818
+   Vorn: 753
+   Gamma Eridon: 451
+   Orion: 888
+   Traelus: 680
+   Lirss: 959
+   Risa: 820
+   Mylasa: 580
+   Argelius: 770
+   Teneebia: 1027
+--- !com.amp.tsp.parse.YamlSector
+name: Mylasa
+edgeList: 
+   Pheben: 289
+   New Romulus: 144
+   Alini: 344
+   Qo'noS: 440
+   Drozana: 637
+   Khitomer: 277
+   Iconia: 225
+   Sanek: 580
+   Archanis: 493
+   Virinat: 294
+   Nimbus: 602
+   Vendor: 311
+   Vorn: 271
+   Gamma Eridon: 129
+   Orion: 607
+   Traelus: 807
+   Lirss: 382
+   Risa: 643
+   Argelius: 393
+   Teneebia: 617
+--- !com.amp.tsp.parse.YamlSector
+name: Khitomer
+edgeList: 
+   Pheben: 226
+   New Romulus: 151
+   Alini: 620
+   Qo'noS: 168
+   Drozana: 416
+   Iconia: 398
+   Sanek: 363
+   Archanis: 261
+   Virinat: 222
+   Nimbus: 757
+   Vendor: 457
+   Vorn: 528
+   Gamma Eridon: 186
+   Orion: 564
+   Traelus: 573
+   Lirss: 623
+   Risa: 534
+   Mylasa: 277
+   Argelius: 413
+   Teneebia: 673
+--- !com.amp.tsp.parse.YamlSector
+name: Argelius
+edgeList: 
+   Pheben: 596
+   New Romulus: 327
+   Alini: 564
+   Qo'noS: 541
+   Drozana: 454
+   Khitomer: 413
+   Iconia: 618
+   Sanek: 770
+   Archanis: 391
+   Virinat: 193
+   Nimbus: 391
+   Vendor: 189
+   Vorn: 620
+   Gamma Eridon: 451
+   Orion: 220
+   Traelus: 610
+   Lirss: 431
+   Risa: 299
+   Mylasa: 393
+   Teneebia: 259
+--- !com.amp.tsp.parse.YamlSector
+name: Orion
+edgeList: 
+   Pheben: 775
+   New Romulus: 519
+   Alini: 774
+   Qo'noS: 649
+   Drozana: 416
+   Khitomer: 564
+   Iconia: 831
+   Sanek: 888
+   Archanis: 432
+   Virinat: 352
+   Nimbus: 470
+   Vendor: 391
+   Vorn: 840
+   Gamma Eridon: 648
+   Traelus: 528
+   Lirss: 619
+   Risa: 144
+   Mylasa: 607
+   Argelius: 220
+   Teneebia: 228
+--- !com.amp.tsp.parse.YamlSector
+name: Iconia
+edgeList: 
+   Pheben: 253
+   New Romulus: 330
+   Alini: 384
+   Qo'noS: 521
+   Drozana: 808
+   Khitomer: 398
+   Sanek: 567
+   Archanis: 655
+   Virinat: 502
+   Nimbus: 791
+   Vendor: 522
+   Vorn: 192
+   Gamma Eridon: 217
+   Orion: 831
+   Traelus: 971
+   Lirss: 516
+   Risa: 858
+   Mylasa: 225
+   Argelius: 618
+   Teneebia: 837
