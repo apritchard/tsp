@@ -8,6 +8,9 @@ import java.awt.Point;
 import java.awt.RenderingHints;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -24,6 +27,8 @@ import com.amp.tsp.mapping.MapWrapper;
 import com.amp.tsp.mapping.Sector;
 import com.amp.tsp.mapping.TspUtilities;
 import com.amp.tsp.parse.MapParser;
+import com.amp.tsp.parse.YamlClickMap;
+import com.amp.tsp.parse.YamlPoint;
 
 
 public class SelectionPicker extends BlankFrame {
@@ -35,13 +40,14 @@ public class SelectionPicker extends BlankFrame {
 	private Map<String, Point> points = new HashMap<>();
 	private List<String> startingPoints = new ArrayList<>();
 	
-	public static void main(String[] args) {
+	public static void main(String[] args) throws MalformedURLException {
 		SelectionPicker sp = new SelectionPicker(new PointListener() {
 			
 			@Override
 			public void notifySelection(Map<String, Point> points, List<String> startingPoints) {
 				Set<Sector> sectors = TspUtilities.pointsToSectors(points);
 				MapParser.writeMapFile("mapText.yaml", sectors);
+				MapParser.writeClickMap("clickMap.yaml", points, startingPoints);
 				MapWrapper mw;
 				if(startingPoints.isEmpty()){
 					mw = new MapWrapper(sectors);
@@ -49,7 +55,7 @@ public class SelectionPicker extends BlankFrame {
 					mw = new MapWrapper(sectors, TspUtilities.stringsToSeeds(startingPoints, sectors), true);
 				}
 				List<Sector> path = mw.calcTspMulti();
-				logger.info("Best Path: " + path);
+				logger.info("Best Path: " + path + " Distance: " + mw.getBoundForPath(path));
 				final BlankFrame frame = new BlankFrame();
 				frame.add(new RoutePanel(points, startingPoints, path));
 				MouseAdapter adapter = new MouseAdapter() {
@@ -66,15 +72,18 @@ public class SelectionPicker extends BlankFrame {
 				frame.setVisible(true);
 			}
 		});
-		sp.setVisible(true);
-	}
-	
-	private static <T> T getValue(Set<T> set, T object){
-		Map<T, T> map = new HashMap<>();
-		for(T t : set){
-			map.put(t, t);
+		
+		if(args.length >0){
+			YamlClickMap ycm = MapParser.parseClickMap(Paths.get(args[0]).toUri().toURL());
+			sp.startingPoints = ycm.startingPoints;
+		
+			for(Entry<String, YamlPoint> point : ycm.points.entrySet()){
+				Point p = new Point(point.getValue().x, point.getValue().y);
+				sp.points.put(point.getKey(), p);
+			}
 		}
-		return map.get(object);
+		
+		sp.setVisible(true);
 	}
 	
 	public SelectionPicker(final PointListener pointListener){
@@ -87,6 +96,18 @@ public class SelectionPicker extends BlankFrame {
 		PointClickAdapter adapter = new PointClickAdapter();
 		addMouseListener(adapter);
 		addMouseMotionListener(adapter);
+	}
+	
+	private boolean deleteIfExisting(Point p){
+		int deleteThreshold = 6;
+		for(Entry<String, Point> point : points.entrySet()){
+			if(point.getValue().distance(p) < deleteThreshold){
+				points.remove(point.getKey());
+				startingPoints.remove(point.getKey());
+				return true;
+			}
+		}
+		return false;
 	}
 	
 	class DrawPanel extends JPanel {
@@ -135,13 +156,20 @@ public class SelectionPicker extends BlankFrame {
 				setVisible(false);
 				dispose();
 			} else {
+				if(deleteIfExisting(e.getPoint())){
+					repaint();
+					return;
+				}
 				String s = JOptionPane.showInputDialog(null, "Point Name:", "Point Name", JOptionPane.PLAIN_MESSAGE).toString();
-				points.put(s, new Point(e.getPoint()));
+				points.put(s, e.getPoint());
 				if(e.isShiftDown()){
 					startingPoints.add(s);
 				}				
 				repaint();
 			} 
 		}
+		
 	}
+	
+	
 }

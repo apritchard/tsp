@@ -1,5 +1,6 @@
 package com.amp.tsp.parse;
 
+import java.awt.Point;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.net.URL;
@@ -122,6 +123,11 @@ public class MapParser {
 		return paths;
 	}
 	
+	public static YamlClickMap parseClickMap(URL url){
+		List<YamlClickMap> yamlClickMap = readYamlObjects(url, YamlClickMap.class);
+		return yamlClickMap.get(0);
+	}
+	
 	public static void writeMapFile(String path, Set<Sector> sectors){
 		List<YamlSector> yamlSectors = new ArrayList<>();
 		
@@ -137,6 +143,22 @@ public class MapParser {
 		}
 		
 		writeYamlObjects(path, yamlSectors);
+	}
+	
+	public static void writeClickMap(String path, Map<String, Point> points, List<String> startingPoints){
+		YamlClickMap cm = new YamlClickMap();
+		Map<String, YamlPoint> yamlPoints = new HashMap<>();
+		for(Entry<String,Point> point : points.entrySet()){
+			YamlPoint yp = new YamlPoint();
+			yp.x = (int)point.getValue().getX();
+			yp.y = (int)point.getValue().getY();
+			yamlPoints.put(point.getKey(), yp);
+		}
+		cm.points = yamlPoints;
+		cm.startingPoints = startingPoints;
+		List<YamlClickMap> l = new ArrayList<>();
+		l.add(cm);
+		writeYamlObjects(path, l);
 	}
 	
 	private static void writeYamlObjects(String path, Collection<? extends Object> objects) {

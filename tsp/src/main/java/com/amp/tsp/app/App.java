@@ -29,17 +29,16 @@ public class App {
 //		URL mapFile = App.class.getClassLoader().getResource("boundaries.yaml");
 //		URL mapFile = App.class.getClassLoader().getResource("federation-space-boundaries.yaml");
 //		URL mapFile = App.class.getClassLoader().getResource("Season10-Alpha.yaml");
-		URL mapFile = App.class.getClassLoader().getResource("season10-alpha-quadrant.yaml");
+//		URL mapFile = App.class.getClassLoader().getResource("season10-alpha-quadrant.yaml");
+		URL mapFile = App.class.getClassLoader().getResource("season10-beta-quadrant.yaml");
 		
 		Set<Sector> sectors = MapParser.parseMapFile(mapFile);
 		
-		URL seedFile = App.class.getClassLoader().getResource("seeds-season10-alpha.yaml");
-		List<List<Sector>> seeds = MapParser.parseSeedFile(seedFile, sectors);
+//		URL seedFile = App.class.getClassLoader().getResource("seeds-season10-alpha.yaml");
+//		List<List<Sector>> seeds = MapParser.parseSeedFile(seedFile, sectors);
 		
-//		List<List<Sector>> seeds = new ArrayList<>();
-		
-		MapWrapper mw = new MapWrapper(sectors, seeds, true);
-//		MapWrapper mw = new MapWrapper(sectors);
+//		MapWrapper mw = new MapWrapper(sectors, seeds, true);
+		MapWrapper mw = new MapWrapper(sectors);
 		
 		StringBuilder sb = new StringBuilder();
 		sb.append("Sectors:").append(System.lineSeparator()).append(mw);
