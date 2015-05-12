@@ -5,5 +5,5 @@ import java.util.List;
 import java.util.Map;
 
 public interface PointListener {
-	void notifySelection(Map<String, Point> points, List<String> seeds);
+	void notifySelection(Map<String, Point> points, List<String> startPoints, List<String> endPoints);
 }

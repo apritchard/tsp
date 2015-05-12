@@ -6,4 +6,5 @@ import java.util.Map;
 public class YamlClickMap {
 	public Map<String, YamlPoint> points;
 	public List<String> startingPoints;
+	public List<String> endingPoints;
 }

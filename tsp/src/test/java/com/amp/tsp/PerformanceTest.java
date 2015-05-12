@@ -34,18 +34,21 @@ public class PerformanceTest {
 
 	private static final Logger logger = Logger.getLogger(PerformanceTest.class.getName());
 	
-	private Set<Sector> moderateSectors, longSectors;
+	private Set<Sector> moderateSectors, longSectors, betaSectors;
 	private List<List<Sector>> longSeeds;
 	
 	final int MODERATE_MIN_BOUND = 23;
 	final int LONG_MIN_BOUND = 38;
+	final int BETA_MIN_BOUND = 4068;
 	
 	@Before
 	public void initialize(){
 		URL moderateFile = PerformanceTest.class.getClassLoader().getResource("federation-space-boundaries.yaml");
 		URL longFile = PerformanceTest.class.getClassLoader().getResource("boundaries.yaml");
+		URL betaFile = PerformanceTest.class.getClassLoader().getResource("season10-beta-quadrant.yaml");
 		moderateSectors = MapParser.parseMapFile(moderateFile);
 		longSectors = MapParser.parseMapFile(longFile);
+		betaSectors = MapParser.parseMapFile(betaFile);
 		
 		URL longSeedFile = PerformanceTest.class.getClassLoader().getResource("seeds-boundaries.yaml");
 		longSeeds = MapParser.parseSeedFile(longSeedFile, longSectors);
@@ -81,6 +84,46 @@ public class PerformanceTest {
 		assertEquals("Incorrect bound for moderate tsp", MODERATE_MIN_BOUND, mw.getBoundForPath(routeTsp));
 		assertEquals("Incorrect bound for moderate tspMulti", MODERATE_MIN_BOUND, mw.getBoundForPath(routeTspMulti));
 		assertEquals("Incorrect bound for moderate tspFJ", MODERATE_MIN_BOUND, mw.getBoundForPath(routeTspFJ));
+	}
+	
+	@Test
+	public void test38NewBetaQuadrantMulti(){
+		long multi, start;
+		start = System.nanoTime();
+		MapWrapper mw = new MapWrapper(betaSectors);
+		List<Sector> routeTspMulti = mw.calcTspMulti();
+		multi = System.nanoTime() - start;
+		assertEquals("Incorrect bound for moderate tspMulti", BETA_MIN_BOUND, mw.getBoundForPath(routeTspMulti));
+		logger.info("Beta Quadrant Length times milli (tspMulti):" + multi/1000000);
+	}
+	
+	@Test
+	public void test40NewBetaQuadrant(){
+		MapWrapper mw;
+		
+		long tsp, multi, fj;
+		long start;
+		
+		start = System.nanoTime();
+		mw = new MapWrapper(betaSectors);
+		List<Sector> routeTsp = mw.calcTsp();
+		tsp = System.nanoTime() - start;
+		
+		start = System.nanoTime();
+		mw = new MapWrapper(betaSectors);
+		List<Sector> routeTspMulti = mw.calcTspMulti();
+		multi = System.nanoTime() - start;
+		
+		start = System.nanoTime();
+		mw = new MapWrapper(betaSectors);
+		List<Sector> routeTspFJ = mw.calcTspForkJoin();
+		fj = System.nanoTime() - start;
+		
+		logger.info(String.format("Beta Quadrant times milli: tsp(%d) multi(%d) fj(%d)", tsp/1000000, multi/1000000, fj/1000000));
+		
+		assertEquals("Incorrect bound for moderate tsp", BETA_MIN_BOUND, mw.getBoundForPath(routeTsp));
+		assertEquals("Incorrect bound for moderate tspMulti", BETA_MIN_BOUND, mw.getBoundForPath(routeTspMulti));
+		assertEquals("Incorrect bound for moderate tspFJ", BETA_MIN_BOUND, mw.getBoundForPath(routeTspFJ));
 	}
 	
 	/**

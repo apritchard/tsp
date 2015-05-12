@@ -21,12 +21,14 @@ public class RoutePanel extends JPanel {
 	private static final long serialVersionUID = 1L;
 	private Map<String, Point> points;
 	private List<String> startingPoints;
+	private List<String> endingPoints;
 	private List<Sector> path;
 	
-	public RoutePanel(Map<String, Point> points, List<String> startingPoints, List<Sector> path){
+	public RoutePanel(Map<String, Point> points, List<String> startingPoints, List<String> endingPoints, List<Sector> path){
 		setBackground(new Color(0f, 0f, 0f, 0.1f));
 		this.points = points;
 		this.startingPoints = startingPoints;
+		this.endingPoints = endingPoints;
 		this.path = path;
 	}
 	
@@ -35,6 +37,7 @@ public class RoutePanel extends JPanel {
 		
 		Graphics2D g2d = (Graphics2D)g;
 		int radius = 9;
+		String textName;
 		for(Entry<String,Point> set : points.entrySet()){
 			Point p = set.getValue();
 			int x = (int) (p.getX() - radius/2);
@@ -44,8 +47,13 @@ public class RoutePanel extends JPanel {
 			g.fillOval(x, y, radius-1, radius-1);
 			if(startingPoints.contains(set.getKey())){
 				g2d.setColor(Color.GREEN);
+				textName = "" + (startingPoints.indexOf(set.getKey()) +1) + ". "  + set.getKey();
+			} else if(endingPoints.contains(set.getKey())){
+				g2d.setColor(Color.BLUE);
+				textName = "" + (endingPoints.indexOf(set.getKey()) +1) + ". "  + set.getKey();
 			} else {
 				g2d.setColor(Color.RED);
+				textName = set.getKey();
 			}
 			g.drawOval(x, y, radius, radius);
 			
@@ -53,7 +61,7 @@ public class RoutePanel extends JPanel {
 			int textY = y-(radius*2);
 			g2d.setColor(Color.WHITE);
 			g2d.setFont(new Font("Helvetica", Font.PLAIN, 20));
-			g2d.drawString(set.getKey(), textX, textY);
+			g2d.drawString(textName, textX, textY);
 		}
 		
 		g2d.setStroke(new BasicStroke(4));

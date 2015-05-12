@@ -37,16 +37,19 @@ public class SelectionPicker extends BlankFrame {
 	
 	private Map<String, Point> points = new HashMap<>();
 	private List<String> startingPoints = new ArrayList<>();
+	private List<String> endingPoints = new ArrayList<>();
 	
 	public static void main(String[] args) throws MalformedURLException {
 		SelectionPicker sp = new SelectionPicker(new SolveAndDisplayPointListener(
-				new SelectionListener(){public void finished(List<Sector> path, BufferedImage screenShot, int distance, Map<String, Point> points, List<String> seeds) 
+				new SelectionListener(){public void finished(List<Sector> path, BufferedImage screenShot, int distance, 
+						Map<String, Point> points, List<String> seeds, List<String> endPoints) 
 				{/*do nothing*/}}
 		));
 		
 		if(args.length >0){
 			YamlClickMap ycm = MapParser.parseClickMap(Paths.get(args[0]).toUri().toURL());
 			sp.setStartingPoints(ycm.startingPoints);
+			sp.setEndingPoints(ycm.endingPoints);
 		
 			for(Entry<String, YamlPoint> point : ycm.points.entrySet()){
 				Point p = new Point(point.getValue().x, point.getValue().y);
@@ -75,6 +78,7 @@ public class SelectionPicker extends BlankFrame {
 			if(point.getValue().distance(p) < deleteThreshold){
 				getPoints().remove(point.getKey());
 				getStartingPoints().remove(point.getKey());
+				getEndingPoints().remove(point.getKey());
 				return true;
 			}
 		}
@@ -86,7 +90,15 @@ public class SelectionPicker extends BlankFrame {
 	}
 
 	public void setStartingPoints(List<String> startingPoints) {
-		this.startingPoints = startingPoints;
+		this.startingPoints = startingPoints == null ? new ArrayList<String>() : startingPoints;
+	}
+
+	public List<String> getEndingPoints() {
+		return endingPoints;
+	}
+
+	public void setEndingPoints(List<String> endingPoints) {
+		this.endingPoints = endingPoints == null ? new ArrayList<String>() : endingPoints;
 	}
 
 	public Map<String, Point> getPoints() {
@@ -110,6 +122,7 @@ public class SelectionPicker extends BlankFrame {
 			
 			Graphics2D g2d = (Graphics2D)g;
 			int radius = 9;
+			String textName;
 			for(Entry<String,Point> set : getPoints().entrySet()){
 				Point p = set.getValue();
 				int x = (int) (p.getX() - radius/2);
@@ -117,10 +130,15 @@ public class SelectionPicker extends BlankFrame {
 				g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 				g.setColor(Color.WHITE);
 				g.fillOval(x, y, radius-1, radius-1);
-				if(getStartingPoints().contains(set.getKey())){
+				if(startingPoints.contains(set.getKey())){
 					g2d.setColor(Color.GREEN);
+					textName = "" + (startingPoints.indexOf(set.getKey()) +1) + ". "  + set.getKey();
+				} else if(endingPoints.contains(set.getKey())){
+					g2d.setColor(Color.BLUE);
+					textName = "" + (endingPoints.indexOf(set.getKey()) +1) + ". "  + set.getKey();
 				} else {
 					g2d.setColor(Color.RED);
+					textName = set.getKey();
 				}
 				g.drawOval(x, y, radius, radius);
 				
@@ -128,7 +146,7 @@ public class SelectionPicker extends BlankFrame {
 				int textY = y-(radius*2);
 				g2d.setColor(Color.WHITE);
 				g2d.setFont(new Font("Helvetica", Font.PLAIN, 20));
-				g2d.drawString(set.getKey(), textX, textY);
+				g2d.drawString(textName, textX, textY);
 			}
 
 		}
@@ -139,7 +157,7 @@ public class SelectionPicker extends BlankFrame {
 		@Override
 		public void mouseClicked(MouseEvent e){
 			if(SwingUtilities.isRightMouseButton(e)){
-				pointListener.notifySelection(getPoints(), getStartingPoints());
+				pointListener.notifySelection(getPoints(), getStartingPoints(), getEndingPoints());
 				setVisible(false);
 				dispose();
 			} else {
@@ -147,11 +165,21 @@ public class SelectionPicker extends BlankFrame {
 					repaint();
 					return;
 				}
-				String s = JOptionPane.showInputDialog(null, "Point Name:", "Point Name", JOptionPane.PLAIN_MESSAGE).toString();
+				String s = JOptionPane.showInputDialog(null, "Point Name:", "Point Name", JOptionPane.PLAIN_MESSAGE);
+				if(s == null){
+					return;
+				}
 				getPoints().put(s, e.getPoint());
 				if(e.isShiftDown()){
 					getStartingPoints().add(s);
-				}				
+					getEndingPoints().remove(s);
+				} else if (e.isControlDown()) {
+					getEndingPoints().add(s);
+					getStartingPoints().remove(s);
+				} else {
+					getEndingPoints().remove(s);
+					getStartingPoints().remove(s);
+				}
 				repaint();
 			} 
 		}

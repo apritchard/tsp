@@ -1,19 +1,42 @@
 !com.amp.tsp.parse.YamlClickMap
+endingPoints: 
+- exit
 points: 
-   f: !com.amp.tsp.parse.YamlPoint
-      x: 1722
-      y: 643
-   cat: !com.amp.tsp.parse.YamlPoint
-      x: 1386
-      y: 805
-   b: !com.amp.tsp.parse.YamlPoint
-      x: 1416
-      y: 628
-   q: !com.amp.tsp.parse.YamlPoint
-      x: 1596
-      y: 889
-   sdfs: !com.amp.tsp.parse.YamlPoint
-      x: 1767
+   DS9: !com.amp.tsp.parse.YamlPoint
+      x: 1215
+      y: 934
+   Algira: !com.amp.tsp.parse.YamlPoint
+      x: 1039
+      y: 1099
+   Betazed: !com.amp.tsp.parse.YamlPoint
+      x: 1621
+      y: 1078
+   Arawath: !com.amp.tsp.parse.YamlPoint
+      x: 796
+      y: 940
+   Tellar: !com.amp.tsp.parse.YamlPoint
+      x: 1672
+      y: 565
+   Defera: !com.amp.tsp.parse.YamlPoint
+      x: 1093
+      y: 736
+   Tzenketh: !com.amp.tsp.parse.YamlPoint
+      x: 1309
+      y: 721
+   Corwin: !com.amp.tsp.parse.YamlPoint
+      x: 1444
+      y: 1009
+   Zone: !com.amp.tsp.parse.YamlPoint
+      x: 1191
+      y: 955
+   Chapel: !com.amp.tsp.parse.YamlPoint
+      x: 1666
       y: 871
+   exit: !com.amp.tsp.parse.YamlPoint
+      x: 1782
+      y: 1051
+   Mizar: !com.amp.tsp.parse.YamlPoint
+      x: 1444
+      y: 727
 startingPoints: 
-- f
+- Zone

@@ -9,5 +9,6 @@ import com.amp.tsp.mapping.Sector;
 
 public interface SelectionListener {
 	void finished(List<Sector> path, BufferedImage screenShot, int distance,
-			Map<String, Point> points, List<String> seeds);
+			Map<String, Point> points, List<String> startPoints,
+			List<String> endPoints);
 }

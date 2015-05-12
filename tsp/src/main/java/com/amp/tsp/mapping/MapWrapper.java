@@ -17,6 +17,8 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.logging.Logger;
 
+import com.google.common.collect.Lists;
+
 /**
  * Class containing information about the map to be solved. Currently contains
  * TSP logic as well, accessed via various method calls.
@@ -36,6 +38,7 @@ public class MapWrapper {
 	private final boolean useSeedsOnly; //if true, all solutions considered will derive from seed paths
 	
 	private TspNode bestPath;
+	private boolean reverse = false;
 	
 	private final Map<CacheKey, List<Sector>> cachedRoutes = new HashMap<>();
 	
@@ -69,6 +72,43 @@ public class MapWrapper {
 		this.seeds = new ArrayList<>();
 		for(List<Sector> seed: seeds){
 			this.seeds.add(new TspNode(seed, getBoundForPath(seed)));
+		}
+	}
+	
+	/**
+	 * Create a new map represented by the provided sectors and calculates the
+	 * shortest path between them. Uses the provided constraints that specify both
+	 * starting and ending points.
+	 * @param sectors
+	 * @param constraints
+	 */
+	public MapWrapper(Set<Sector> sectors, List<Constraint> constraints){
+		this.sectors = sectors;
+		this.shortestPaths = TspUtilities.calculateShorestPaths(sectors);
+		this.useSeedsOnly = true;
+		
+		this.seeds = new ArrayList<>();
+		for(Constraint constraint : constraints){
+			TspNode node;
+			if(constraint.getStarting().isEmpty() && !constraint.getEnding().isEmpty()){
+				//if we have only an ending, just reverse and use the ending as the start
+				logger.info("Ending but no starting, reversing list");
+				List<Sector> seed = Lists.reverse(constraint.getEnding());
+				node = new TspNode(seed, getBoundForPath(seed));
+				reverse = true;
+			} else if (!constraint.getStarting().isEmpty() && constraint.getEnding().isEmpty()) {
+				logger.info("Starting points but no ending");
+				//if only a starting, then use the seed-only approach
+				node = new TspNode(constraint.getStarting(), getBoundForPath(constraint.getStarting()));
+			} else if(!constraint.getStarting().isEmpty() && !constraint.getEnding().isEmpty()){
+				logger.info("Both starting and ending points");
+				//both starting and ending constraint
+				node = new TspNode(constraint.getStarting(), getBoundForPath(constraint.getStarting()), constraint.getEnding());
+			} else {
+				//neither starting nor ending nodes, skip
+				continue;
+			}
+			this.seeds.add(node);
 		}
 	}
 	
@@ -140,7 +180,7 @@ public class MapWrapper {
 	public List<Sector> calcTspForkJoin(int depthThreshold){
 		ForkJoinPool fjp = new ForkJoinPool();
 		fjp.invoke(new TspCalcAction(new PriorityBlockingQueue<TspNode>(getInitialNodes()), this, depthThreshold));
-		return bestPath.getPath();
+		return reverse? Lists.reverse(bestPath.getPath()) : bestPath.getPath();
 	}
 	
 	/**
@@ -194,7 +234,7 @@ public class MapWrapper {
 			return longestPath.get();
 		} else {
 			logger.info("Processing finished, returning best path.");
-			return bestPath.get();
+			return reverse? Lists.reverse(bestPath.get()) :bestPath.get();
 		}
 		
 	}
@@ -267,7 +307,7 @@ public class MapWrapper {
 		//if queue is empty and we haven't returned, then either we found no complete paths
 		// (bestPath will be null), or the very last path we checked is the best path
 		// (unlikely, but possible), in which case return it.
-		return bestPath;
+		return reverse? Lists.reverse(bestPath) : bestPath;
 	}
 	
 	/**

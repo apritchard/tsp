@@ -9,6 +9,7 @@ class TspNode implements Comparable<TspNode>{
 
 	private int bound;
 	private List<Sector> path;
+	private List<Sector> ending;
 	
 	/**
 	 * @param path A list of sectors traveled so far, with the 
@@ -18,7 +19,12 @@ class TspNode implements Comparable<TspNode>{
 	public TspNode(List<Sector> path, int bound){
 		this.path = path;
 		this.bound = bound;
-
+	}
+	
+	public TspNode(List<Sector> path, int bound, List<Sector> ending){
+		this.path = path;
+		this.bound = bound;
+		this.ending = ending;
 	}
 	
 	/**
@@ -33,6 +39,10 @@ class TspNode implements Comparable<TspNode>{
 	 */
 	public List<Sector> getPath(){
 		return path;
+	}
+	
+	public List<Sector> getEnding(){
+		return ending;
 	}
 	
 	@Override

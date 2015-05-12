@@ -145,7 +145,7 @@ public class MapParser {
 		writeYamlObjects(path, yamlSectors);
 	}
 	
-	public static void writeClickMap(String path, Map<String, Point> points, List<String> startingPoints){
+	public static void writeClickMap(String path, Map<String, Point> points, List<String> startingPoints, List<String> endingPoints){
 		YamlClickMap cm = new YamlClickMap();
 		Map<String, YamlPoint> yamlPoints = new HashMap<>();
 		for(Entry<String,Point> point : points.entrySet()){
@@ -156,6 +156,7 @@ public class MapParser {
 		}
 		cm.points = yamlPoints;
 		cm.startingPoints = startingPoints;
+		cm.endingPoints = endingPoints;
 		List<YamlClickMap> l = new ArrayList<>();
 		l.add(cm);
 		writeYamlObjects(path, l);

@@ -125,5 +125,29 @@ public class TspUtilities {
 		}
 		return seeds;
 	}
+	
+	public static List<Constraint> stringsToConstraints(List<String> startingPoints, List<String> endingPoints, Set<Sector> sectors){
+		List<Constraint> constraints = new ArrayList<>();
+		Map<Sector, Sector> lookup = new HashMap<>();
+		for(Sector s : sectors){
+			lookup.put(s, s);
+		}
+		List<Sector> startSeed = new ArrayList<>();
+		if(startingPoints != null){
+			for(String seed : startingPoints){
+				startSeed.add(lookup.get(new Sector(seed)));
+			}
+		}
+		List<Sector> endSeed = new ArrayList<>();
+		if(endingPoints != null){
+			for(String seed : endingPoints){
+				endSeed.add(lookup.get(new Sector(seed)));
+			}
+		}
+		
+		Constraint c = new Constraint(startSeed, endSeed);
+		constraints.add(c);
+		return constraints;		
+	}
 
 }

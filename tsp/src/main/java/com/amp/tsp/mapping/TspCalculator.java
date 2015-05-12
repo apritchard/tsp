@@ -82,11 +82,13 @@ public class TspCalculator implements Runnable{
 			
 			//if the current path covers all sectors, it's a full path, so set it as our new best
 			synchronized(mw){
-				if(curr.getPath().size() == sectors.size() && curr.getBound() < bound.get()) {
-					logger.info("Cost " + curr.getBound() + " path found, saving");
-					logger.info(TspUtilities.routeString(curr.getPath()));
-					bestPath.set(curr.getPath());
-					bound.set(curr.getBound());
+				if(curr.getPath().size() == sectors.size()) {
+					if(curr.getBound() < bound.get()){
+						logger.info("Cost " + curr.getBound() + " path found, saving");
+						logger.info(TspUtilities.routeString(curr.getPath()));
+						bestPath.set(curr.getPath());
+						bound.set(curr.getBound());
+					}
 					continue;
 				}
 			}
@@ -94,6 +96,38 @@ public class TspCalculator implements Runnable{
 			//Expand search to the next step and add to queue
 			Set<Sector> unvisited = new HashSet<>(sectors);
 			unvisited.removeAll(curr.getPath());
+			
+			//handle case in which an ending is specified
+			if(curr.getEnding() != null){
+				unvisited.removeAll(curr.getEnding());
+				if(unvisited.isEmpty()){
+					logger.info("Ending found");
+					List<Sector> full = new ArrayList<Sector>(curr.getPath());
+					full.addAll(curr.getEnding());
+					synchronized(mw){
+						int currBound = mw.getBoundForPath(full);
+						if(currBound < bound.get()){
+							bestPath.set(full);
+							bound.set(currBound);
+						}
+					}
+					continue;
+				}
+				for(Sector s : unvisited){
+					if(curr.getEnding().contains(s)){
+						continue;
+					}
+					List<Sector> newPath = new ArrayList<>(curr.getPath());
+					newPath.add(s);
+					TspNode newNode = new TspNode(newPath, mw.getBoundForPath(newPath), curr.getEnding());
+					if(newNode.getBound() <= bound.get()){
+						queue.add(newNode);
+					}
+				}
+				continue;
+			}
+			
+			//no ending specified, use faster method
 			for(Sector s : unvisited){
 				List<Sector> newPath = new ArrayList<>(curr.getPath());
 				newPath.add(s);
