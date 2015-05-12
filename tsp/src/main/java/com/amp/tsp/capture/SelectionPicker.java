@@ -8,24 +8,22 @@ import java.awt.Point;
 import java.awt.RenderingHints;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.image.BufferedImage;
 import java.net.MalformedURLException;
-import java.net.URL;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Set;
 import java.util.logging.Logger;
 
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 
-import com.amp.tsp.mapping.MapWrapper;
+import com.amp.tsp.app.SelectionListener;
 import com.amp.tsp.mapping.Sector;
-import com.amp.tsp.mapping.TspUtilities;
 import com.amp.tsp.parse.MapParser;
 import com.amp.tsp.parse.YamlClickMap;
 import com.amp.tsp.parse.YamlPoint;
@@ -41,45 +39,18 @@ public class SelectionPicker extends BlankFrame {
 	private List<String> startingPoints = new ArrayList<>();
 	
 	public static void main(String[] args) throws MalformedURLException {
-		SelectionPicker sp = new SelectionPicker(new PointListener() {
-			
-			@Override
-			public void notifySelection(Map<String, Point> points, List<String> startingPoints) {
-				Set<Sector> sectors = TspUtilities.pointsToSectors(points);
-				MapParser.writeMapFile("mapText.yaml", sectors);
-				MapParser.writeClickMap("clickMap.yaml", points, startingPoints);
-				MapWrapper mw;
-				if(startingPoints.isEmpty()){
-					mw = new MapWrapper(sectors);
-				} else {
-					mw = new MapWrapper(sectors, TspUtilities.stringsToSeeds(startingPoints, sectors), true);
-				}
-				List<Sector> path = mw.calcTspMulti();
-				logger.info("Best Path: " + path + " Distance: " + mw.getBoundForPath(path));
-				final BlankFrame frame = new BlankFrame();
-				frame.add(new RoutePanel(points, startingPoints, path));
-				MouseAdapter adapter = new MouseAdapter() {
-					@Override
-					public void mouseClicked(MouseEvent e){
-						if(SwingUtilities.isRightMouseButton(e)){
-							frame.setVisible(false);
-							frame.dispose();
-						} 
-					}
-				};
-				frame.addMouseListener(adapter);
-				frame.addMouseMotionListener(adapter);
-				frame.setVisible(true);
-			}
-		});
+		SelectionPicker sp = new SelectionPicker(new SolveAndDisplayPointListener(
+				new SelectionListener(){public void finished(List<Sector> path, BufferedImage screenShot, int distance, Map<String, Point> points, List<String> seeds) 
+				{/*do nothing*/}}
+		));
 		
 		if(args.length >0){
 			YamlClickMap ycm = MapParser.parseClickMap(Paths.get(args[0]).toUri().toURL());
-			sp.startingPoints = ycm.startingPoints;
+			sp.setStartingPoints(ycm.startingPoints);
 		
 			for(Entry<String, YamlPoint> point : ycm.points.entrySet()){
 				Point p = new Point(point.getValue().x, point.getValue().y);
-				sp.points.put(point.getKey(), p);
+				sp.getPoints().put(point.getKey(), p);
 			}
 		}
 		
@@ -100,16 +71,32 @@ public class SelectionPicker extends BlankFrame {
 	
 	private boolean deleteIfExisting(Point p){
 		int deleteThreshold = 6;
-		for(Entry<String, Point> point : points.entrySet()){
+		for(Entry<String, Point> point : getPoints().entrySet()){
 			if(point.getValue().distance(p) < deleteThreshold){
-				points.remove(point.getKey());
-				startingPoints.remove(point.getKey());
+				getPoints().remove(point.getKey());
+				getStartingPoints().remove(point.getKey());
 				return true;
 			}
 		}
 		return false;
 	}
 	
+	public List<String> getStartingPoints() {
+		return startingPoints;
+	}
+
+	public void setStartingPoints(List<String> startingPoints) {
+		this.startingPoints = startingPoints;
+	}
+
+	public Map<String, Point> getPoints() {
+		return points;
+	}
+
+	public void setPoints(Map<String, Point> points) {
+		this.points = points;
+	}
+
 	class DrawPanel extends JPanel {
 		private static final long serialVersionUID = 1L;
 
@@ -123,14 +110,14 @@ public class SelectionPicker extends BlankFrame {
 			
 			Graphics2D g2d = (Graphics2D)g;
 			int radius = 9;
-			for(Entry<String,Point> set : points.entrySet()){
+			for(Entry<String,Point> set : getPoints().entrySet()){
 				Point p = set.getValue();
 				int x = (int) (p.getX() - radius/2);
 				int y = (int) (p.getY() - radius/2);
 				g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 				g.setColor(Color.WHITE);
 				g.fillOval(x, y, radius-1, radius-1);
-				if(startingPoints.contains(set.getKey())){
+				if(getStartingPoints().contains(set.getKey())){
 					g2d.setColor(Color.GREEN);
 				} else {
 					g2d.setColor(Color.RED);
@@ -152,7 +139,7 @@ public class SelectionPicker extends BlankFrame {
 		@Override
 		public void mouseClicked(MouseEvent e){
 			if(SwingUtilities.isRightMouseButton(e)){
-				pointListener.notifySelection(points, startingPoints);
+				pointListener.notifySelection(getPoints(), getStartingPoints());
 				setVisible(false);
 				dispose();
 			} else {
@@ -161,15 +148,14 @@ public class SelectionPicker extends BlankFrame {
 					return;
 				}
 				String s = JOptionPane.showInputDialog(null, "Point Name:", "Point Name", JOptionPane.PLAIN_MESSAGE).toString();
-				points.put(s, e.getPoint());
+				getPoints().put(s, e.getPoint());
 				if(e.isShiftDown()){
-					startingPoints.add(s);
+					getStartingPoints().add(s);
 				}				
 				repaint();
 			} 
 		}
 		
 	}
-	
 	
 }

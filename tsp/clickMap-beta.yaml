@@ -1,8 +1,5 @@
 !com.amp.tsp.parse.YamlClickMap
 points: 
-   Beta Sector - Transwarp: !com.amp.tsp.parse.YamlPoint
-      x: 1422
-      y: 832
    Pheben: !com.amp.tsp.parse.YamlPoint
       x: 1632
       y: 871
@@ -39,24 +36,24 @@ points:
    Vendor: !com.amp.tsp.parse.YamlPoint
       x: 1188
       y: 502
-   Vorn: !com.amp.tsp.parse.YamlPoint
-      x: 1659
-      y: 439
    Gamma Eridon: !com.amp.tsp.parse.YamlPoint
       x: 1521
       y: 757
+   Vorn: !com.amp.tsp.parse.YamlPoint
+      x: 1659
+      y: 439
    Orion: !com.amp.tsp.parse.YamlPoint
       x: 870
       y: 730
    Traelus: !com.amp.tsp.parse.YamlPoint
       x: 951
       y: 1255
-   Lirss: !com.amp.tsp.parse.YamlPoint
-      x: 1305
-      y: 292
    Risa: !com.amp.tsp.parse.YamlPoint
       x: 873
       y: 874
+   Lirss: !com.amp.tsp.parse.YamlPoint
+      x: 1305
+      y: 292
    Mylasa: !com.amp.tsp.parse.YamlPoint
       x: 1470
       y: 634
@@ -66,5 +63,4 @@ points:
    Teneebia: !com.amp.tsp.parse.YamlPoint
       x: 867
       y: 502
-startingPoints: 
-- Beta Sector - Transwarp
+startingPoints: []

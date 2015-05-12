@@ -14,14 +14,14 @@ import java.util.Map.Entry;
 
 import javax.swing.JPanel;
 
+import com.amp.tsp.app.SelectionListener;
 import com.amp.tsp.mapping.Sector;
 
 public class RoutePanel extends JPanel {
 	private static final long serialVersionUID = 1L;
-	Map<String, Point> points;
-	List<String> startingPoints;
-	List<Sector> path;
-
+	private Map<String, Point> points;
+	private List<String> startingPoints;
+	private List<Sector> path;
 	
 	public RoutePanel(Map<String, Point> points, List<String> startingPoints, List<Sector> path){
 		setBackground(new Color(0f, 0f, 0f, 0.1f));
