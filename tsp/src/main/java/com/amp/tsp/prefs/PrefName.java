@@ -7,6 +7,7 @@ public enum PrefName {
 	IMAGE_FILE_TYPE("image-file-type", PrefType.ENUM_SINGLE, ImageFileType.TIFF.toString(), true),
 	LAST_SAVE_PATH("last-save-path", PrefType.DIRECTORY, "", true),
 	LAST_MAP_LOCATION("last-map-location", PrefType.FILE, "clickMap.yaml", true),
+	PIXEL_COST_OF_WARP("pixel-cost-of-warp", PrefType.INTEGER, 20, true),
 	LAST_SAVED_LOCATION("last-saved-location", PrefType.FILE, "clickMap.yaml", false),
 	APP_X("app-x", PrefType.INTEGER, 0, false),
 	APP_Y("app-y", PrefType.INTEGER, 0, false),

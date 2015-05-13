@@ -11,6 +11,8 @@ import java.util.Map.Entry;
 import java.util.Set;
 import java.util.logging.Logger;
 
+import com.amp.tsp.prefs.PrefName;
+
 public class TspUtilities {
 	private final static Logger logger = Logger.getLogger(TspUtilities.class.getName());
 	
@@ -130,7 +132,7 @@ public class TspUtilities {
 	}
 	
 	public static Set<Sector> pointsToSectors(Map<String, Point> points, List<String> warpPoints){
-		final int WARP_TIME = 20;
+		final int WARP_TIME = PrefName.PIXEL_COST_OF_WARP.getInt();
 		Set<Sector> sectors = new HashSet<>();
 		for(Entry<String, Point> entry : points.entrySet()){
 			sectors.add(new Sector(entry.getKey()));
