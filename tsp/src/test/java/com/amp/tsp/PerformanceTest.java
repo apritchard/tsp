@@ -61,13 +61,18 @@ public class PerformanceTest {
 	public void test00Moderate(){
 		MapWrapper mw;
 		
-		long tsp, multi, fj;
+		long tsp, tspInt, multi, fj;
 		long start; 
 				
 		start = System.nanoTime();
 		mw = new MapWrapper(moderateSectors);
 		List<Sector> routeTsp = mw.calcTsp();
 		tsp = System.nanoTime() - start;
+		
+		start = System.nanoTime();
+		mw = new MapWrapper(moderateSectors);
+		List<Sector> routeTspInt = mw.calcTspInt();
+		tspInt = System.nanoTime() - start;
 		
 		start = System.nanoTime();
 		mw = new MapWrapper(moderateSectors);
@@ -79,9 +84,10 @@ public class PerformanceTest {
 		List<Sector> routeTspFJ = mw.calcTspForkJoin();
 		fj = System.nanoTime() - start;
 		
-		logger.info(String.format("Moderate Length times milli: tsp(%d) multi(%d) fj(%d)", tsp/1000000, multi/1000000, fj/1000000));
+		logger.info(String.format("Moderate Length times milli: tsp(%d) tspInt(%d) multi(%d) fj(%d)", tsp/1000000, tspInt/1000000, multi/1000000, fj/1000000));
 		
 		assertEquals("Incorrect bound for moderate tsp", MODERATE_MIN_BOUND, mw.getBoundForPath(routeTsp));
+		assertEquals("Incorrect bound for moderate tspInt", MODERATE_MIN_BOUND, mw.getBoundForPath(routeTspInt));
 		assertEquals("Incorrect bound for moderate tspMulti", MODERATE_MIN_BOUND, mw.getBoundForPath(routeTspMulti));
 		assertEquals("Incorrect bound for moderate tspFJ", MODERATE_MIN_BOUND, mw.getBoundForPath(routeTspFJ));
 	}
@@ -101,13 +107,18 @@ public class PerformanceTest {
 	public void test40NewBetaQuadrant(){
 		MapWrapper mw;
 		
-		long tsp, multi, fj;
+		long tsp, tspInt, multi, fj;
 		long start;
 		
 		start = System.nanoTime();
 		mw = new MapWrapper(betaSectors);
 		List<Sector> routeTsp = mw.calcTsp();
 		tsp = System.nanoTime() - start;
+		
+		start = System.nanoTime();
+		mw = new MapWrapper(betaSectors);
+		List<Sector> routeTspInt = mw.calcTspInt();
+		tspInt = System.nanoTime() - start;
 		
 		start = System.nanoTime();
 		mw = new MapWrapper(betaSectors);
@@ -119,9 +130,10 @@ public class PerformanceTest {
 		List<Sector> routeTspFJ = mw.calcTspForkJoin();
 		fj = System.nanoTime() - start;
 		
-		logger.info(String.format("Beta Quadrant times milli: tsp(%d) multi(%d) fj(%d)", tsp/1000000, multi/1000000, fj/1000000));
+		logger.info(String.format("Beta Quadrant times milli: tsp(%d) int(%d) multi(%d) fj(%d)", tsp/1000000, tspInt/1000000, multi/1000000, fj/1000000));
 		
 		assertEquals("Incorrect bound for moderate tsp", BETA_MIN_BOUND, mw.getBoundForPath(routeTsp));
+		assertEquals("Incorrect bound for moderate tsp", BETA_MIN_BOUND, mw.getBoundForPath(routeTspInt));
 		assertEquals("Incorrect bound for moderate tspMulti", BETA_MIN_BOUND, mw.getBoundForPath(routeTspMulti));
 		assertEquals("Incorrect bound for moderate tspFJ", BETA_MIN_BOUND, mw.getBoundForPath(routeTspFJ));
 	}

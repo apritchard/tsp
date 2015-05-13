@@ -59,7 +59,7 @@ public class MapWrapper {
 	 */
 	public MapWrapper(Set<Sector> sectors){
 		this.sectors = sectors;
-		this.shortestPaths = TspUtilities.calculateShorestPaths(sectors);
+		this.shortestPaths = TspUtilities.calculateShortestPathsStatic(sectors);
 		this.seeds = new ArrayList<>();
 		useSeedsOnly = false;
 		sectorList = new Sector[sectors.size() + 1];

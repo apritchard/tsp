@@ -30,7 +30,7 @@ public abstract class TspSolver {
 	 */
 	public TspSolver(Set<Sector> sectors){
 		this.sectors = sectors;
-		this.shortestPaths = TspUtilities.calculateShorestPaths(sectors);
+		this.shortestPaths = TspUtilities.calculateShortestPathsStatic(sectors);
 		this.seeds = new ArrayList<>();
 		useSeedsOnly = false;
 	}
@@ -44,7 +44,7 @@ public abstract class TspSolver {
 	 */
 	public TspSolver(Set<Sector> sectors, List<List<Sector>> seeds, boolean useSeedsOnly){
 		this.sectors = sectors;
-		this.shortestPaths = TspUtilities.calculateShorestPaths(sectors);
+		this.shortestPaths = TspUtilities.calculateShortestPathsStatic(sectors);
 		this.useSeedsOnly = useSeedsOnly;
 		
 		this.seeds = new ArrayList<>();

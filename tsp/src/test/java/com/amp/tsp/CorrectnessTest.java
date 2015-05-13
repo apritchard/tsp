@@ -47,7 +47,7 @@ public class CorrectnessTest {
 	
 	@Test
 	public void testSimpleShortestPaths(){
-		Map<Sector, Map<Sector,Integer>> m = TspUtilities.calculateShorestPaths(simpleSectors);
+		Map<Sector, Map<Sector,Integer>> m = TspUtilities.calculateShortestPaths(simpleSectors);
 		Map<Sector,Integer> aEdges = m.get(new Sector("A"));
 		assertEquals(aEdges.get(new Sector("B")), new Integer(2));
 		assertEquals(aEdges.get(new Sector("C")), new Integer(3));
@@ -56,9 +56,26 @@ public class CorrectnessTest {
 	
 	@Test
 	public void testIncompleteShortestPaths(){
-		Map<Sector, Map<Sector,Integer>> m = TspUtilities.calculateShorestPaths(simplePartialSectors);
+		Map<Sector, Map<Sector,Integer>> m = TspUtilities.calculateShortestPaths(simplePartialSectors);
 		Map<Sector,Integer> aEdges = m.get(new Sector("A"));
 		assertEquals(aEdges.get(new Sector("B")), new Integer(5));
+		assertEquals(aEdges.get(new Sector("C")), new Integer(4));
+		assertEquals(aEdges.get(new Sector("D")), new Integer(3));
+	}
+	@Test
+	public void testSimpleShortestPathsStatic(){
+		Map<Sector, Map<Sector,Integer>> m = TspUtilities.calculateShortestPathsStatic(simpleSectors);
+		Map<Sector,Integer> aEdges = m.get(new Sector("A"));
+		assertEquals(aEdges.get(new Sector("B")), new Integer(2));
+		assertEquals(aEdges.get(new Sector("C")), new Integer(4));
+		assertEquals(aEdges.get(new Sector("D")), new Integer(3));
+	}
+	
+	@Test
+	public void testIncompleteShortestPathsStatic(){
+		Map<Sector, Map<Sector,Integer>> m = TspUtilities.calculateShortestPathsStatic(simplePartialSectors);
+		Map<Sector,Integer> aEdges = m.get(new Sector("A"));
+		assertEquals(aEdges.get(new Sector("B")), new Integer(6));
 		assertEquals(aEdges.get(new Sector("C")), new Integer(4));
 		assertEquals(aEdges.get(new Sector("D")), new Integer(3));
 	}

@@ -2,6 +2,7 @@ package com.amp.tsp.mapping;
 
 import java.awt.Point;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -13,13 +14,45 @@ import java.util.logging.Logger;
 public class TspUtilities {
 	private final static Logger logger = Logger.getLogger(TspUtilities.class.getName());
 	
+	
+	/**
+	 * Version of shortest paths that does not allow for passing through other
+	 * nodes to get to your destination. Used to allow asymmetric warp point relationships
+	 * @param sectors
+	 * @return
+	 */
+	public static Map<Sector, Map<Sector, Integer>> calculateShortestPathsStatic(Set<Sector> sectors){
+		Map<Sector, Map<Sector, Integer>> shortestPaths = new HashMap<>();
+		
+		int max = 0;
+		for(Sector s1 : sectors){
+			max = Math.max(max, Collections.max(s1.getEdgeList().values()));
+		}
+		for(Sector s1 : sectors){
+			shortestPaths.put(s1,  s1.getEdgeList());
+			for(Sector s2 : sectors){
+				if(s1.equals(s2)){ 
+					shortestPaths.get(s1).put(s2, 0);
+				} else if(!s1.getEdgeList().containsKey(s2)){
+					shortestPaths.get(s1).put(s2, max+1); 
+				}
+			}
+		}
+		
+		//remove path to self
+		for(Sector s1 : sectors){
+			shortestPaths.get(s1).remove(s1);
+		}
+		return shortestPaths;
+	}
+	
 	/**
 	 * Calculates the distance from all Sectors to all other Sectors
 	 * 
 	 * @param sectors A Set of connected Sectors
 	 * @return Map in which map.get(s1).get(s2) returns the distance between s1 and s2
 	 */
-	public static Map<Sector, Map<Sector, Integer>> calculateShorestPaths(Set<Sector> sectors){
+	public static Map<Sector, Map<Sector, Integer>> calculateShortestPaths(Set<Sector> sectors){
 		Map<Sector, Map<Sector, Integer>> shortestPaths = new HashMap<>();
 
 		//initialize shortest paths with neighboring edges, 0 for self, and max_value for everything else
