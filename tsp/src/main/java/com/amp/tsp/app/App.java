@@ -3,13 +3,11 @@ package com.amp.tsp.app;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import java.util.logging.LogManager;
 import java.util.logging.Logger;
 
-import com.amp.tsp.CorrectnessTest;
 import com.amp.tsp.mapping.MapWrapper;
 import com.amp.tsp.mapping.Sector;
 import com.amp.tsp.parse.MapParser;

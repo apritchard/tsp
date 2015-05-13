@@ -113,10 +113,14 @@ public class TspPanel extends JPanel implements SelectionListener {
 			}			
 		});
 
-		String instructions = "Press to create or load a map. Your primary monitor will tint, indicating recording is active. Left click to place nodes"
-				+ " on the map. Shift-Click to place a node that must be a starting node. If multiple shift-click nodes are placed, one of them will be chosen to start the"
-				+ " path. Right click to solve."
-				+ "\n\nProcessing times will become long for maps above 20 nodes.";
+		String instructions = "Press to create or load a map. Your primary monitor will tint, indicating recording is active. "
+				+ "\nLeft click\tplace node on the map"
+				+ "\nShift-click\tNode required at beginning of path"
+				+ "\nCtrl-click\tNode required at end of path"
+				+ "\nAlt-click\tNode may be warped to (warp cost specified in preferences)"
+				+ "\nRight-click\tSolve graph"
+				+ "\n\nNodes may be either beginning or ending and also a warp node, but cannot be both beginning"
+				+ " and ending. Graphs containing more than 20 nodes may take some time to solve. Ending nodes decrease performance.";
 		
 		JTextArea taInstructions = new JTextArea();
 	    taInstructions.setText(instructions);
