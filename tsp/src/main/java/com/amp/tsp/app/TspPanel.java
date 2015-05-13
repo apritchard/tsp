@@ -61,6 +61,7 @@ public class TspPanel extends JPanel implements SelectionListener {
 					YamlClickMap ycm = MapParser.parseClickMap(Paths.get(PrefName.LAST_MAP_LOCATION.get()).toUri().toURL());
 					picker.setStartingPoints(ycm.startingPoints);
 					picker.setEndingPoints(ycm.endingPoints);
+					picker.setWarpPoints(ycm.warpPoints);
 				
 					for(Entry<String, YamlPoint> point : ycm.points.entrySet()){
 						Point p = new Point(point.getValue().x, point.getValue().y);
@@ -98,6 +99,7 @@ public class TspPanel extends JPanel implements SelectionListener {
 					YamlClickMap ycm = MapParser.parseClickMap(Paths.get(chooser.getSelectedFile().getAbsolutePath()).toUri().toURL());
 					picker.setStartingPoints(ycm.startingPoints);
 					picker.setEndingPoints(ycm.endingPoints);
+					picker.setWarpPoints(ycm.warpPoints);
 				
 					for(Entry<String, YamlPoint> point : ycm.points.entrySet()){
 						Point p = new Point(point.getValue().x, point.getValue().y);
@@ -134,14 +136,14 @@ public class TspPanel extends JPanel implements SelectionListener {
 
 	@Override
 	public void finished(final List<Sector> path, final BufferedImage screenShot, final int distance, 
-			final Map<String, Point> points, final List<String> startPoints, final List<String> endPoints) {
+			final Map<String, Point> points, final List<String> startPoints, final List<String> endPoints, final List<String> warpPoints) {
 		getTopLevelAncestor().setVisible(true);
 		SwingUtilities.invokeLater(new Runnable() {
 			
 			@Override
 			public void run() {
 				JFrame frame = new JFrame();
-				frame.getContentPane().add(new DisplayImagePanel(path, screenShot, distance, points, startPoints, endPoints));
+				frame.getContentPane().add(new DisplayImagePanel(path, screenShot, distance, points, startPoints, endPoints, warpPoints));
 				frame.pack();
 				frame.setVisible(true);
 			}

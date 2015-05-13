@@ -96,7 +96,8 @@ public class TspUtilities {
 		return sb.toString();
 	}
 	
-	public static Set<Sector> pointsToSectors(Map<String, Point> points){
+	public static Set<Sector> pointsToSectors(Map<String, Point> points, List<String> warpPoints){
+		final int WARP_TIME = 20;
 		Set<Sector> sectors = new HashSet<>();
 		for(Entry<String, Point> entry : points.entrySet()){
 			sectors.add(new Sector(entry.getKey()));
@@ -106,7 +107,13 @@ public class TspUtilities {
 				if(s.equals(s2)){
 					continue;
 				}
-				s.addEdge(s2, (int)points.get(s.getName()).distance(points.get(s2.getName())));
+				int distance;
+				if(warpPoints.contains(s2.getName())){
+					distance = WARP_TIME;
+				} else {
+					distance =(int)points.get(s.getName()).distance(points.get(s2.getName())); 
+				}
+				s.addEdge(s2, distance);
 			}
 		}
 		return sectors;
@@ -148,6 +155,15 @@ public class TspUtilities {
 		Constraint c = new Constraint(startSeed, endSeed);
 		constraints.add(c);
 		return constraints;		
+	}
+
+
+	public static List<Sector> sectorList(int[] bestPath, Sector[] sectorList) {
+		List<Sector> sectors = new ArrayList<>();
+		for(int i = 0; i < bestPath.length; i++){
+			sectors.add(sectorList[bestPath[i]]);
+		}
+		return sectors;
 	}
 
 }

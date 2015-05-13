@@ -1,10 +1,12 @@
 package com.amp.tsp.mapping;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.PriorityQueue;
 import java.util.Queue;
 import java.util.Set;
@@ -35,12 +37,18 @@ public class MapWrapper {
 	private final Map<Sector, Map<Sector, Integer>> shortestPaths;
 	
 	private final List<TspNode> seeds; //each seed is a path used to initialize the search for an optimal path
-	private final boolean useSeedsOnly; //if true, all solutions considered will derive from seed paths
+	private boolean useSeedsOnly; //if true, all solutions considered will derive from seed paths
 	
 	private TspNode bestPath;
 	private boolean reverse = false;
 	
 	private final Map<CacheKey, List<Sector>> cachedRoutes = new HashMap<>();
+	
+	//bounds optimization variables
+	private final Sector[] sectorList;
+	private final Map<Sector, Integer> sectorMap;
+	private final boolean[] usedSectors; 
+	private final int numSectors;
 	
 	public Set<Sector> getSectors() {return sectors;}
 	public Map<Sector, Map<Sector, Integer>> getShortestPaths() {return shortestPaths;}
@@ -55,6 +63,15 @@ public class MapWrapper {
 		this.shortestPaths = TspUtilities.calculateShorestPaths(sectors);
 		this.seeds = new ArrayList<>();
 		useSeedsOnly = false;
+		sectorList = new Sector[sectors.size() + 1];
+		sectorMap = new HashMap<>();
+		usedSectors = new boolean[sectors.size() +1];
+		int i = 1;
+		for(Sector s : sectors){
+			sectorMap.put(s, i);
+			sectorList[i++] = s;
+		}
+		numSectors = sectors.size();
 	}
 	
 	/**
@@ -65,11 +82,9 @@ public class MapWrapper {
 	 * @param seeds
 	 */
 	public MapWrapper(Set<Sector> sectors, List<List<Sector>> seeds, boolean useSeedsOnly){
-		this.sectors = sectors;
-		this.shortestPaths = TspUtilities.calculateShorestPaths(sectors);
+		this(sectors);
 		this.useSeedsOnly = useSeedsOnly;
 		
-		this.seeds = new ArrayList<>();
 		for(List<Sector> seed: seeds){
 			this.seeds.add(new TspNode(seed, getBoundForPath(seed)));
 		}
@@ -83,11 +98,9 @@ public class MapWrapper {
 	 * @param constraints
 	 */
 	public MapWrapper(Set<Sector> sectors, List<Constraint> constraints){
-		this.sectors = sectors;
-		this.shortestPaths = TspUtilities.calculateShorestPaths(sectors);
+		this(sectors);
 		this.useSeedsOnly = true;
 		
-		this.seeds = new ArrayList<>();
 		for(Constraint constraint : constraints){
 			TspNode node;
 			if(constraint.getStarting().isEmpty() && !constraint.getEnding().isEmpty()){
@@ -112,6 +125,7 @@ public class MapWrapper {
 		}
 	}
 	
+	
 	public String toString(){
 		StringBuilder sb = new StringBuilder();
 		for(Sector s : sectors){
@@ -125,7 +139,12 @@ public class MapWrapper {
 	 * @return The shortest weighted distance between the two provided sectors
 	 */
 	public Integer getDistance(Sector s1, Sector s2){
-		return shortestPaths.get(s1).get(s2);
+		try{
+			return shortestPaths.get(s1).get(s2);
+		} catch (Exception e){
+			e.printStackTrace();
+			throw e;
+		}
 	}
 	
 	/**
@@ -239,6 +258,55 @@ public class MapWrapper {
 		
 	}
 	
+	public List<Sector> calcTspInt(){
+		Queue<TspNode2> queue = TspNode2.queueFrom(getInitialNodes(), sectorMap);
+		
+		//start with max bound and no best path
+		int bound = Integer.MAX_VALUE;
+		int[] bestPath = null;
+		
+		while(!queue.isEmpty()){
+			TspNode2 curr = queue.poll();
+			
+			if(curr.getBound() > bound){
+				logger.info("Searched all bounds less than " + bound + ", exiting");
+				return TspUtilities.sectorList(bestPath, sectorList);
+			}
+			
+			//if the current path covers all sectors, it's a full path, so set it as our next best
+			if(curr.getLength() == numSectors){
+				if(curr.getBound() < bound) {
+					if(curr.getBound() == 0){
+						logger.warning("triple wtf");
+					}
+					logger.info("Cost " + curr.getBound() + " path found, saving");
+					logger.info(TspUtilities.routeString(TspUtilities.sectorList(curr.getPath(), sectorList)));
+					bestPath = curr.getPath();
+					bound = curr.getBound();
+				}
+				continue;
+			}
+			
+			//Add all next steps to queue (which will sort them by bound)
+			Arrays.fill(usedSectors, false);
+			for(int i = 0; i < curr.getLength(); i++){
+				usedSectors[curr.getPath()[i]] = true;
+			}
+			for(int i = 1; i <= numSectors; i++){
+				if(!usedSectors[i]){
+					int[] newPath = Arrays.copyOf(curr.getPath(), numSectors);
+					newPath[curr.getLength()] = i;
+					int newBound = getBoundForPath(newPath);
+					if(newBound <= bound){
+						queue.add(new TspNode2(newBound, newPath, curr.getEnding(), curr.getLength() + 1));
+					}
+					
+				}
+			}
+		}
+		return TspUtilities.sectorList(bestPath, sectorList);
+	}
+	
 	/**
 	 * Calculate shortest route using a single-threaded branch and bound algorithm.
 	 * @return The optimal path
@@ -310,6 +378,50 @@ public class MapWrapper {
 		return reverse? Lists.reverse(bestPath) : bestPath;
 	}
 	
+	public int getBoundForPath(final int[] path){
+		int bound = 0;
+		
+		if(path.length == 1 || path[1] == 0 ){
+			return bound;
+		} else {
+			//bound = cost of current steps + minimum edge from each unvisited node
+			
+			Arrays.fill(usedSectors, false);
+			
+			//sum the cost of each step so far and populate usedSectors
+			int i = 0;
+			usedSectors[path[i]] = true;
+			while(i+1 < numSectors && path[i] > 0 && path[i+1] > 0){
+				bound += getDistance(sectorList[path[i]], sectorList[path[i+1]]);
+				usedSectors[path[i+1]] = true;
+				i++;
+			}
+			
+			//if this is the complete path, we're done
+			if(i+1 == numSectors){
+				return bound;
+			}
+			
+			//then add the minimum distance out from each remaining nodes
+			for(int j = 1; j <= numSectors ; j++){
+				//if we've already traveled to this sector, skip it
+				if(usedSectors[j]) continue;
+				
+				//otherwise, find the nearest sector we haven't visited
+				int lowest = Integer.MAX_VALUE;
+				for(int k = 1; k <= numSectors ; k++){
+					//if you can't get from j to k, skip it
+					if(!shortestPaths.get(sectorList[j]).containsKey(sectorList[k])) continue;
+					//if we've visited it, skip it unless it's the last sector in our path
+					if(usedSectors[k] && k != path[i]) continue;
+					lowest = Math.min(shortestPaths.get(sectorList[j]).get(sectorList[k]), lowest);
+				}
+				bound += lowest;
+			}
+			return bound;
+		}
+	}
+	
 	/**
 	 * Calculate and return the lower bound for the cost of the provided
 	 * path on this particular map.
@@ -327,12 +439,7 @@ public class MapWrapper {
 			//sum the cost of each step so far
 			int steps = path.size() - 1;
 			for(int i = 0; i < steps; i++){
-				try{
-					bound += getDistance(path.get(i),path.get(i+1));
-				} catch (Exception e){
-					System.out.println("hmm");
-					throw e;
-				}
+				bound += getDistance(path.get(i),path.get(i+1));
 			}
 			
 			//if this is the complete path, we're done
@@ -341,17 +448,22 @@ public class MapWrapper {
 			}
 			
 			//then add the minimum distance out from each remaining nodes
+//			for(Entry<Sector, Map<Sector, Integer>> entry : shortestPaths.entrySet()){
 			for(Sector s1 : shortestPaths.keySet()){
 				//if we've already traveled to this sector, skip it
 				if(path.contains(s1)) continue;
+//				if(path.contains(entry.getKey())) continue;
 				
 				//otherwise, find the nearest sector we haven't visited
 				int lowest = Integer.MAX_VALUE;
 				for(Sector s2 : shortestPaths.get(s1).keySet()){
+//				for(Entry<Sector, Integer> entry2 : entry.getValue().entrySet()){
 					//if we've visited it, skip it unless it's the last sector in our path
 					if(!s2.equals(path.get(path.size()-1)) && path.contains(s2)) continue;
+//					if(entry2.getKey().equals(path.get(path.size()-1)) && path.contains(entry2.getKey())) continue;
 					
 					lowest = Math.min(shortestPaths.get(s1).get(s2), lowest);
+//					lowest = Math.min(entry2.getValue(), lowest);
 				}
 				bound += lowest; 
 			}

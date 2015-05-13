@@ -71,6 +71,15 @@ public class CorrectnessTest {
 	}
 	
 	@Test
+	public void testSimpleIntTsp() {
+		MapWrapper mw = new MapWrapper(simpleSectors);
+		testSimple(mw, mw.calcTspInt());
+		
+		mw = new MapWrapper(simplePartialSectors);
+		testSimplePartial(mw, mw.calcTspInt());
+	}
+	
+	@Test
 	public void testSimpleTspMulti(){
 		MapWrapper mw = new MapWrapper(simpleSectors);
 		testSimple(mw, mw.calcTspMulti()); 
@@ -101,6 +110,21 @@ public class CorrectnessTest {
 		
 		mw = new MapWrapper(simplePartialSectors, simpleSeeds, true);
 		testSimplePartialSeedsOnly(mw, mw.calcTsp());
+	}
+	
+	@Test
+	public void testSeedTspInt(){
+		MapWrapper mw = new MapWrapper(simpleSectors, simpleSeeds, false);
+		testSimple(mw, mw.calcTspInt());
+		
+		mw = new MapWrapper(simpleSectors, simpleSeeds, true);
+		testSimpleSeedsOnly(mw, mw.calcTspInt());
+		
+		mw = new MapWrapper(simplePartialSectors, simpleSeeds, false);
+		testSimplePartial(mw, mw.calcTspInt());
+		
+		mw = new MapWrapper(simplePartialSectors, simpleSeeds, true);
+		testSimplePartialSeedsOnly(mw, mw.calcTspInt());
 	}
 	
 	@Test
@@ -135,6 +159,7 @@ public class CorrectnessTest {
 	
 	private void testSimple(MapWrapper mw, List<Sector> route){
 		final int LENGTH = 6;
+		logger.info("Bound for " + route + " " + mw.getBoundForPath(route));
 		assertEquals("Incorrect bound for simple", mw.getBoundForPath(route), LENGTH);
 	}
 	

@@ -8,7 +8,7 @@ import java.util.Map;
 import com.amp.tsp.mapping.Sector;
 
 public interface SelectionListener {
-	void finished(List<Sector> path, BufferedImage screenShot, int distance,
-			Map<String, Point> points, List<String> startPoints,
-			List<String> endPoints);
+	void finished(List<Sector> path, BufferedImage captureScreen, int distance,
+			Map<String, Point> points, List<String> startingPoints,
+			List<String> endingPoints, List<String> warpPoints);
 }

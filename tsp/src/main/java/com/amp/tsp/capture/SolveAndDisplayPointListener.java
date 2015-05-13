@@ -33,22 +33,23 @@ public class SolveAndDisplayPointListener implements PointListener {
 
 
 	@Override
-	public void notifySelection(final Map<String, Point> points, final List<String> startingPoints, final List<String> endingPoints) {
-		Set<Sector> sectors = TspUtilities.pointsToSectors(points);
+	public void notifySelection(final Map<String, Point> points, final List<String> startingPoints, final List<String> endingPoints, final List<String> warpPoints) {
+		Set<Sector> sectors = TspUtilities.pointsToSectors(points, warpPoints);
 		MapParser.writeMapFile("mapText.yaml", sectors);
-		MapParser.writeClickMap(PrefName.LAST_MAP_LOCATION.get(), points, startingPoints, endingPoints);
+		MapParser.writeClickMap(PrefName.LAST_MAP_LOCATION.get(), points, startingPoints, endingPoints, warpPoints);
 		MapWrapper mw;
 		mw = new MapWrapper(sectors, TspUtilities.stringsToConstraints(startingPoints, endingPoints, sectors));
-		final List<Sector> path = mw.calcTspMulti();
+//		final List<Sector> path = mw.calcTspMulti();
+		final List<Sector> path = mw.calcTspInt();
 		final int distance = mw.getBoundForPath(path);
 		logger.info("Best Path: " + path + " Distance: " + distance);
 		final BlankFrame frame = new BlankFrame();
-		frame.add(new RoutePanel(points, startingPoints, endingPoints, path));
+		frame.add(new RoutePanel(points, startingPoints, endingPoints, warpPoints, path));
 		MouseAdapter adapter = new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e){
 				if(SwingUtilities.isRightMouseButton(e)){
-					selectionListener.finished(path, captureScreen(points), distance, points, startingPoints, endingPoints);
+					selectionListener.finished(path, captureScreen(points), distance, points, startingPoints, endingPoints, warpPoints);
 					frame.setVisible(false);
 					frame.dispose();
 				} 

@@ -30,7 +30,7 @@ public class DisplayImagePanel extends JPanel{
 	private static final long serialVersionUID = 1L;
 
 	public DisplayImagePanel(final List<Sector> path, final BufferedImage image, int distance, 
-			final Map<String, Point> points, final List<String> startPoints, final List<String> endPoints){
+			final Map<String, Point> points, final List<String> startPoints, final List<String> endPoints, final List<String> warpPoints){
 		setLayout(new MigLayout());
 		JLabel lblImage = new JLabel(new ImageIcon(image));
 		String pathDesc = "Optimal Path (" + distance + "px): " + path.toString();
@@ -79,7 +79,7 @@ public class DisplayImagePanel extends JPanel{
 					if(!file.getName().endsWith(ext)){
 						file = new File(file.getAbsolutePath() + "." + ext);
 					}
-					MapParser.writeClickMap(file.getAbsolutePath(), points, startPoints, endPoints);
+					MapParser.writeClickMap(file.getAbsolutePath(), points, startPoints, endPoints, warpPoints);
 					PrefName.LAST_SAVE_PATH.put(file.getParent());
 				}
 				

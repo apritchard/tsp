@@ -1,168 +1,63 @@
 !com.amp.tsp.parse.YamlSector
-name: DS9
+name: b2
 edgeList: 
-   Algira: 241
-   Arawath: 419
-   Betazed: 430
-   Tellar: 587
-   Defera: 232
-   Tzenketh: 232
-   Corwin: 240
-   Zone: 31
-   Chapel: 455
-   exit: 578
-   Mizar: 308
+   d: 142
+   e: 56
+   b: 141
+   c: 114
+   a: 295
+   b3: 105
 --- !com.amp.tsp.parse.YamlSector
-name: Mizar
+name: b
 edgeList: 
-   DS9: 308
-   Algira: 549
-   Arawath: 682
-   Betazed: 393
-   Tellar: 279
-   Defera: 351
-   Tzenketh: 135
-   Corwin: 282
-   Zone: 340
-   Chapel: 264
-   exit: 468
+   d: 234
+   e: 178
+   c: 248
+   a: 271
+   b3: 186
+   b2: 141
 --- !com.amp.tsp.parse.YamlSector
-name: Algira
+name: a
 edgeList: 
-   DS9: 241
-   Arawath: 290
-   Betazed: 582
-   Tellar: 828
-   Defera: 366
-   Tzenketh: 464
-   Corwin: 414
-   Zone: 209
-   Chapel: 667
-   exit: 744
-   Mizar: 549
+   d: 220
+   e: 352
+   b: 271
+   c: 393
+   b3: 398
+   b2: 295
 --- !com.amp.tsp.parse.YamlSector
-name: Tellar
+name: d
 edgeList: 
-   DS9: 587
-   Algira: 828
-   Arawath: 952
-   Betazed: 515
-   Defera: 603
-   Tzenketh: 395
-   Corwin: 499
-   Zone: 619
-   Chapel: 306
-   exit: 498
-   Mizar: 279
+   e: 182
+   b: 234
+   c: 195
+   a: 220
+   b3: 240
+   b2: 142
 --- !com.amp.tsp.parse.YamlSector
-name: Defera
+name: b3
 edgeList: 
-   DS9: 232
-   Algira: 366
-   Arawath: 360
-   Betazed: 629
-   Tellar: 603
-   Tzenketh: 216
-   Corwin: 444
-   Zone: 239
-   Chapel: 588
-   exit: 757
-   Mizar: 351
+   d: 240
+   e: 59
+   b: 186
+   c: 99
+   a: 398
+   b2: 105
 --- !com.amp.tsp.parse.YamlSector
-name: Betazed
+name: c
 edgeList: 
-   DS9: 430
-   Algira: 582
-   Arawath: 836
-   Tellar: 515
-   Defera: 629
-   Tzenketh: 474
-   Corwin: 189
-   Zone: 447
-   Chapel: 211
-   exit: 163
-   Mizar: 393
+   d: 195
+   e: 70
+   b: 248
+   a: 393
+   b3: 99
+   b2: 114
 --- !com.amp.tsp.parse.YamlSector
-name: Chapel
+name: e
 edgeList: 
-   DS9: 455
-   Algira: 667
-   Arawath: 872
-   Betazed: 211
-   Tellar: 306
-   Defera: 588
-   Tzenketh: 387
-   Corwin: 261
-   Zone: 482
-   exit: 214
-   Mizar: 264
---- !com.amp.tsp.parse.YamlSector
-name: Arawath
-edgeList: 
-   DS9: 419
-   Algira: 290
-   Betazed: 836
-   Tellar: 952
-   Defera: 360
-   Tzenketh: 557
-   Corwin: 651
-   Zone: 395
-   Chapel: 872
-   exit: 992
-   Mizar: 682
---- !com.amp.tsp.parse.YamlSector
-name: Tzenketh
-edgeList: 
-   DS9: 232
-   Algira: 464
-   Arawath: 557
-   Betazed: 474
-   Tellar: 395
-   Defera: 216
-   Corwin: 318
-   Zone: 262
-   Chapel: 387
-   exit: 576
-   Mizar: 135
---- !com.amp.tsp.parse.YamlSector
-name: Corwin
-edgeList: 
-   DS9: 240
-   Algira: 414
-   Arawath: 651
-   Betazed: 189
-   Tellar: 499
-   Defera: 444
-   Tzenketh: 318
-   Zone: 258
-   Chapel: 261
-   exit: 340
-   Mizar: 282
---- !com.amp.tsp.parse.YamlSector
-name: Zone
-edgeList: 
-   DS9: 31
-   Algira: 209
-   Arawath: 395
-   Betazed: 447
-   Tellar: 619
-   Defera: 239
-   Tzenketh: 262
-   Corwin: 258
-   Chapel: 482
-   exit: 598
-   Mizar: 340
---- !com.amp.tsp.parse.YamlSector
-name: exit
-edgeList: 
-   DS9: 578
-   Algira: 744
-   Arawath: 992
-   Betazed: 163
-   Tellar: 498
-   Defera: 757
-   Tzenketh: 576
-   Corwin: 340
-   Zone: 598
-   Chapel: 214
-   Mizar: 468
+   d: 182
+   b: 178
+   c: 70
+   a: 352
+   b3: 59
+   b2: 56

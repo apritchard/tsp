@@ -30,7 +30,7 @@ public class App {
 //		URL mapFile = App.class.getClassLoader().getResource("federation-space-boundaries.yaml");
 //		URL mapFile = App.class.getClassLoader().getResource("Season10-Alpha.yaml");
 //		URL mapFile = App.class.getClassLoader().getResource("season10-alpha-quadrant.yaml");
-		URL mapFile = App.class.getClassLoader().getResource("season10-beta-quadrant.yaml");
+		URL mapFile = App.class.getClassLoader().getResource("warp-point.yaml");
 		
 		Set<Sector> sectors = MapParser.parseMapFile(mapFile);
 		

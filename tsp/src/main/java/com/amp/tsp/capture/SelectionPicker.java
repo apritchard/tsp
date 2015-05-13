@@ -38,11 +38,12 @@ public class SelectionPicker extends BlankFrame {
 	private Map<String, Point> points = new HashMap<>();
 	private List<String> startingPoints = new ArrayList<>();
 	private List<String> endingPoints = new ArrayList<>();
+	private List<String> warpPoints = new ArrayList<>();
 	
 	public static void main(String[] args) throws MalformedURLException {
 		SelectionPicker sp = new SelectionPicker(new SolveAndDisplayPointListener(
 				new SelectionListener(){public void finished(List<Sector> path, BufferedImage screenShot, int distance, 
-						Map<String, Point> points, List<String> seeds, List<String> endPoints) 
+						Map<String, Point> points, List<String> seeds, List<String> endPoints, List<String> warpPoints) 
 				{/*do nothing*/}}
 		));
 		
@@ -50,6 +51,7 @@ public class SelectionPicker extends BlankFrame {
 			YamlClickMap ycm = MapParser.parseClickMap(Paths.get(args[0]).toUri().toURL());
 			sp.setStartingPoints(ycm.startingPoints);
 			sp.setEndingPoints(ycm.endingPoints);
+			sp.setWarpPoints(ycm.warpPoints);
 		
 			for(Entry<String, YamlPoint> point : ycm.points.entrySet()){
 				Point p = new Point(point.getValue().x, point.getValue().y);
@@ -101,6 +103,14 @@ public class SelectionPicker extends BlankFrame {
 		this.endingPoints = endingPoints == null ? new ArrayList<String>() : endingPoints;
 	}
 
+	public List<String> getWarpPoints() {
+		return warpPoints;
+	}
+
+	public void setWarpPoints(List<String> warpPoints) {
+		this.warpPoints = warpPoints == null ? new ArrayList<String>() : warpPoints;
+	}
+
 	public Map<String, Point> getPoints() {
 		return points;
 	}
@@ -119,36 +129,7 @@ public class SelectionPicker extends BlankFrame {
 		
 		public void paint(Graphics g){
 			super.paint(g);
-			
-			Graphics2D g2d = (Graphics2D)g;
-			int radius = 9;
-			String textName;
-			for(Entry<String,Point> set : getPoints().entrySet()){
-				Point p = set.getValue();
-				int x = (int) (p.getX() - radius/2);
-				int y = (int) (p.getY() - radius/2);
-				g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-				g.setColor(Color.WHITE);
-				g.fillOval(x, y, radius-1, radius-1);
-				if(startingPoints.contains(set.getKey())){
-					g2d.setColor(Color.GREEN);
-					textName = "" + (startingPoints.indexOf(set.getKey()) +1) + ". "  + set.getKey();
-				} else if(endingPoints.contains(set.getKey())){
-					g2d.setColor(Color.BLUE);
-					textName = "" + (endingPoints.indexOf(set.getKey()) +1) + ". "  + set.getKey();
-				} else {
-					g2d.setColor(Color.RED);
-					textName = set.getKey();
-				}
-				g.drawOval(x, y, radius, radius);
-				
-				int textX = x-radius;
-				int textY = y-(radius*2);
-				g2d.setColor(Color.WHITE);
-				g2d.setFont(new Font("Helvetica", Font.PLAIN, 20));
-				g2d.drawString(textName, textX, textY);
-			}
-
+			DrawUtils.drawMap(g, points, startingPoints, endingPoints, warpPoints);
 		}
 	}
 	
@@ -157,7 +138,7 @@ public class SelectionPicker extends BlankFrame {
 		@Override
 		public void mouseClicked(MouseEvent e){
 			if(SwingUtilities.isRightMouseButton(e)){
-				pointListener.notifySelection(getPoints(), getStartingPoints(), getEndingPoints());
+				pointListener.notifySelection(getPoints(), getStartingPoints(), getEndingPoints(), getWarpPoints());
 				setVisible(false);
 				dispose();
 			} else {
@@ -179,6 +160,12 @@ public class SelectionPicker extends BlankFrame {
 				} else {
 					getEndingPoints().remove(s);
 					getStartingPoints().remove(s);
+				}
+				
+				if(e.isAltDown()){
+					getWarpPoints().add(s);
+				} else {
+					getWarpPoints().remove(s);
 				}
 				repaint();
 			} 
