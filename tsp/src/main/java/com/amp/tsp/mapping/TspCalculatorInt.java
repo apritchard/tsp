@@ -26,6 +26,7 @@ public class TspCalculatorInt implements Runnable {
 	private final Sector[] sectorList;
 	private final Map<Sector, Integer> sectorMap;
 	private final boolean[] usedSectors; 
+	private final boolean[] usedSectorsSwap; 
 	private final int numSectors;
 
 	public TspCalculatorInt(AtomicInteger bound, AtomicReference<int[]> bestPath, 
@@ -43,6 +44,7 @@ public class TspCalculatorInt implements Runnable {
 		sectorList = new Sector[sectors.size() + 1];
 		sectorMap = new HashMap<>();
 		usedSectors = new boolean[sectors.size() +1];
+		usedSectorsSwap = new boolean[sectors.size() +1];
 		int i = 1;
 		for(Sector s : sectors){
 			sectorMap.put(s, i);
@@ -59,6 +61,8 @@ public class TspCalculatorInt implements Runnable {
 			
 //			logger.info(threadNum + " evaluating " + TspUtilities.routeString(TspUtilities.sectorList(curr.getPath(),  sectorList)));
 			
+			//this part is pretty cheap and cannot be interleaved with other threads, so just
+			//synchronize it all
 			synchronized(mw){
 				//we're not going to have anything better than our current at this point, so return 
 				if(curr.getBound() > bound.get()){
@@ -77,17 +81,59 @@ public class TspCalculatorInt implements Runnable {
 					continue;
 				}
 			}
+
+			//mark currently used sectors
+			Arrays.fill(usedSectors, false);
+			for(int s : curr.getPath()){
+				usedSectors[s] = true;
+			}
+
+			//handle case in which an ending is specified
+			if(curr.getEnding() != null){
+				logger.info("Ending: " + TspUtilities.routeString(curr.getEnding(), sectorList));
+				
+				//always mark ending sectors as used even if not a complete path
+				for(int s : curr.getEnding()){
+					usedSectors[s] = true;
+				}
+				
+				//full path, check if it's good
+				if(curr.getLength() + curr.getEnding().length == numSectors){
+					for(int s : curr.getEnding()){
+						curr.addNode(s);
+					}
+					synchronized(mw){
+						//this corrupts usedSectors, but no problem since we continue after this
+						int currBound = mw.getBoundForPathThreadSafe(curr.getPath(), usedSectorsSwap);
+						logger.info("Full path (" + currBound + ") " + TspUtilities.routeString(curr.getPath(), sectorList));
+						if(currBound < bound.get()){
+							bestPath.set(curr.getPath());
+							bound.set(currBound);
+						}
+					}
+					continue;
+				}
+				
+				for(int i = 1; i <= numSectors; i++){
+					if(!usedSectors[i]){
+						int[] newPath = Arrays.copyOf(curr.getPath(), numSectors);
+						newPath[curr.getLength()] = i;
+						int newBound = mw.getBoundForPathThreadSafe(newPath, usedSectorsSwap);
+						if(newBound <= bound.get()){
+							queue.add(new TspNode2(newBound, newPath, curr.getEnding(), curr.getLength() + 1));
+						}
+					}
+				}
+				continue;
+
+			}
 			
 			//Add all next steps to queue (which will sort them by bound)
-			Arrays.fill(usedSectors, false);
-			for(int i = 0; i < curr.getLength(); i++){
-				usedSectors[curr.getPath()[i]] = true;
-			}
 			for(int i = 1; i <= numSectors; i++){
 				if(!usedSectors[i]){
 					int[] newPath = Arrays.copyOf(curr.getPath(), numSectors);
 					newPath[curr.getLength()] = i;
-					int newBound = mw.getBoundForPathThreadSafe(newPath, usedSectors);
+					int newBound = mw.getBoundForPathThreadSafe(newPath, usedSectorsSwap);
 					if(newBound <= bound.get()){
 						queue.add(new TspNode2(newBound, newPath, curr.getEnding(), curr.getLength() + 1));
 					}

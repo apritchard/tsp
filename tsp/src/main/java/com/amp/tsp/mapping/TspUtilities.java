@@ -201,4 +201,8 @@ public class TspUtilities {
 		return sectors;
 	}
 
+	public static String routeString(int[] path, Sector[] sectorList) {
+		return routeString(sectorList(path, sectorList));
+	}
+
 }

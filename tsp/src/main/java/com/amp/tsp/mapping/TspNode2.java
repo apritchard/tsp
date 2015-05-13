@@ -36,7 +36,7 @@ class TspNode2 implements Comparable<TspNode2>{
 		if(sectorEnding != null){
 			this.ending = new int[sectorEnding.size()];
 			for(int i = 0; i < sectorEnding.size(); i++){
-				ending[i] = sectorMap.get(sectorPath.get(i));
+				ending[i] = sectorMap.get(sectorEnding.get(i));
 			}
 		}
 		
