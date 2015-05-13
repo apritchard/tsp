@@ -34,6 +34,10 @@ public class SolveAndDisplayPointListener implements PointListener {
 
 	@Override
 	public void notifySelection(final Map<String, Point> points, final List<String> startingPoints, final List<String> endingPoints, final List<String> warpPoints) {
+		if(points == null || points.isEmpty()){
+			selectionListener.finished(null, null, 0, null, null, null, null);
+			return;
+		}
 		Set<Sector> sectors = TspUtilities.pointsToSectors(points, warpPoints);
 		MapParser.writeMapFile("mapText.yaml", sectors);
 		MapParser.writeClickMap(PrefName.LAST_MAP_LOCATION.get(), points, startingPoints, endingPoints, warpPoints);

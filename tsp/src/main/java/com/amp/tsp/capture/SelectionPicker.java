@@ -6,6 +6,8 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.RenderingHints;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
@@ -72,6 +74,14 @@ public class SelectionPicker extends BlankFrame {
 		PointClickAdapter adapter = new PointClickAdapter();
 		addMouseListener(adapter);
 		addMouseMotionListener(adapter);
+		addKeyListener(new KeyListener() {
+			public void keyTyped(KeyEvent e) {
+				pointListener.notifySelection(null, null, null, null);
+				dispose();
+			}
+			public void keyReleased(KeyEvent e) {}
+			public void keyPressed(KeyEvent e) {}
+		});
 	}
 	
 	private boolean deleteIfExisting(Point p){

@@ -119,6 +119,7 @@ public class TspPanel extends JPanel implements SelectionListener {
 				+ "\nCtrl-click\tNode required at end of path"
 				+ "\nAlt-click\tNode may be warped to (warp cost specified in preferences)"
 				+ "\nRight-click\tSolve graph"
+				+ "\nEscape\tCancel map input"
 				+ "\n\nNodes may be either beginning or ending and also a warp node, but cannot be both beginning"
 				+ " and ending. Graphs containing more than 20 nodes may take some time to solve. Ending nodes decrease performance.";
 		
@@ -142,6 +143,10 @@ public class TspPanel extends JPanel implements SelectionListener {
 	public void finished(final List<Sector> path, final BufferedImage screenShot, final int distance, 
 			final Map<String, Point> points, final List<String> startPoints, final List<String> endPoints, final List<String> warpPoints) {
 		getTopLevelAncestor().setVisible(true);
+		
+		if(path == null || path.isEmpty()){
+			return;
+		}
 		SwingUtilities.invokeLater(new Runnable() {
 			
 			@Override
