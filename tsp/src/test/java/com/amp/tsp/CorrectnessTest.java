@@ -26,17 +26,19 @@ public class CorrectnessTest {
 	
 	private static final Logger logger = Logger.getLogger(CorrectnessTest.class.getName());
 
-	private Set<Sector> simpleSectors, simplePartialSectors;
+	private Set<Sector> simpleSectors, simplePartialSectors, simpleAsymSectors;
 	private List<List<Sector>> simpleSeeds, simplePartialSeeds;
 
 	@Before
 	public void initialize(){
 		URL simple = CorrectnessTest.class.getClassLoader().getResource("simple.yaml");
+		URL simpleAsym = CorrectnessTest.class.getClassLoader().getResource("asymmetric.yaml");
 		URL simplePartial = CorrectnessTest.class.getClassLoader().getResource("simple-partial.yaml");
 		
 		URL seedsSimple = CorrectnessTest.class.getClassLoader().getResource("seeds-simple.yaml");
 		
 		simpleSectors = MapParser.parseMapFile(simple);
+		simpleAsymSectors = MapParser.parseMapFile(simpleAsym);
 		simplePartialSectors = MapParser.parseMapFile(simplePartial);
 		
 		simpleSeeds = MapParser.parseSeedFile(seedsSimple, simpleSectors);
@@ -68,6 +70,9 @@ public class CorrectnessTest {
 		
 		mw = new MapWrapper(simplePartialSectors);
 		testSimplePartial(mw, mw.calcTsp());
+		
+		mw = new MapWrapper(simpleAsymSectors);
+		testSimpleAsym(mw, mw.calcTsp());
 	}
 	
 	@Test
@@ -77,6 +82,9 @@ public class CorrectnessTest {
 		
 		mw = new MapWrapper(simplePartialSectors);
 		testSimplePartial(mw, mw.calcTspInt());
+		
+		mw = new MapWrapper(simpleAsymSectors);
+		testSimpleAsym(mw, mw.calcTspInt());
 	}
 	
 	@Test
@@ -86,6 +94,9 @@ public class CorrectnessTest {
 		
 		mw = new MapWrapper(simplePartialSectors);
 		testSimplePartial(mw, mw.calcTspMulti());
+		
+		mw = new MapWrapper(simpleAsymSectors);
+		testSimpleAsym(mw, mw.calcTspMulti());
 	}
 	
 	@Test
@@ -94,7 +105,10 @@ public class CorrectnessTest {
 		testSimple(mw, mw.calcTspForkJoin());
 		
 		mw = new MapWrapper(simplePartialSectors);
-		testSimplePartial(mw, mw.calcTspForkJoin());		
+		testSimplePartial(mw, mw.calcTspForkJoin());
+		
+		mw = new MapWrapper(simpleAsymSectors);
+		testSimpleAsym(mw, mw.calcTspForkJoin());
 	}
 	
 	@Test
@@ -158,6 +172,12 @@ public class CorrectnessTest {
 	}
 	
 	private void testSimple(MapWrapper mw, List<Sector> route){
+		final int LENGTH = 6;
+		logger.info("Bound for " + route + " " + mw.getBoundForPath(route));
+		assertEquals("Incorrect bound for simple", mw.getBoundForPath(route), LENGTH);
+	}
+	
+	private void testSimpleAsym(MapWrapper mw, List<Sector> route){
 		final int LENGTH = 6;
 		logger.info("Bound for " + route + " " + mw.getBoundForPath(route));
 		assertEquals("Incorrect bound for simple", mw.getBoundForPath(route), LENGTH);

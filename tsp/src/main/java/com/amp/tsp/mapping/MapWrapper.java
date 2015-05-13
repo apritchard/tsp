@@ -264,13 +264,33 @@ public class MapWrapper {
 		//start with max bound and no best path
 		int bound = Integer.MAX_VALUE;
 		int[] bestPath = null;
+		TspNode2 longest = queue.peek();
 		
+		int count = 0;
 		while(!queue.isEmpty()){
 			TspNode2 curr = queue.poll();
 			
 			if(curr.getBound() > bound){
 				logger.info("Searched all bounds less than " + bound + ", exiting");
-				return TspUtilities.sectorList(bestPath, sectorList);
+				List<Sector> retList = TspUtilities.sectorList(bestPath, sectorList);
+				return reverse? Lists.reverse(retList) : retList;
+			}
+			
+			if(curr.getLength() > longest.getLength()){
+				longest = curr;
+			}
+			
+			if(count++ % 100000 == 0){
+				StringBuilder sb = new StringBuilder();
+				sb.append("Trace:").append(System.lineSeparator());
+				sb.append("\tQueue size: ").append(queue.size()).append(System.lineSeparator());
+				sb.append("\tCurrent bound: ").append(curr.getBound()).append(System.lineSeparator());
+				if(bestPath != null) {
+					sb.append("\tBest Complete Path: ").append(TspUtilities.routeString(TspUtilities.sectorList(bestPath, sectorList)));
+				} else {
+					sb.append("\tLongest Current Path: (" + longest.getLength() + "/" + sectors.size() + ") ").append(TspUtilities.routeString(TspUtilities.sectorList(longest.getPath(), sectorList)));
+				}
+				logger.info(sb.toString());				
 			}
 			
 			//if the current path covers all sectors, it's a full path, so set it as our next best
@@ -304,7 +324,9 @@ public class MapWrapper {
 				}
 			}
 		}
-		return TspUtilities.sectorList(bestPath, sectorList);
+		
+		List<Sector> retList = TspUtilities.sectorList(bestPath, sectorList);
+		return reverse? Lists.reverse(retList) : retList;
 	}
 	
 	/**
@@ -344,7 +366,7 @@ public class MapWrapper {
 			//we're not going to have anything better than our current at this point, so return 
 			if(curr.getBound() > bound){
 				logger.info("Searched all bounds less than " + bound + ", exiting");
-				return bestPath;
+				return reverse? Lists.reverse(bestPath) : bestPath;
 			}
 			
 			//if the current path covers all sectors, it's a full path, so set it as our new best
@@ -414,7 +436,7 @@ public class MapWrapper {
 					if(!shortestPaths.get(sectorList[j]).containsKey(sectorList[k])) continue;
 					//if we've visited it, skip it unless it's the last sector in our path
 					if(usedSectors[k] && k != path[i]) continue;
-					lowest = Math.min(shortestPaths.get(sectorList[j]).get(sectorList[k]), lowest);
+					lowest = Math.min(shortestPaths.get(sectorList[k]).get(sectorList[j]), lowest);
 				}
 				bound += lowest;
 			}
@@ -440,6 +462,7 @@ public class MapWrapper {
 			int steps = path.size() - 1;
 			for(int i = 0; i < steps; i++){
 				bound += getDistance(path.get(i),path.get(i+1));
+//				logger.info(path.get(i) + " to " + path.get(i+1) + ", total Bound: " + bound);
 			}
 			
 			//if this is the complete path, we're done
@@ -448,25 +471,22 @@ public class MapWrapper {
 			}
 			
 			//then add the minimum distance out from each remaining nodes
-//			for(Entry<Sector, Map<Sector, Integer>> entry : shortestPaths.entrySet()){
 			for(Sector s1 : shortestPaths.keySet()){
 				//if we've already traveled to this sector, skip it
 				if(path.contains(s1)) continue;
-//				if(path.contains(entry.getKey())) continue;
 				
 				//otherwise, find the nearest sector we haven't visited
 				int lowest = Integer.MAX_VALUE;
 				for(Sector s2 : shortestPaths.get(s1).keySet()){
-//				for(Entry<Sector, Integer> entry2 : entry.getValue().entrySet()){
 					//if we've visited it, skip it unless it's the last sector in our path
 					if(!s2.equals(path.get(path.size()-1)) && path.contains(s2)) continue;
-//					if(entry2.getKey().equals(path.get(path.size()-1)) && path.contains(entry2.getKey())) continue;
-					
-					lowest = Math.min(shortestPaths.get(s1).get(s2), lowest);
-//					lowest = Math.min(entry2.getValue(), lowest);
+//					logger.info("saving lower of " + s2 + " to " + s1 + "(" + shortestPaths.get(s2).get(s1) +  ") and " + lowest);
+					lowest = Math.min(shortestPaths.get(s2).get(s1), lowest);
 				}
 				bound += lowest; 
+//				logger.info("bound: " + bound);
 			}
+//			logger.info("Final bound for " + TspUtilities.routeString(path) + ": " + bound);
 			return bound;
 		}
 	}
