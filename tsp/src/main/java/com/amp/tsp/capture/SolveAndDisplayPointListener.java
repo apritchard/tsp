@@ -39,8 +39,8 @@ public class SolveAndDisplayPointListener implements PointListener {
 		MapParser.writeClickMap(PrefName.LAST_MAP_LOCATION.get(), points, startingPoints, endingPoints, warpPoints);
 		MapWrapper mw;
 		mw = new MapWrapper(sectors, TspUtilities.stringsToConstraints(startingPoints, endingPoints, sectors));
-//		final List<Sector> path = mw.calcTspMulti();
-		final List<Sector> path = mw.calcTspInt();
+		final List<Sector> path = mw.calcTspMulti();
+//		final List<Sector> path = mw.calcTspInt();
 		final int distance = mw.getBoundForPath(path);
 		logger.info("Best Path: " + path + " Distance: " + distance);
 		final BlankFrame frame = new BlankFrame();

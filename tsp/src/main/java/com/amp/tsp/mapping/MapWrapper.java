@@ -40,7 +40,6 @@ public class MapWrapper {
 	private boolean useSeedsOnly; //if true, all solutions considered will derive from seed paths
 	
 	private TspNode bestPath;
-	private boolean reverse = false;
 	
 	private final Map<CacheKey, List<Sector>> cachedRoutes = new HashMap<>();
 	
@@ -102,26 +101,25 @@ public class MapWrapper {
 		this.useSeedsOnly = true;
 		
 		for(Constraint constraint : constraints){
-			TspNode node;
 			if(constraint.getStarting().isEmpty() && !constraint.getEnding().isEmpty()){
-				//if we have only an ending, just reverse and use the ending as the start
-				logger.info("Ending but no starting, reversing list");
-				List<Sector> seed = Lists.reverse(constraint.getEnding());
-				node = new TspNode(seed, getBoundForPath(seed));
-				reverse = true;
+				//annoying - ending only, can't reverse because of asymmetry, so make 1 seed for each sector
+				for(Sector s : sectors){
+					List<Sector> l = new ArrayList<>();
+					l.add(s);
+					this.seeds.add(	new TspNode(l, getBoundForPath(l), constraint.getEnding()));
+				}
 			} else if (!constraint.getStarting().isEmpty() && constraint.getEnding().isEmpty()) {
 				logger.info("Starting points but no ending");
 				//if only a starting, then use the seed-only approach
-				node = new TspNode(constraint.getStarting(), getBoundForPath(constraint.getStarting()));
+				this.seeds.add(new TspNode(constraint.getStarting(), getBoundForPath(constraint.getStarting())));
 			} else if(!constraint.getStarting().isEmpty() && !constraint.getEnding().isEmpty()){
 				logger.info("Both starting and ending points");
 				//both starting and ending constraint
-				node = new TspNode(constraint.getStarting(), getBoundForPath(constraint.getStarting()), constraint.getEnding());
+				this.seeds.add(new TspNode(constraint.getStarting(), getBoundForPath(constraint.getStarting()), constraint.getEnding()));
 			} else {
 				//neither starting nor ending nodes, skip
 				continue;
 			}
-			this.seeds.add(node);
 		}
 	}
 	
@@ -199,7 +197,7 @@ public class MapWrapper {
 	public List<Sector> calcTspForkJoin(int depthThreshold){
 		ForkJoinPool fjp = new ForkJoinPool();
 		fjp.invoke(new TspCalcAction(new PriorityBlockingQueue<TspNode>(getInitialNodes()), this, depthThreshold));
-		return reverse? Lists.reverse(bestPath.getPath()) : bestPath.getPath();
+		return bestPath.getPath();
 	}
 	
 	/**
@@ -253,7 +251,7 @@ public class MapWrapper {
 			return longestPath.get();
 		} else {
 			logger.info("Processing finished, returning best path.");
-			return reverse? Lists.reverse(bestPath.get()) :bestPath.get();
+			return bestPath.get();
 		}
 		
 	}
@@ -273,7 +271,7 @@ public class MapWrapper {
 			if(curr.getBound() > bound){
 				logger.info("Searched all bounds less than " + bound + ", exiting");
 				List<Sector> retList = TspUtilities.sectorList(bestPath, sectorList);
-				return reverse? Lists.reverse(retList) : retList;
+				return retList;
 			}
 			
 			if(curr.getLength() > longest.getLength()){
@@ -296,9 +294,6 @@ public class MapWrapper {
 			//if the current path covers all sectors, it's a full path, so set it as our next best
 			if(curr.getLength() == numSectors){
 				if(curr.getBound() < bound) {
-					if(curr.getBound() == 0){
-						logger.warning("triple wtf");
-					}
 					logger.info("Cost " + curr.getBound() + " path found, saving");
 					logger.info(TspUtilities.routeString(TspUtilities.sectorList(curr.getPath(), sectorList)));
 					bestPath = curr.getPath();
@@ -326,7 +321,7 @@ public class MapWrapper {
 		}
 		
 		List<Sector> retList = TspUtilities.sectorList(bestPath, sectorList);
-		return reverse? Lists.reverse(retList) : retList;
+		return retList;
 	}
 	
 	/**
@@ -366,7 +361,7 @@ public class MapWrapper {
 			//we're not going to have anything better than our current at this point, so return 
 			if(curr.getBound() > bound){
 				logger.info("Searched all bounds less than " + bound + ", exiting");
-				return reverse? Lists.reverse(bestPath) : bestPath;
+				return bestPath;
 			}
 			
 			//if the current path covers all sectors, it's a full path, so set it as our new best
@@ -397,7 +392,7 @@ public class MapWrapper {
 		//if queue is empty and we haven't returned, then either we found no complete paths
 		// (bestPath will be null), or the very last path we checked is the best path
 		// (unlikely, but possible), in which case return it.
-		return reverse? Lists.reverse(bestPath) : bestPath;
+		return bestPath;
 	}
 	
 	public int getBoundForPath(final int[] path){

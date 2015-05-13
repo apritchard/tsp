@@ -9,6 +9,7 @@ import java.util.Set;
 import java.util.logging.LogManager;
 import java.util.logging.Logger;
 
+import com.amp.tsp.CorrectnessTest;
 import com.amp.tsp.mapping.MapWrapper;
 import com.amp.tsp.mapping.Sector;
 import com.amp.tsp.parse.MapParser;
@@ -26,11 +27,13 @@ public class App {
 			logger.warning("Failed to find logger.properties");
 		}
 		
+		URL mapFile = App.class.getClassLoader().getResource("trick.yaml");
+		
 //		URL mapFile = App.class.getClassLoader().getResource("boundaries.yaml");
 //		URL mapFile = App.class.getClassLoader().getResource("federation-space-boundaries.yaml");
 //		URL mapFile = App.class.getClassLoader().getResource("Season10-Alpha.yaml");
 //		URL mapFile = App.class.getClassLoader().getResource("season10-alpha-quadrant.yaml");
-		URL mapFile = App.class.getClassLoader().getResource("warp-point.yaml");
+//		URL mapFile = App.class.getClassLoader().getResource("warp-point.yaml");
 		
 		Set<Sector> sectors = MapParser.parseMapFile(mapFile);
 		
