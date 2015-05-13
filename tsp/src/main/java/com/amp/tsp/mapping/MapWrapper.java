@@ -200,6 +200,38 @@ public class MapWrapper {
 		return bestPath.getPath();
 	}
 	
+	public List<Sector> calcTspMultiInt(){
+		AtomicInteger bound = new AtomicInteger(Integer.MAX_VALUE);
+		AtomicReference<int[]> bestPath = new AtomicReference<>();
+		
+		int numThreads = Runtime.getRuntime().availableProcessors() * 2;
+		Queue<TspNode2> initialQueue = new PriorityBlockingQueue<>(TspNode2.queueFrom(getInitialNodes(), sectorMap));
+		
+		ExecutorService executor = Executors.newFixedThreadPool(numThreads);
+		for(int i = 0; i < numThreads ; i++){
+			TspCalculatorInt tspCalc = new TspCalculatorInt(bound, bestPath, initialQueue, this);
+			executor.execute(tspCalc);
+		}
+
+		//Wait for them to finish
+		executor.shutdown();
+		try {
+			executor.awaitTermination(Long.MAX_VALUE, TimeUnit.SECONDS);
+		} catch (InterruptedException e) {
+			logger.warning("Threads prematurely interrupted; program may not have finished.");
+		}
+		
+		if(bestPath.get() == null){
+//			logger.warning("No complete path found, returning longest path");
+//			return longestPath.get();
+			return new ArrayList<Sector>();
+		} else {
+			logger.info("Processing finished, returning best path.");
+			return TspUtilities.sectorList(bestPath.get(), sectorList);
+		}
+		
+	}
+	
 	/**
 	 * Solve using a multi-threaded approach by creating two threads for each available
 	 * processor and dividing the queue of paths amongst them.
@@ -396,6 +428,10 @@ public class MapWrapper {
 	}
 	
 	public int getBoundForPath(final int[] path){
+		return getBoundForPathThreadSafe(path, usedSectors);
+	}
+	
+	public int getBoundForPathThreadSafe(final int[] path, boolean[] usedSectors){
 		int bound = 0;
 		
 		if(path.length == 1 || path[1] == 0 ){
@@ -411,6 +447,7 @@ public class MapWrapper {
 			while(i+1 < numSectors && path[i] > 0 && path[i+1] > 0){
 				bound += getDistance(sectorList[path[i]], sectorList[path[i+1]]);
 				usedSectors[path[i+1]] = true;
+//				logger.info(sectorList[path[i]] + " to " + sectorList[path[i+1]] + ", total Bound: " + bound);
 				i++;
 			}
 			
@@ -431,10 +468,13 @@ public class MapWrapper {
 					if(!shortestPaths.get(sectorList[j]).containsKey(sectorList[k])) continue;
 					//if we've visited it, skip it unless it's the last sector in our path
 					if(usedSectors[k] && k != path[i]) continue;
+//					logger.info("saving lower of " + sectorList[k] + " to " + sectorList[j]+ "(" + shortestPaths.get(sectorList[k]).get(sectorList[j]) +  ") and " + lowest);
 					lowest = Math.min(shortestPaths.get(sectorList[k]).get(sectorList[j]), lowest);
 				}
 				bound += lowest;
+//				logger.info("bound: " + bound);
 			}
+//			logger.info("Final bound for " + TspUtilities.routeString(TspUtilities.sectorList(path, sectorList)) + ": " + bound);
 			return bound;
 		}
 	}

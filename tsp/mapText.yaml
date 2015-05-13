@@ -4,6 +4,7 @@ edgeList:
    Pheben: 594
    New Romulus: 477
    Qo'noS: 784
+   warp: 20
    Drozana: 944
    Khitomer: 626
    Iconia: 386
@@ -20,7 +21,6 @@ edgeList:
    Risa: 864
    Mylasa: 347
    Argelius: 566
-   Warp - Instance Change: 20
    Teneebia: 676
 --- !com.amp.tsp.parse.YamlSector
 name: Qo'noS
@@ -28,6 +28,7 @@ edgeList:
    Pheben: 288
    New Romulus: 319
    Alini: 784
+   warp: 20
    Drozana: 380
    Khitomer: 162
    Iconia: 518
@@ -44,14 +45,38 @@ edgeList:
    Risa: 582
    Mylasa: 437
    Argelius: 538
-   Warp - Instance Change: 20
    Teneebia: 793
+--- !com.amp.tsp.parse.YamlSector
+name: warp
+edgeList: 
+   Pheben: 216
+   New Romulus: 56
+   Alini: 503
+   Qo'noS: 282
+   Drozana: 505
+   Khitomer: 122
+   Iconia: 307
+   Sanek: 450
+   Archanis: 352
+   Virinat: 214
+   Nimbus: 676
+   Vendor: 375
+   Vorn: 415
+   Gamma Eridon: 93
+   Orion: 564
+   Traelus: 671
+   Lirss: 511
+   Risa: 565
+   Mylasa: 157
+   Argelius: 378
+   Teneebia: 632
 --- !com.amp.tsp.parse.YamlSector
 name: Pheben
 edgeList: 
    New Romulus: 271
    Alini: 594
    Qo'noS: 288
+   warp: 20
    Drozana: 635
    Khitomer: 227
    Iconia: 251
@@ -68,7 +93,6 @@ edgeList:
    Risa: 759
    Mylasa: 287
    Argelius: 595
-   Warp - Instance Change: 20
    Teneebia: 849
 --- !com.amp.tsp.parse.YamlSector
 name: New Romulus
@@ -76,6 +100,7 @@ edgeList:
    Pheben: 271
    Alini: 477
    Qo'noS: 319
+   warp: 20
    Drozana: 498
    Khitomer: 157
    Iconia: 329
@@ -92,32 +117,7 @@ edgeList:
    Risa: 530
    Mylasa: 142
    Argelius: 326
-   Warp - Instance Change: 20
    Teneebia: 578
---- !com.amp.tsp.parse.YamlSector
-name: Warp - Instance Change
-edgeList: 
-   Pheben: 153
-   New Romulus: 119
-   Alini: 527
-   Qo'noS: 261
-   Drozana: 533
-   Khitomer: 122
-   Iconia: 278
-   Sanek: 401
-   Archanis: 378
-   Virinat: 272
-   Nimbus: 736
-   Vendor: 434
-   Vorn: 413
-   Gamma Eridon: 67
-   Orion: 624
-   Traelus: 694
-   Lirss: 555
-   Risa: 618
-   Mylasa: 182
-   Argelius: 442
-   Teneebia: 696
 --- !com.amp.tsp.parse.YamlSector
 name: Risa
 edgeList: 
@@ -125,6 +125,7 @@ edgeList:
    New Romulus: 530
    Alini: 864
    Qo'noS: 582
+   warp: 20
    Drozana: 292
    Khitomer: 535
    Iconia: 858
@@ -140,7 +141,6 @@ edgeList:
    Lirss: 724
    Mylasa: 643
    Argelius: 299
-   Warp - Instance Change: 20
    Teneebia: 372
 --- !com.amp.tsp.parse.YamlSector
 name: Gamma Eridon
@@ -149,6 +149,7 @@ edgeList:
    New Romulus: 132
    Alini: 468
    Qo'noS: 327
+   warp: 20
    Drozana: 594
    Khitomer: 188
    Iconia: 216
@@ -164,7 +165,6 @@ edgeList:
    Risa: 658
    Mylasa: 133
    Argelius: 455
-   Warp - Instance Change: 20
    Teneebia: 701
 --- !com.amp.tsp.parse.YamlSector
 name: Drozana
@@ -173,6 +173,7 @@ edgeList:
    New Romulus: 498
    Alini: 944
    Qo'noS: 380
+   warp: 20
    Khitomer: 416
    Iconia: 810
    Sanek: 590
@@ -188,7 +189,6 @@ edgeList:
    Risa: 292
    Mylasa: 639
    Argelius: 457
-   Warp - Instance Change: 20
    Teneebia: 634
 --- !com.amp.tsp.parse.YamlSector
 name: Virinat
@@ -197,6 +197,7 @@ edgeList:
    New Romulus: 174
    Alini: 576
    Qo'noS: 348
+   warp: 20
    Drozana: 367
    Khitomer: 223
    Iconia: 502
@@ -212,7 +213,6 @@ edgeList:
    Risa: 355
    Mylasa: 294
    Argelius: 193
-   Warp - Instance Change: 20
    Teneebia: 452
 --- !com.amp.tsp.parse.YamlSector
 name: Teneebia
@@ -221,6 +221,7 @@ edgeList:
    New Romulus: 578
    Alini: 676
    Qo'noS: 793
+   warp: 20
    Drozana: 634
    Khitomer: 675
    Iconia: 837
@@ -237,7 +238,6 @@ edgeList:
    Risa: 372
    Mylasa: 617
    Argelius: 259
-   Warp - Instance Change: 20
 --- !com.amp.tsp.parse.YamlSector
 name: Archanis
 edgeList: 
@@ -245,6 +245,7 @@ edgeList:
    New Romulus: 351
    Alini: 813
    Qo'noS: 245
+   warp: 20
    Drozana: 155
    Khitomer: 260
    Iconia: 655
@@ -260,7 +261,6 @@ edgeList:
    Risa: 344
    Mylasa: 493
    Argelius: 391
-   Warp - Instance Change: 20
    Teneebia: 615
 --- !com.amp.tsp.parse.YamlSector
 name: Nimbus
@@ -269,6 +269,7 @@ edgeList:
    New Romulus: 621
    Alini: 522
    Qo'noS: 903
+   warp: 20
    Drozana: 835
    Khitomer: 757
    Iconia: 790
@@ -284,7 +285,6 @@ edgeList:
    Risa: 607
    Mylasa: 600
    Argelius: 388
-   Warp - Instance Change: 20
    Teneebia: 255
 --- !com.amp.tsp.parse.YamlSector
 name: Traelus
@@ -293,6 +293,7 @@ edgeList:
    New Romulus: 667
    Alini: 1115
    Qo'noS: 506
+   warp: 20
    Drozana: 171
    Khitomer: 573
    Iconia: 972
@@ -308,7 +309,6 @@ edgeList:
    Risa: 388
    Mylasa: 809
    Argelius: 613
-   Warp - Instance Change: 20
    Teneebia: 757
 --- !com.amp.tsp.parse.YamlSector
 name: Vorn
@@ -317,6 +317,7 @@ edgeList:
    New Romulus: 412
    Alini: 212
    Qo'noS: 673
+   warp: 20
    Drozana: 910
    Khitomer: 531
    Iconia: 192
@@ -332,7 +333,6 @@ edgeList:
    Risa: 898
    Mylasa: 271
    Argelius: 620
-   Warp - Instance Change: 20
    Teneebia: 794
 --- !com.amp.tsp.parse.YamlSector
 name: Vendor
@@ -341,6 +341,7 @@ edgeList:
    New Romulus: 320
    Alini: 385
    Qo'noS: 613
+   warp: 20
    Drozana: 625
    Khitomer: 460
    Iconia: 522
@@ -356,7 +357,6 @@ edgeList:
    Risa: 487
    Mylasa: 311
    Argelius: 189
-   Warp - Instance Change: 20
    Teneebia: 321
 --- !com.amp.tsp.parse.YamlSector
 name: Lirss
@@ -365,6 +365,7 @@ edgeList:
    New Romulus: 466
    Alini: 204
    Qo'noS: 785
+   warp: 20
    Drozana: 859
    Khitomer: 623
    Iconia: 514
@@ -380,7 +381,6 @@ edgeList:
    Risa: 724
    Mylasa: 379
    Argelius: 428
-   Warp - Instance Change: 20
    Teneebia: 485
 --- !com.amp.tsp.parse.YamlSector
 name: Sanek
@@ -389,6 +389,7 @@ edgeList:
    New Romulus: 502
    Alini: 910
    Qo'noS: 240
+   warp: 20
    Drozana: 590
    Khitomer: 361
    Iconia: 567
@@ -404,7 +405,6 @@ edgeList:
    Risa: 820
    Mylasa: 580
    Argelius: 770
-   Warp - Instance Change: 20
    Teneebia: 1027
 --- !com.amp.tsp.parse.YamlSector
 name: Mylasa
@@ -413,6 +413,7 @@ edgeList:
    New Romulus: 142
    Alini: 347
    Qo'noS: 437
+   warp: 20
    Drozana: 639
    Khitomer: 280
    Iconia: 225
@@ -428,7 +429,6 @@ edgeList:
    Lirss: 379
    Risa: 643
    Argelius: 393
-   Warp - Instance Change: 20
    Teneebia: 617
 --- !com.amp.tsp.parse.YamlSector
 name: Khitomer
@@ -437,6 +437,7 @@ edgeList:
    New Romulus: 157
    Alini: 626
    Qo'noS: 162
+   warp: 20
    Drozana: 416
    Iconia: 400
    Sanek: 361
@@ -452,7 +453,6 @@ edgeList:
    Risa: 535
    Mylasa: 280
    Argelius: 415
-   Warp - Instance Change: 20
    Teneebia: 675
 --- !com.amp.tsp.parse.YamlSector
 name: Argelius
@@ -461,6 +461,7 @@ edgeList:
    New Romulus: 326
    Alini: 566
    Qo'noS: 538
+   warp: 20
    Drozana: 457
    Khitomer: 415
    Iconia: 618
@@ -476,7 +477,6 @@ edgeList:
    Lirss: 428
    Risa: 299
    Mylasa: 393
-   Warp - Instance Change: 20
    Teneebia: 259
 --- !com.amp.tsp.parse.YamlSector
 name: Orion
@@ -485,6 +485,7 @@ edgeList:
    New Romulus: 519
    Alini: 776
    Qo'noS: 647
+   warp: 20
    Drozana: 418
    Khitomer: 565
    Iconia: 831
@@ -500,7 +501,6 @@ edgeList:
    Risa: 144
    Mylasa: 607
    Argelius: 220
-   Warp - Instance Change: 20
    Teneebia: 228
 --- !com.amp.tsp.parse.YamlSector
 name: Iconia
@@ -509,6 +509,7 @@ edgeList:
    New Romulus: 329
    Alini: 386
    Qo'noS: 518
+   warp: 20
    Drozana: 810
    Khitomer: 400
    Sanek: 567
@@ -524,5 +525,4 @@ edgeList:
    Risa: 858
    Mylasa: 225
    Argelius: 618
-   Warp - Instance Change: 20
    Teneebia: 837

@@ -117,6 +117,18 @@ public class CorrectnessTest {
 	}
 	
 	@Test
+	public void testSimpleTspMultiInt(){
+		MapWrapper mw = new MapWrapper(simpleSectors);
+		testSimple(mw, mw.calcTspMultiInt()); 
+		
+		mw = new MapWrapper(simplePartialSectors);
+		testSimplePartial(mw, mw.calcTspMultiInt());
+		
+		mw = new MapWrapper(simpleAsymSectors);
+		testSimpleAsym(mw, mw.calcTspMultiInt());
+	}
+	
+	@Test
 	public void testSimpleTspForkJoin(){
 		MapWrapper mw = new MapWrapper(simpleSectors);
 		testSimple(mw, mw.calcTspForkJoin());
@@ -171,6 +183,21 @@ public class CorrectnessTest {
 		
 		mw = new MapWrapper(simplePartialSectors, simpleSeeds, true);
 		testSimplePartialSeedsOnly(mw, mw.calcTspMulti());
+	}
+	
+	@Test
+	public void testSeedTspMultiInt(){
+		MapWrapper mw = new MapWrapper(simpleSectors, simpleSeeds, false);
+		testSimple(mw, mw.calcTspMultiInt());
+		
+		mw = new MapWrapper(simpleSectors, simpleSeeds, true);
+		testSimpleSeedsOnly(mw, mw.calcTspMultiInt());
+		
+		mw = new MapWrapper(simplePartialSectors, simpleSeeds, false);
+		testSimplePartial(mw, mw.calcTspMultiInt());
+		
+		mw = new MapWrapper(simplePartialSectors, simpleSeeds, true);
+		testSimplePartialSeedsOnly(mw, mw.calcTspMultiInt());
 	}
 	
 	@Test

@@ -194,7 +194,9 @@ public class TspUtilities {
 	public static List<Sector> sectorList(int[] bestPath, Sector[] sectorList) {
 		List<Sector> sectors = new ArrayList<>();
 		for(int i = 0; i < bestPath.length; i++){
-			sectors.add(sectorList[bestPath[i]]);
+			if(sectorList[bestPath[i]] != null){
+				sectors.add(sectorList[bestPath[i]]);
+			}
 		}
 		return sectors;
 	}

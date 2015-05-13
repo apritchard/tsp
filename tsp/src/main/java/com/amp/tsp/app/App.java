@@ -27,7 +27,7 @@ public class App {
 			logger.warning("Failed to find logger.properties");
 		}
 		
-		URL mapFile = App.class.getClassLoader().getResource("trick.yaml");
+		URL mapFile = App.class.getClassLoader().getResource("asymmetric.yaml");
 		
 //		URL mapFile = App.class.getClassLoader().getResource("boundaries.yaml");
 //		URL mapFile = App.class.getClassLoader().getResource("federation-space-boundaries.yaml");
@@ -60,7 +60,7 @@ public class App {
 		logger.finer(sb.toString());
 		
 		
-		List<Sector> route = mw.calcTsp();
+		List<Sector> route = mw.calcTspMultiInt();
 //		List<Sector> route = mw.calcTspMulti();
 //		List<Sector> route = mw.calcTspForkJoin();
 		
