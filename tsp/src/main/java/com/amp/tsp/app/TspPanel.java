@@ -16,6 +16,7 @@ import java.util.logging.Logger;
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextArea;
 import javax.swing.SwingUtilities;
@@ -67,8 +68,12 @@ public class TspPanel extends JPanel implements SelectionListener {
 						Point p = new Point(point.getValue().x, point.getValue().y);
 						picker.getPoints().put(point.getKey(), p);
 					}
-				} catch (MalformedURLException mue){
-					mue.printStackTrace();
+				} catch (Exception ex){
+					ex.printStackTrace();
+					JOptionPane.showMessageDialog(null, "No previous map found! Either make a new map, change your last map location in preferences, or load a saved map.");
+					getTopLevelAncestor().setVisible(true);
+					picker.dispose();
+					return;
 				}
 				picker.setVisible(true);
 				
@@ -117,8 +122,8 @@ public class TspPanel extends JPanel implements SelectionListener {
 				+ "\nLeft click\tplace node on the map"
 				+ "\nShift-click\tNode required at beginning of path"
 				+ "\nCtrl-click\tNode required at end of path"
-				+ "\nAlt-click\tNode may be warped to (warp cost specified in preferences)"
-				+ "\nRight-click\tSolve graph"
+				+ "\nAlt-click\tNode may be warped to (cost in preferences)"
+				+ "\nRight-click\tSolve graph (press again to save solved graph)"
 				+ "\nEscape\tCancel map input"
 				+ "\n\nNodes may be either beginning or ending and also a warp node, but cannot be both beginning"
 				+ " and ending. Graphs containing more than 20 nodes may take some time to solve. Ending nodes decrease performance.";
