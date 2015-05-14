@@ -51,15 +51,36 @@ public class TspCalculatorInt implements Runnable {
 			sectorList[i++] = s;
 		}
 		numSectors = sectors.size();
+		
 	}
 
 	@Override
 	public void run() {
 		
+		TspNode2 longest = queue.peek();
+		
 		while(!queue.isEmpty()){
 			TspNode2 curr = queue.poll();
 			
 //			logger.info(threadNum + " evaluating " + TspUtilities.routeString(TspUtilities.sectorList(curr.getPath(),  sectorList)));
+			
+			if(curr.getLength() > longest.getLength()){
+				longest = curr;
+			}
+			
+			if(count++ % 100000 == 0){
+				StringBuilder sb = new StringBuilder();
+				sb.append("Trace:").append(System.lineSeparator());
+				sb.append("\tQueue size: ").append(queue.size()).append(System.lineSeparator());
+				sb.append("\tCurrent bound: ").append(curr.getBound()).append(System.lineSeparator());
+				if(bestPath.get() != null) {
+					sb.append("\tBest Complete Path: ").append(TspUtilities.routeString(bestPath.get(), sectorList));
+				} else {
+					sb.append("\tPath: (" + curr.getLength() + "/" + numSectors + ") ").append(TspUtilities.routeString(curr.getPath(), sectorList));
+					sb.append("\n\tLongest Current Path: (" + longest.getLength() + "/" + numSectors + ") ").append(TspUtilities.routeString(longest.getPath(), sectorList));
+				}
+				logger.info(sb.toString());				
+			}
 			
 			//this part is pretty cheap and cannot be interleaved with other threads, so just
 			//synchronize it all
@@ -90,7 +111,7 @@ public class TspCalculatorInt implements Runnable {
 
 			//handle case in which an ending is specified
 			if(curr.getEnding() != null){
-				logger.info("Ending: " + TspUtilities.routeString(curr.getEnding(), sectorList));
+//				logger.info("Ending: " + TspUtilities.routeString(curr.getEnding(), sectorList));
 				
 				//always mark ending sectors as used even if not a complete path
 				for(int s : curr.getEnding()){
