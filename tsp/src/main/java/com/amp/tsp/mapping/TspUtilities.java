@@ -26,6 +26,10 @@ public class TspUtilities {
 	public static Map<Sector, Map<Sector, Integer>> calculateShortestPathsStatic(Set<Sector> sectors){
 		Map<Sector, Map<Sector, Integer>> shortestPaths = new HashMap<>();
 		
+		if(sectors.size() <2){
+			return shortestPaths;
+		}
+		
 		int max = 0;
 		for(Sector s1 : sectors){
 			max = Math.max(max, Collections.max(s1.getEdgeList().values()));
