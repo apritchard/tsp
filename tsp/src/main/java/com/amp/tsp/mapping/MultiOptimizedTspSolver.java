@@ -19,6 +19,10 @@ public class MultiOptimizedTspSolver extends OptimizedTspSolver {
 
 	private final TspSolver theSolver = this; //for synchronization
 	
+	AtomicInteger bound;
+	AtomicReference<byte[]> bestPath;
+	Queue<TspNode2> queue;
+	
 	/**
 	 * @see TspSolver#TspSolver(Set)
 	 */
@@ -50,16 +54,15 @@ public class MultiOptimizedTspSolver extends OptimizedTspSolver {
 	 */
 	@Override
 	public List<Sector> solve() {
-		AtomicInteger bound = new AtomicInteger(Integer.MAX_VALUE);
-		AtomicReference<byte[]> bestPath = new AtomicReference<>();
-
 		int numThreads = Runtime.getRuntime().availableProcessors() * 2;
-		Queue<TspNode2> initialQueue = new PriorityBlockingQueue<>(
-				TspNode2.queueFrom(getInitialNodes(), sectorMap));
 
+		queue = new PriorityBlockingQueue<>(TspNode2.queueFrom(getInitialNodes(), sectorMap));
+		bestPath = new AtomicReference<>();
+		bound = new AtomicInteger(Integer.MAX_VALUE);
+		
 		ExecutorService executor = Executors.newFixedThreadPool(numThreads);
 		for (int i = 0; i < numThreads; i++) {
-			TspCalculatorInt tspCalc = new TspCalculatorInt(bound, bestPath, initialQueue);
+			TspCalculatorInt tspCalc = new TspCalculatorInt();
 			executor.execute(tspCalc);
 		}
 
@@ -72,9 +75,8 @@ public class MultiOptimizedTspSolver extends OptimizedTspSolver {
 		}
 
 		if (bestPath.get() == null) {
-			// logger.warning("No complete path found, returning longest path");
-			// return longestPath.get();
-			return new ArrayList<Sector>();
+			 logger.warning("No complete path found, longest Path not saved");
+			 return new ArrayList<>();
 		} else {
 			logger.info("Processing finished, returning best path.");
 			return TspUtilities.sectorList(bestPath.get(), sectorList);
@@ -83,10 +85,6 @@ public class MultiOptimizedTspSolver extends OptimizedTspSolver {
 	
 	public class TspCalculatorInt implements Runnable {
 		
-		private final AtomicInteger bound;
-		private final AtomicReference<byte[]> bestPath;
-		private final Queue<TspNode2> queue;
-		
 		//bounds optimization variables, local copies
 		private final Sector[] sectorList;
 		private final Map<Sector, Integer> sectorMap;
@@ -94,12 +92,7 @@ public class MultiOptimizedTspSolver extends OptimizedTspSolver {
 		private final boolean[] usedSectorsSwap; 
 		private final int numSectors;
 
-		public TspCalculatorInt(AtomicInteger bound, AtomicReference<byte[]> bestPath, 
-				Queue<TspNode2> initialQueue) {
-			this.bound = bound;
-			this.bestPath = bestPath;
-			this.queue = initialQueue;
-			
+		public TspCalculatorInt() {
 			//make thread-local copies of these
 			sectorList = new Sector[sectors.size() + 1];
 			sectorMap = new HashMap<>();
@@ -117,18 +110,12 @@ public class MultiOptimizedTspSolver extends OptimizedTspSolver {
 		public void run() {
 			int count = 0;
 			
-			TspNode2 longest = queue.peek();
-			
 			while(!queue.isEmpty()){
 				TspNode2 curr = queue.poll();
 				
-				
-				if(curr.getLength() > longest.getLength()){
-					longest = curr;
-				}
-				
 				if(count++ % 100000 == 0){
-					logState(queue.size(), curr.getBound(), bestPath.get(), longest.getPath());
+					//save time by not tracking best path, use curr path instead
+					logState(queue.size(), curr.getBound(), bestPath.get(), curr.getPath());
 				}
 				
 				//this part is pretty cheap and cannot be interleaved with other threads, so just synchronize it all

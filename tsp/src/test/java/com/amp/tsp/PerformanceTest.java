@@ -114,8 +114,13 @@ public class PerformanceTest {
 		assertEquals("Incorrect bound for moderate tspMulti", BETA_MIN_BOUND, mw.getBoundForPath(routeTspMulti));
 	}
 	
+	@Test
+	public void test39MultiExtensive(){
+		//TODO Test using multiple expensive clickmaps
+	}
+	
 		@Test
-	public void test40NewBetaQuadrantSolver(){
+	public void test40NewBetaQuadrant(){
 		TspSolver mw;
 		
 		long tsp, tspInt, multi, multiInt, fj;
