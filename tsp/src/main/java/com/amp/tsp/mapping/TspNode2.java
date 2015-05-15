@@ -13,28 +13,28 @@ class TspNode2 implements Comparable<TspNode2>{
 
 	private int bound;
 	private int length;
-	private int[] path;
-	private int[] ending;
+	private byte[] path;
+	private byte[] ending;
 	
-	public TspNode2(int bound, int[] path, int[] ending, int length){
+	public TspNode2(int bound, byte[] path, byte[] ending, int length){
 		this.bound = bound;
 		this.path = path;
 		this.ending = ending;
 		this.length = length;
 	}
 	
-	public TspNode2(TspNode node, Map<Sector, Integer> sectorMap){
+	public TspNode2(TspNode node, Map<Sector, Byte> sectorMap){
 		this.bound = node.getBound();
 		
 		List<Sector> sectorPath = node.getPath();
-		this.path = new int[sectorMap.size()]; //path needs to be maximum possible length
+		this.path = new byte[sectorMap.size()]; //path needs to be maximum possible length
 		for(int i = 0; i < sectorPath.size() ; i++){
 			path[i] = sectorMap.get(sectorPath.get(i));
 		}
 		
 		List<Sector> sectorEnding = node.getEnding();
 		if(sectorEnding != null){
-			this.ending = new int[sectorEnding.size()];
+			this.ending = new byte[sectorEnding.size()];
 			for(int i = 0; i < sectorEnding.size(); i++){
 				ending[i] = sectorMap.get(sectorEnding.get(i));
 			}
@@ -43,12 +43,12 @@ class TspNode2 implements Comparable<TspNode2>{
 		this.length = sectorPath.size();
 	}
 	
-	public void addNode(int node){
+	public void addNode(byte node){
 		path[length++] = node;
 	}
 	
 	public static Queue<TspNode2> queueFrom(Queue<TspNode> initialNodes,
-			Map<Sector, Integer> sectorMap) {
+			Map<Sector, Byte> sectorMap) {
 		Queue<TspNode2> queue = new PriorityQueue<>();
 		
 		for(TspNode node : initialNodes){
@@ -84,19 +84,19 @@ class TspNode2 implements Comparable<TspNode2>{
 		this.length = length;
 	}
 
-	public int[] getPath() {
+	public byte[] getPath() {
 		return path;
 	}
 
-	public void setPath(int[] path) {
+	public void setPath(byte[] path) {
 		this.path = path;
 	}
 
-	public int[] getEnding() {
+	public byte[] getEnding() {
 		return ending;
 	}
 
-	public void setEnding(int[] ending) {
+	public void setEnding(byte[] ending) {
 		this.ending = ending;
 	}
 

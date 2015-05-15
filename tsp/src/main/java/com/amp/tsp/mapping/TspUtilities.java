@@ -197,7 +197,7 @@ public class TspUtilities {
 	}
 
 
-	public static List<Sector> sectorList(int[] bestPath, Sector[] sectorList) {
+	public static List<Sector> sectorList(byte[] bestPath, Sector[] sectorList) {
 		List<Sector> sectors = new ArrayList<>();
 		for(int i = 0; i < bestPath.length; i++){
 			if(sectorList[bestPath[i]] != null){
@@ -207,7 +207,7 @@ public class TspUtilities {
 		return sectors;
 	}
 
-	public static String routeString(int[] path, Sector[] sectorList) {
+	public static String routeString(byte[] path, Sector[] sectorList) {
 		return routeString(sectorList(path, sectorList));
 	}
 

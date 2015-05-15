@@ -16,7 +16,7 @@ public class TspCalculatorInt implements Runnable {
 	private static int count = 0;
 	
 	private final AtomicInteger bound;
-	private final AtomicReference<int[]> bestPath;
+	private final AtomicReference<byte[]> bestPath;
 	private final Queue<TspNode2> queue;
 	private final MapWrapper mw;
 	
@@ -29,7 +29,7 @@ public class TspCalculatorInt implements Runnable {
 	private final boolean[] usedSectorsSwap; 
 	private final int numSectors;
 
-	public TspCalculatorInt(AtomicInteger bound, AtomicReference<int[]> bestPath, 
+	public TspCalculatorInt(AtomicInteger bound, AtomicReference<byte[]> bestPath, 
 			Queue<TspNode2> initialQueue, MapWrapper mapWrapper) {
 		this.bound = bound;
 		this.bestPath = bestPath;
@@ -79,7 +79,7 @@ public class TspCalculatorInt implements Runnable {
 					sb.append("\tPath: (" + curr.getLength() + "/" + numSectors + ") ").append(TspUtilities.routeString(curr.getPath(), sectorList));
 					sb.append("\n\tLongest Current Path: (" + longest.getLength() + "/" + numSectors + ") ").append(TspUtilities.routeString(longest.getPath(), sectorList));
 				}
-				logger.info(sb.toString());				
+				logger.info(sb.toString());
 			}
 			
 			//this part is pretty cheap and cannot be interleaved with other threads, so just
@@ -120,7 +120,7 @@ public class TspCalculatorInt implements Runnable {
 				
 				//full path, check if it's good
 				if(curr.getLength() + curr.getEnding().length == numSectors){
-					for(int s : curr.getEnding()){
+					for(byte s : curr.getEnding()){
 						curr.addNode(s);
 					}
 					synchronized(mw){
@@ -135,9 +135,9 @@ public class TspCalculatorInt implements Runnable {
 					continue;
 				}
 				
-				for(int i = 1; i <= numSectors; i++){
+				for(byte i = 1; i <= numSectors; i++){
 					if(!usedSectors[i]){
-						int[] newPath = Arrays.copyOf(curr.getPath(), numSectors);
+						byte[] newPath = Arrays.copyOf(curr.getPath(), numSectors);
 						newPath[curr.getLength()] = i;
 						int newBound = mw.getBoundForPathThreadSafe(newPath, usedSectorsSwap);
 						if(newBound <= bound.get()){
@@ -150,9 +150,9 @@ public class TspCalculatorInt implements Runnable {
 			}
 			
 			//Add all next steps to queue (which will sort them by bound)
-			for(int i = 1; i <= numSectors; i++){
+			for(byte i = 1; i <= numSectors; i++){
 				if(!usedSectors[i]){
-					int[] newPath = Arrays.copyOf(curr.getPath(), numSectors);
+					byte[] newPath = Arrays.copyOf(curr.getPath(), numSectors);
 					newPath[curr.getLength()] = i;
 					int newBound = mw.getBoundForPathThreadSafe(newPath, usedSectorsSwap);
 					if(newBound <= bound.get()){

@@ -45,7 +45,7 @@ public class MapWrapper {
 	
 	//bounds optimization variables
 	private final Sector[] sectorList;
-	private final Map<Sector, Integer> sectorMap;
+	private final Map<Sector, Byte> sectorMap;
 	private final boolean[] usedSectors; 
 	private final int numSectors;
 	
@@ -65,7 +65,7 @@ public class MapWrapper {
 		sectorList = new Sector[sectors.size() + 1];
 		sectorMap = new HashMap<>();
 		usedSectors = new boolean[sectors.size() +1];
-		int i = 1;
+		byte i = 1;
 		for(Sector s : sectors){
 			sectorMap.put(s, i);
 			sectorList[i++] = s;
@@ -202,7 +202,7 @@ public class MapWrapper {
 	
 	public List<Sector> calcTspMultiInt(){
 		AtomicInteger bound = new AtomicInteger(Integer.MAX_VALUE);
-		AtomicReference<int[]> bestPath = new AtomicReference<>();
+		AtomicReference<byte[]> bestPath = new AtomicReference<>();
 		
 		int numThreads = Runtime.getRuntime().availableProcessors() * 2;
 		Queue<TspNode2> initialQueue = new PriorityBlockingQueue<>(TspNode2.queueFrom(getInitialNodes(), sectorMap));
@@ -293,7 +293,7 @@ public class MapWrapper {
 		
 		//start with max bound and no best path
 		int bound = Integer.MAX_VALUE;
-		int[] bestPath = null;
+		byte[] bestPath = null;
 		TspNode2 longest = queue.peek();
 		
 		int count = 0;
@@ -336,12 +336,12 @@ public class MapWrapper {
 			
 			//Add all next steps to queue (which will sort them by bound)
 			Arrays.fill(usedSectors, false);
-			for(int i = 0; i < curr.getLength(); i++){
+			for(byte i = 0; i < curr.getLength(); i++){
 				usedSectors[curr.getPath()[i]] = true;
 			}
-			for(int i = 1; i <= numSectors; i++){
+			for(byte i = 1; i <= numSectors; i++){
 				if(!usedSectors[i]){
-					int[] newPath = Arrays.copyOf(curr.getPath(), numSectors);
+					byte[] newPath = Arrays.copyOf(curr.getPath(), numSectors);
 					newPath[curr.getLength()] = i;
 					int newBound = getBoundForPath(newPath);
 					if(newBound <= bound){
@@ -427,11 +427,11 @@ public class MapWrapper {
 		return bestPath;
 	}
 	
-	public int getBoundForPath(final int[] path){
+	public int getBoundForPath(final byte[] path){
 		return getBoundForPathThreadSafe(path, usedSectors);
 	}
 	
-	public int getBoundForPathThreadSafe(final int[] path, boolean[] usedSectors){
+	public int getBoundForPathThreadSafe(final byte[] path, boolean[] usedSectors){
 		int bound = 0;
 		
 		if(path.length == 1 || path[1] == 0 ){
