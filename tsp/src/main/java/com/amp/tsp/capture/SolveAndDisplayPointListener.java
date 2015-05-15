@@ -16,8 +16,9 @@ import java.util.logging.Logger;
 import javax.swing.SwingUtilities;
 
 import com.amp.tsp.app.SelectionListener;
-import com.amp.tsp.mapping.MapWrapper;
+import com.amp.tsp.mapping.MultiOptimizedTspSolver;
 import com.amp.tsp.mapping.Sector;
+import com.amp.tsp.mapping.TspSolver;
 import com.amp.tsp.mapping.TspUtilities;
 import com.amp.tsp.parse.MapParser;
 import com.amp.tsp.prefs.PrefName;
@@ -41,11 +42,11 @@ public class SolveAndDisplayPointListener implements PointListener {
 		Set<Sector> sectors = TspUtilities.pointsToSectors(points, warpPoints);
 		MapParser.writeMapFile("mapText.yaml", sectors);
 		MapParser.writeClickMap(PrefName.LAST_MAP_LOCATION.get(), points, startingPoints, endingPoints, warpPoints);
-		MapWrapper mw;
-		mw = new MapWrapper(sectors, TspUtilities.stringsToConstraints(startingPoints, endingPoints, sectors));
-		final List<Sector> path = mw.calcTspMultiInt();
-//		final List<Sector> path = mw.calcTspInt();
-		final int distance = mw.getBoundForPath(path);
+		
+		TspSolver solver = new MultiOptimizedTspSolver(sectors, TspUtilities.stringsToConstraints(startingPoints, endingPoints, sectors));
+		final List<Sector> path = solver.solve();
+		final int distance = solver.getBoundForPath(path);
+		
 		logger.info("Best Path: " + path + " Distance: " + distance);
 		final BlankFrame frame = new BlankFrame();
 		frame.add(new RoutePanel(points, startingPoints, endingPoints, warpPoints, path));

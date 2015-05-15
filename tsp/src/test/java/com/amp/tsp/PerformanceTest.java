@@ -15,8 +15,13 @@ import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runners.MethodSorters;
 
-import com.amp.tsp.mapping.MapWrapper;
+import com.amp.tsp.mapping.BasicOptimizedTspSolver;
+import com.amp.tsp.mapping.BasicTspSolver;
+import com.amp.tsp.mapping.ForkJoinTspSolver;
+import com.amp.tsp.mapping.MultiOptimizedTspSolver;
+import com.amp.tsp.mapping.MultiTspSolver;
 import com.amp.tsp.mapping.Sector;
+import com.amp.tsp.mapping.TspSolver;
 import com.amp.tsp.parse.MapParser;
 
 /**
@@ -59,89 +64,89 @@ public class PerformanceTest {
 	 */
 	@Test
 	public void test00Moderate(){
-		MapWrapper mw;
+		TspSolver solver;
 		
 		long tsp, tspInt, multi, multiInt, fj;
 		long start; 
 				
 		start = System.nanoTime();
-		mw = new MapWrapper(moderateSectors);
-		List<Sector> routeTsp = mw.calcTsp();
+		solver = new BasicTspSolver(moderateSectors);
+		List<Sector> routeTsp = solver.solve();
 		tsp = System.nanoTime() - start;
 		
 		start = System.nanoTime();
-		mw = new MapWrapper(moderateSectors);
-		List<Sector> routeTspInt = mw.calcTspInt();
+		solver = new BasicOptimizedTspSolver(moderateSectors);
+		List<Sector> routeTspInt = solver.solve();
 		tspInt = System.nanoTime() - start;
 		
 		start = System.nanoTime();
-		mw = new MapWrapper(moderateSectors);
-		List<Sector> routeTspMulti = mw.calcTspMulti();
+		solver = new MultiTspSolver(moderateSectors);
+		List<Sector> routeTspMulti = solver.solve();
 		multi = System.nanoTime() - start;
 		
 		start = System.nanoTime();
-		mw = new MapWrapper(moderateSectors);
-		List<Sector> routeTspMultiInt = mw.calcTspMultiInt();
+		solver = new MultiOptimizedTspSolver(moderateSectors);
+		List<Sector> routeTspMultiInt = solver.solve();
 		multiInt = System.nanoTime() - start;
 		
 		start = System.nanoTime();
-		mw = new MapWrapper(moderateSectors);
-		List<Sector> routeTspFJ = mw.calcTspForkJoin();
+		solver = new ForkJoinTspSolver(moderateSectors);
+		List<Sector> routeTspFJ = solver.solve();
 		fj = System.nanoTime() - start;
 		
 		logger.info(String.format("Moderate Length times milli: tsp(%d) tspInt(%d) multi(%d) multiInt(%d) fj(%d)", tsp/1000000, tspInt/1000000, multi/1000000, multiInt/1000000, fj/1000000));
 		
-		assertEquals("Incorrect bound for moderate tsp", MODERATE_MIN_BOUND, mw.getBoundForPath(routeTsp));
-		assertEquals("Incorrect bound for moderate tspInt", MODERATE_MIN_BOUND, mw.getBoundForPath(routeTspInt));
-		assertEquals("Incorrect bound for moderate tspMulti", MODERATE_MIN_BOUND, mw.getBoundForPath(routeTspMulti));
-		assertEquals("Incorrect bound for moderate tspMulti", MODERATE_MIN_BOUND, mw.getBoundForPath(routeTspMultiInt));
-		assertEquals("Incorrect bound for moderate tspFJ", MODERATE_MIN_BOUND, mw.getBoundForPath(routeTspFJ));
+		assertEquals("Incorrect bound for moderate tsp", MODERATE_MIN_BOUND, solver.getBoundForPath(routeTsp));
+		assertEquals("Incorrect bound for moderate tspInt", MODERATE_MIN_BOUND, solver.getBoundForPath(routeTspInt));
+		assertEquals("Incorrect bound for moderate tspMulti", MODERATE_MIN_BOUND, solver.getBoundForPath(routeTspMulti));
+		assertEquals("Incorrect bound for moderate tspMulti", MODERATE_MIN_BOUND, solver.getBoundForPath(routeTspMultiInt));
+		assertEquals("Incorrect bound for moderate tspFJ", MODERATE_MIN_BOUND, solver.getBoundForPath(routeTspFJ));
 	}
 	
 	@Test
 	public void test38NewBetaQuadrantMulti(){
 		long multi, start;
 		start = System.nanoTime();
-		MapWrapper mw = new MapWrapper(betaSectors);
-		List<Sector> routeTspMulti = mw.calcTspMultiInt();
+		TspSolver mw = new MultiOptimizedTspSolver(betaSectors);
+		List<Sector> routeTspMulti = mw.solve();
 		multi = System.nanoTime() - start;
 		logger.info("Beta Quadrant Length times milli (tspMulti):" + multi/1000000);
 		assertEquals("Incorrect bound for moderate tspMulti", BETA_MIN_BOUND, mw.getBoundForPath(routeTspMulti));
 	}
 	
-	@Test
-	public void test40NewBetaQuadrant(){
-		MapWrapper mw;
+		@Test
+	public void test40NewBetaQuadrantSolver(){
+		TspSolver mw;
 		
 		long tsp, tspInt, multi, multiInt, fj;
 		long start;
 		
 		start = System.nanoTime();
-		mw = new MapWrapper(betaSectors);
-		List<Sector> routeTsp = mw.calcTsp();
+		mw = new BasicTspSolver(betaSectors);
+		List<Sector> routeTsp = mw.solve();
 		tsp = System.nanoTime() - start;
 		
 		start = System.nanoTime();
-		mw = new MapWrapper(betaSectors);
-		List<Sector> routeTspInt = mw.calcTspInt();
+		mw = new BasicOptimizedTspSolver(betaSectors);
+		List<Sector> routeTspInt = mw.solve();
 		tspInt = System.nanoTime() - start;
 		
 		start = System.nanoTime();
-		mw = new MapWrapper(betaSectors);
-		List<Sector> routeTspMulti = mw.calcTspMulti();
+		mw = new MultiTspSolver(betaSectors);
+		List<Sector> routeTspMulti = mw.solve();
 		multi = System.nanoTime() - start;
 		
 		start = System.nanoTime();
-		mw = new MapWrapper(betaSectors);
-		List<Sector> routeTspMultiInt = mw.calcTspMultiInt();
+		mw = new MultiOptimizedTspSolver(betaSectors);
+		List<Sector> routeTspMultiInt = mw.solve();
 		multiInt = System.nanoTime() - start;
 		
 		start = System.nanoTime();
-		mw = new MapWrapper(betaSectors);
-		List<Sector> routeTspFJ = mw.calcTspForkJoin();
+		mw = new ForkJoinTspSolver(betaSectors);
+		List<Sector> routeTspFJ = mw.solve();
 		fj = System.nanoTime() - start;
 		
-		logger.info(String.format("Beta Quadrant times milli: tsp(%d) int(%d) multi(%d) multiInt(%d) fj(%d)", tsp/1000000, tspInt/1000000, multi/1000000, multiInt/1000000, fj/1000000));
+		logger.info(String.format("Beta Quadrant solver times milli: tsp(%d) int(%d) multi(%d) multiInt(%d) fj(%d)", tsp/1000000, tspInt/1000000, multi/1000000, multiInt/1000000, fj/1000000));
 		
 		assertEquals("Incorrect bound for moderate tsp", BETA_MIN_BOUND, mw.getBoundForPath(routeTsp));
 		assertEquals("Incorrect bound for moderate tsp", BETA_MIN_BOUND, mw.getBoundForPath(routeTspInt));
@@ -155,12 +160,12 @@ public class PerformanceTest {
 	 */
 	@Test
 	public void test50LongTsp(){
-		MapWrapper mw = new MapWrapper(longSectors, longSeeds, true);
+		TspSolver mw = new BasicOptimizedTspSolver(longSectors, longSeeds, true);
 		
 		long start, timeCost; 
 				
 		start = System.nanoTime();
-		List<Sector> routeTsp = mw.calcTsp();
+		List<Sector> routeTsp = mw.solve();
 		timeCost = System.nanoTime() - start;
 		
 		logger.info("Long Length times milli (tsp):" + timeCost/1000000);
@@ -173,12 +178,12 @@ public class PerformanceTest {
 	 */
 	@Test
 	public void test51LongTspMulti(){
-		MapWrapper mw = new MapWrapper(longSectors, longSeeds, true);
+		TspSolver mw = new MultiOptimizedTspSolver(longSectors, longSeeds, true);
 		
 		long start, timeCost; 
 		
 		start = System.nanoTime();
-		List<Sector> route = mw.calcTspMulti();
+		List<Sector> route = mw.solve();
 		timeCost = System.nanoTime() - start;
 		
 		logger.info("Long Length times milli (tspMulti):" + timeCost/1000000);
@@ -186,40 +191,22 @@ public class PerformanceTest {
 		assertEquals("Incorrect bound for long tspMulti", LONG_MIN_BOUND, mw.getBoundForPath(route));
 	}
 	
-	/*
-	 * Test fork-join implementation on a long route
-	 */
-	@Test
-	public void test52LongTspForkJoin(){
-		MapWrapper mw = new MapWrapper(longSectors, longSeeds, true);
-		
-		long start, timeCost;
-		
-		start = System.nanoTime();
-		List<Sector> route = mw.calcTspForkJoin(18);
-		timeCost = System.nanoTime() - start;
-		
-		logger.info("Long Length times milli (tspFj):" + timeCost/1000000);
-		
-		assertEquals("Incorrect bound for long tspForkJoin", LONG_MIN_BOUND, mw.getBoundForPath(route));		
-	}
-	
 	/**
 	 * Test performance of depth threshold on fork-join solution to moderate route
 	 */
 	@Test
 	public void test70ForkJoinDepth(){
-		MapWrapper mw;
+		ForkJoinTspSolver fjSolver;
 		
 		Map<Integer, Long> times = new HashMap<>();
 		long start, total;
 		for(int i = 0; i < moderateSectors.size(); i++){
 			start = System.nanoTime();
-			mw = new MapWrapper(moderateSectors);
-			List<Sector> routeTsp = mw.calcTspForkJoin(i);
+			fjSolver = new ForkJoinTspSolver(moderateSectors);
+			List<Sector> routeTsp = fjSolver.solve(i);
 			total = System.nanoTime() - start;
 			times.put(i, total);
-			assertEquals("Incorrect bound for forkJoin with depth of " + i, MODERATE_MIN_BOUND, mw.getBoundForPath(routeTsp));
+			assertEquals("Incorrect bound for forkJoin with depth of " + i, MODERATE_MIN_BOUND, fjSolver.getBoundForPath(routeTsp));
 		}
 		
 		StringBuilder sb = new StringBuilder();
@@ -229,29 +216,4 @@ public class PerformanceTest {
 		logger.info(sb.toString());
 	}
 	
-	/**
-	 * Test performance of depth threshold on fork-join solution to long route.
-	 * Conclusion: it doesn't really make a difference as long as it's greater than 1.
-	 */
-	@Test
-	public void test71ForkJoinDepthLong(){
-		MapWrapper mw;
-		
-		Map<Integer, Long> times = new HashMap<>();
-		long start, total;
-		for(int i = 1; i < 23; i++){
-			start = System.nanoTime();
-			mw = new MapWrapper(longSectors, longSeeds, true);
-			List<Sector> routeTsp = mw.calcTspForkJoin(i);
-			total = System.nanoTime() - start;
-			times.put(i, total);
-			assertEquals("Incorrect bound for forkJoin with depth of " + i, LONG_MIN_BOUND, mw.getBoundForPath(routeTsp));
-		}
-		
-		StringBuilder sb = new StringBuilder();
-		for(Entry<Integer, Long> entry : times.entrySet()){
-			sb.append("(").append(entry.getKey()).append(", ").append(entry.getValue()/1000000).append("ms)");
-		}
-		logger.info(sb.toString());
-	}
 }

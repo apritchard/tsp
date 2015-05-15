@@ -8,8 +8,9 @@ import java.util.Set;
 import java.util.logging.LogManager;
 import java.util.logging.Logger;
 
-import com.amp.tsp.mapping.MapWrapper;
+import com.amp.tsp.mapping.MultiOptimizedTspSolver;
 import com.amp.tsp.mapping.Sector;
+import com.amp.tsp.mapping.TspSolver;
 import com.amp.tsp.parse.MapParser;
 
 public class App {
@@ -25,21 +26,19 @@ public class App {
 			logger.warning("Failed to find logger.properties");
 		}
 		
-		URL mapFile = App.class.getClassLoader().getResource("asymmetric.yaml");
-		
+//		URL mapFile = App.class.getClassLoader().getResource("asymmetric.yaml");
 //		URL mapFile = App.class.getClassLoader().getResource("boundaries.yaml");
 //		URL mapFile = App.class.getClassLoader().getResource("federation-space-boundaries.yaml");
 //		URL mapFile = App.class.getClassLoader().getResource("Season10-Alpha.yaml");
 //		URL mapFile = App.class.getClassLoader().getResource("season10-alpha-quadrant.yaml");
-//		URL mapFile = App.class.getClassLoader().getResource("warp-point.yaml");
+		URL mapFile = App.class.getClassLoader().getResource("warp-point.yaml");
 		
 		Set<Sector> sectors = MapParser.parseMapFile(mapFile);
 		
 //		URL seedFile = App.class.getClassLoader().getResource("seeds-season10-alpha.yaml");
 //		List<List<Sector>> seeds = MapParser.parseSeedFile(seedFile, sectors);
 		
-//		MapWrapper mw = new MapWrapper(sectors, seeds, true);
-		MapWrapper mw = new MapWrapper(sectors);
+		TspSolver mw = new MultiOptimizedTspSolver(sectors);
 		
 		StringBuilder sb = new StringBuilder();
 		sb.append("Sectors:").append(System.lineSeparator()).append(mw);
@@ -57,10 +56,7 @@ public class App {
 		}
 		logger.finer(sb.toString());
 		
-		
-		List<Sector> route = mw.calcTspMultiInt();
-//		List<Sector> route = mw.calcTspMulti();
-//		List<Sector> route = mw.calcTspForkJoin();
+		List<Sector> route = mw.solve();
 		
 		sb = new StringBuilder();
 		sb.append("Best route: ").append(System.lineSeparator());

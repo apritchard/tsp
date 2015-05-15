@@ -11,8 +11,13 @@ import java.util.logging.Logger;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.amp.tsp.mapping.MapWrapper;
+import com.amp.tsp.mapping.BasicOptimizedTspSolver;
+import com.amp.tsp.mapping.BasicTspSolver;
+import com.amp.tsp.mapping.ForkJoinTspSolver;
+import com.amp.tsp.mapping.MultiOptimizedTspSolver;
+import com.amp.tsp.mapping.MultiTspSolver;
 import com.amp.tsp.mapping.Sector;
+import com.amp.tsp.mapping.TspSolver;
 import com.amp.tsp.mapping.TspUtilities;
 import com.amp.tsp.parse.MapParser;
 
@@ -26,6 +31,13 @@ public class CorrectnessTest {
 	
 	private static final Logger logger = Logger.getLogger(CorrectnessTest.class.getName());
 
+	private final int SIMPLE_BOUND = 6;
+	private final int ASYM_BOUND = 6;
+	private final int SEEDS_BOUND = 6;
+	private final int SEEDS_ONLY_BOUND = 6;
+	private final int PARTIAL_BOUND = 8;
+	private final int PARTIAL_SEEDS_ONLY_BOUND = 9;
+	
 	private Set<Sector> simpleSectors, simplePartialSectors, simpleAsymSectors;
 	private List<List<Sector>> simpleSeeds, simplePartialSeeds;
 
@@ -82,163 +94,62 @@ public class CorrectnessTest {
 	
 	@Test
 	public void testSimpleTsp() {
-		MapWrapper mw = new MapWrapper(simpleSectors);
-		testSimple(mw, mw.calcTsp());
-		
-		mw = new MapWrapper(simplePartialSectors);
-		testSimplePartial(mw, mw.calcTsp());
-		
-		mw = new MapWrapper(simpleAsymSectors);
-		testSimpleAsym(mw, mw.calcTsp());
+		testSolver(new BasicTspSolver(simpleSectors), SIMPLE_BOUND);
+		testSolver(new BasicTspSolver(simplePartialSectors), PARTIAL_BOUND);
+		testSolver(new BasicTspSolver(simpleAsymSectors), ASYM_BOUND);
+		testSolver(new BasicTspSolver(simpleSectors, simpleSeeds, false), SEEDS_BOUND);
+		testSolver(new BasicTspSolver(simpleSectors, simpleSeeds, true), SEEDS_ONLY_BOUND);
+		testSolver(new BasicTspSolver(simplePartialSectors, simpleSeeds, false), PARTIAL_BOUND);
+		testSolver(new BasicTspSolver(simplePartialSectors, simpleSeeds, true), PARTIAL_SEEDS_ONLY_BOUND);
 	}
 	
 	@Test
-	public void testSimpleIntTsp() {
-		MapWrapper mw = new MapWrapper(simpleSectors);
-		testSimple(mw, mw.calcTspInt());
-		
-		mw = new MapWrapper(simplePartialSectors);
-		testSimplePartial(mw, mw.calcTspInt());
-		
-		mw = new MapWrapper(simpleAsymSectors);
-		testSimpleAsym(mw, mw.calcTspInt());
+	public void testSimpleOptimizedTsp() {
+		testSolver(new BasicOptimizedTspSolver(simpleSectors), SIMPLE_BOUND);
+		testSolver(new BasicOptimizedTspSolver(simplePartialSectors), PARTIAL_BOUND);
+		testSolver(new BasicOptimizedTspSolver(simpleAsymSectors), ASYM_BOUND);
+		testSolver(new BasicOptimizedTspSolver(simpleSectors, simpleSeeds, false), SEEDS_BOUND);
+		testSolver(new BasicOptimizedTspSolver(simpleSectors, simpleSeeds, true), SEEDS_ONLY_BOUND);
+		testSolver(new BasicOptimizedTspSolver(simplePartialSectors, simpleSeeds, false), PARTIAL_BOUND);
+		testSolver(new BasicOptimizedTspSolver(simplePartialSectors, simpleSeeds, true), PARTIAL_SEEDS_ONLY_BOUND);
 	}
 	
 	@Test
 	public void testSimpleTspMulti(){
-		MapWrapper mw = new MapWrapper(simpleSectors);
-		testSimple(mw, mw.calcTspMulti()); 
-		
-		mw = new MapWrapper(simplePartialSectors);
-		testSimplePartial(mw, mw.calcTspMulti());
-		
-		mw = new MapWrapper(simpleAsymSectors);
-		testSimpleAsym(mw, mw.calcTspMulti());
+		testSolver(new MultiTspSolver(simpleSectors), SIMPLE_BOUND);
+		testSolver(new MultiTspSolver(simplePartialSectors), PARTIAL_BOUND);
+		testSolver(new MultiTspSolver(simpleAsymSectors), ASYM_BOUND);
+		testSolver(new MultiTspSolver(simpleSectors, simpleSeeds, false), SEEDS_BOUND);
+		testSolver(new MultiTspSolver(simpleSectors, simpleSeeds, true), SEEDS_ONLY_BOUND);
+		testSolver(new MultiTspSolver(simplePartialSectors, simpleSeeds, false), PARTIAL_BOUND);
+		testSolver(new MultiTspSolver(simplePartialSectors, simpleSeeds, true), PARTIAL_SEEDS_ONLY_BOUND);
 	}
 	
 	@Test
-	public void testSimpleTspMultiInt(){
-		MapWrapper mw = new MapWrapper(simpleSectors);
-		testSimple(mw, mw.calcTspMultiInt()); 
-		
-		mw = new MapWrapper(simplePartialSectors);
-		testSimplePartial(mw, mw.calcTspMultiInt());
-		
-		mw = new MapWrapper(simpleAsymSectors);
-		testSimpleAsym(mw, mw.calcTspMultiInt());
+	public void testSimpleTspMultiOptimized(){
+		testSolver(new MultiOptimizedTspSolver(simpleSectors), SIMPLE_BOUND);
+		testSolver(new MultiOptimizedTspSolver(simplePartialSectors), PARTIAL_BOUND);
+		testSolver(new MultiOptimizedTspSolver(simpleAsymSectors), ASYM_BOUND);
+		testSolver(new MultiOptimizedTspSolver(simpleSectors, simpleSeeds, false), SEEDS_BOUND);
+		testSolver(new MultiOptimizedTspSolver(simpleSectors, simpleSeeds, true), SEEDS_ONLY_BOUND);
+		testSolver(new MultiOptimizedTspSolver(simplePartialSectors, simpleSeeds, false), PARTIAL_BOUND);
+		testSolver(new MultiOptimizedTspSolver(simplePartialSectors, simpleSeeds, true), PARTIAL_SEEDS_ONLY_BOUND);
 	}
 	
 	@Test
 	public void testSimpleTspForkJoin(){
-		MapWrapper mw = new MapWrapper(simpleSectors);
-		testSimple(mw, mw.calcTspForkJoin());
-		
-		mw = new MapWrapper(simplePartialSectors);
-		testSimplePartial(mw, mw.calcTspForkJoin());
-		
-		mw = new MapWrapper(simpleAsymSectors);
-		testSimpleAsym(mw, mw.calcTspForkJoin());
+		testSolver(new ForkJoinTspSolver(simpleSectors), SIMPLE_BOUND);
+		testSolver(new ForkJoinTspSolver(simplePartialSectors), PARTIAL_BOUND);
+		testSolver(new ForkJoinTspSolver(simpleAsymSectors), ASYM_BOUND);
+		testSolver(new MultiTspSolver(simpleSectors, simpleSeeds, false), SEEDS_BOUND);
+		testSolver(new MultiTspSolver(simpleSectors, simpleSeeds, true), SEEDS_ONLY_BOUND);
+		testSolver(new MultiTspSolver(simplePartialSectors, simpleSeeds, false), PARTIAL_BOUND);
+		testSolver(new MultiTspSolver(simplePartialSectors, simpleSeeds, true), PARTIAL_SEEDS_ONLY_BOUND);
 	}
 	
-	@Test
-	public void testSeedTsp(){
-		MapWrapper mw = new MapWrapper(simpleSectors, simpleSeeds, false);
-		testSimple(mw, mw.calcTsp());
-		
-		mw = new MapWrapper(simpleSectors, simpleSeeds, true);
-		testSimpleSeedsOnly(mw, mw.calcTsp());
-		
-		mw = new MapWrapper(simplePartialSectors, simpleSeeds, false);
-		testSimplePartial(mw, mw.calcTsp());
-		
-		mw = new MapWrapper(simplePartialSectors, simpleSeeds, true);
-		testSimplePartialSeedsOnly(mw, mw.calcTsp());
-	}
-	
-	@Test
-	public void testSeedTspInt(){
-		MapWrapper mw = new MapWrapper(simpleSectors, simpleSeeds, false);
-		testSimple(mw, mw.calcTspInt());
-		
-		mw = new MapWrapper(simpleSectors, simpleSeeds, true);
-		testSimpleSeedsOnly(mw, mw.calcTspInt());
-		
-		mw = new MapWrapper(simplePartialSectors, simpleSeeds, false);
-		testSimplePartial(mw, mw.calcTspInt());
-		
-		mw = new MapWrapper(simplePartialSectors, simpleSeeds, true);
-		testSimplePartialSeedsOnly(mw, mw.calcTspInt());
-	}
-	
-	@Test
-	public void testSeedTspMulti(){
-		MapWrapper mw = new MapWrapper(simpleSectors, simpleSeeds, false);
-		testSimple(mw, mw.calcTspMulti());
-		
-		mw = new MapWrapper(simpleSectors, simpleSeeds, true);
-		testSimpleSeedsOnly(mw, mw.calcTspMulti());
-		
-		mw = new MapWrapper(simplePartialSectors, simpleSeeds, false);
-		testSimplePartial(mw, mw.calcTspMulti());
-		
-		mw = new MapWrapper(simplePartialSectors, simpleSeeds, true);
-		testSimplePartialSeedsOnly(mw, mw.calcTspMulti());
-	}
-	
-	@Test
-	public void testSeedTspMultiInt(){
-		MapWrapper mw = new MapWrapper(simpleSectors, simpleSeeds, false);
-		testSimple(mw, mw.calcTspMultiInt());
-		
-		mw = new MapWrapper(simpleSectors, simpleSeeds, true);
-		testSimpleSeedsOnly(mw, mw.calcTspMultiInt());
-		
-		mw = new MapWrapper(simplePartialSectors, simpleSeeds, false);
-		testSimplePartial(mw, mw.calcTspMultiInt());
-		
-		mw = new MapWrapper(simplePartialSectors, simpleSeeds, true);
-		testSimplePartialSeedsOnly(mw, mw.calcTspMultiInt());
-	}
-	
-	@Test
-	public void testSeedTspForkJoin(){
-		MapWrapper mw = new MapWrapper(simpleSectors, simpleSeeds, false);
-		testSimple(mw, mw.calcTspForkJoin());
-		
-		mw = new MapWrapper(simpleSectors, simpleSeeds, true);
-		testSimpleSeedsOnly(mw, mw.calcTspForkJoin());
-		
-		mw = new MapWrapper(simplePartialSectors, simpleSeeds, false);
-		testSimplePartial(mw, mw.calcTspForkJoin());
-		
-		mw = new MapWrapper(simplePartialSectors, simpleSeeds, true);
-		testSimplePartialSeedsOnly(mw, mw.calcTspForkJoin());
-	}
-	
-	private void testSimple(MapWrapper mw, List<Sector> route){
-		final int LENGTH = 6;
-		logger.info("Bound for " + route + " " + mw.getBoundForPath(route));
-		assertEquals("Incorrect bound for simple", mw.getBoundForPath(route), LENGTH);
-	}
-	
-	private void testSimpleAsym(MapWrapper mw, List<Sector> route){
-		final int LENGTH = 6;
-		logger.info("Bound for " + route + " " + mw.getBoundForPath(route));
-		assertEquals("Incorrect bound for simple", mw.getBoundForPath(route), LENGTH);
-	}
-	
-	private void testSimplePartial(MapWrapper mw, List<Sector> route){
-		final int LENGTH = 8;
-		assertEquals("Incorrect bound for simple incomplete", mw.getBoundForPath(route), LENGTH);
-	}
-	
-	private void testSimpleSeedsOnly(MapWrapper mw, List<Sector> route){
-		final int LENGTH = 6;
-		assertEquals("Incorrect bound for simple with starting seeds only", mw.getBoundForPath(route), LENGTH);
-	}
-	
-	private void testSimplePartialSeedsOnly(MapWrapper mw, List<Sector> route){
-		final int LENGTH = 9;
-		assertEquals("Incorrect bound for simple partial with starting seeds only", mw.getBoundForPath(route), LENGTH);
+	private void testSolver(TspSolver solver, int expectedBound){
+		List<Sector> route = solver.solve();
+		logger.info("Bound for " + route + " " + solver.getBoundForPath(route));
+		assertEquals("Incorrect bound for simple", solver.getBoundForPath(route), expectedBound);
 	}
 }
