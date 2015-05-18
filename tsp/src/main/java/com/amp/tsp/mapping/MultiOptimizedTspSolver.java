@@ -13,7 +13,6 @@ import java.util.concurrent.PriorityBlockingQueue;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
-import java.util.logging.Logger;
 
 public class MultiOptimizedTspSolver extends OptimizedTspSolver {
 
@@ -158,28 +157,15 @@ public class MultiOptimizedTspSolver extends OptimizedTspSolver {
 							curr.addNode(s);
 						}
 						synchronized(theSolver){
-							//this corrupts usedSectors, but no problem since we continue after this
 							int currBound = getBoundForPath(curr.getPath(), usedSectorsSwap);
-							logger.info("Full path (" + currBound + ") " + TspUtilities.routeString(curr.getPath(), sectorList));
 							if(currBound < bound.get()){
+								logger.info("Full path (" + currBound + ") " + TspUtilities.routeString(curr.getPath(), sectorList));
 								bestPath.set(curr.getPath());
 								bound.set(currBound);
 							}
 						}
 						continue;
 					}
-					
-					for(byte i = 1; i <= numSectors; i++){
-						if(!usedSectors[i]){
-							byte[] newPath = Arrays.copyOf(curr.getPath(), numSectors);
-							newPath[curr.getLength()] = i;
-							int newBound = getBoundForPath(newPath, usedSectorsSwap);
-							if(newBound <= bound.get()){
-								queue.add(new TspNode2(newBound, newPath, curr.getEnding(), curr.getLength() + 1));
-							}
-						}
-					}
-					continue;
 				}
 				
 				//Add all next steps to queue (which will sort them by bound)
@@ -194,6 +180,8 @@ public class MultiOptimizedTspSolver extends OptimizedTspSolver {
 					}
 				}
 			}
+			
+			System.gc();
 		}
 	}
 }

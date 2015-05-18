@@ -6,6 +6,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+/**
+ * This solver uses a version of getBoundForPath that operates on
+ * a byte[] instead of a List<Sector> for performance.
+ * @author alex
+ */
 public abstract class OptimizedTspSolver extends TspSolver {
 	//bounds optimization variables
 	protected final Sector[] sectorList;
@@ -76,32 +81,34 @@ public abstract class OptimizedTspSolver extends TspSolver {
 			Arrays.fill(usedSectors, false);
 			
 			//sum the cost of each step so far and populate usedSectors
-			int i = 0;
-			usedSectors[path[i]] = true;
-			while(i+1 < numSectors && path[i] > 0 && path[i+1] > 0){
-				bound += getDistance(sectorList[path[i]], sectorList[path[i+1]]);
-				usedSectors[path[i+1]] = true;
-				i++;
+			usedSectors[path[0]] = true;
+			int first, second;
+			for(first = 0, second=1; second < numSectors ; first++, second++){
+				if(path[second] == 0){
+					break;
+				}
+				bound += getDistance(sectorList[path[first]], sectorList[path[second]]);
+				usedSectors[path[second]] = true;
 			}
 			
 			//if this is the complete path, we're done
-			if(i+1 == numSectors){
+			if(second == numSectors){
 				return bound;
 			}
 			
 			//then add the minimum distance out from each remaining nodes
-			for(int j = 1; j <= numSectors ; j++){
+			for(int i = 1; i <= numSectors ; i++){
 				//if we've already traveled to this sector, skip it
-				if(usedSectors[j]) continue;
+				if(usedSectors[i]) continue;
 				
 				//otherwise, find the nearest sector we haven't visited
 				int lowest = Integer.MAX_VALUE;
-				for(int k = 1; k <= numSectors ; k++){
+				for(int j = 1; j <= numSectors ; j++){
 					//if you can't get from j to k, skip it
-					if(!shortestPaths.get(sectorList[j]).containsKey(sectorList[k])) continue;
+					if(!shortestPaths.get(sectorList[i]).containsKey(sectorList[j])) continue;
 					//if we've visited it, skip it unless it's the last sector in our path
-					if(usedSectors[k] && k != path[i]) continue;
-					lowest = Math.min(shortestPaths.get(sectorList[k]).get(sectorList[j]), lowest);
+					if(usedSectors[j] && j != path[first]) continue;
+					lowest = Math.min(shortestPaths.get(sectorList[j]).get(sectorList[i]), lowest);
 				}
 				bound += lowest;
 			}
