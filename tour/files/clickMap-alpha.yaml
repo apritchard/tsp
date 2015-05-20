@@ -1,0 +1,40 @@
+!com.amp.tsp.parse.YamlClickMap
+points: 
+   DS9: !com.amp.tsp.parse.YamlPoint
+      x: 1216
+      y: 934
+   Algira: !com.amp.tsp.parse.YamlPoint
+      x: 1039
+      y: 1099
+   Tellar: !com.amp.tsp.parse.YamlPoint
+      x: 1672
+      y: 565
+   Arawath: !com.amp.tsp.parse.YamlPoint
+      x: 796
+      y: 940
+   Betazed: !com.amp.tsp.parse.YamlPoint
+      x: 1621
+      y: 1078
+   Defera: !com.amp.tsp.parse.YamlPoint
+      x: 1093
+      y: 736
+   Tzenketh: !com.amp.tsp.parse.YamlPoint
+      x: 1309
+      y: 721
+   Ferenginar: !com.amp.tsp.parse.YamlPoint
+      x: 1213
+      y: 394
+   Chapel: !com.amp.tsp.parse.YamlPoint
+      x: 1666
+      y: 871
+   Corwin: !com.amp.tsp.parse.YamlPoint
+      x: 1444
+      y: 1009
+   Breen: !com.amp.tsp.parse.YamlPoint
+      x: 811
+      y: 415
+   Mizar: !com.amp.tsp.parse.YamlPoint
+      x: 1444
+      y: 727
+startingPoints: 
+- DS9

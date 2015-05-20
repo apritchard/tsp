@@ -1,0 +1,76 @@
+!com.amp.tsp.parse.YamlClickMap
+endingPoints: 
+- Zone Exit
+points: 
+   Pheben: !com.amp.tsp.parse.YamlPoint
+      x: 1632
+      y: 871
+   New Romulus: !com.amp.tsp.parse.YamlPoint
+      x: 1389
+      y: 751
+   Alini: !com.amp.tsp.parse.YamlPoint
+      x: 1509
+      y: 289
+   Warp Point 1: !com.amp.tsp.parse.YamlPoint
+      x: 843
+      y: 568
+   Qo'noS: !com.amp.tsp.parse.YamlPoint
+      x: 1422
+      y: 1069
+   Drozana: !com.amp.tsp.parse.YamlPoint
+      x: 1044
+      y: 1111
+   Khitomer: !com.amp.tsp.parse.YamlPoint
+      x: 1407
+      y: 907
+   Sanek: !com.amp.tsp.parse.YamlPoint
+      x: 1629
+      y: 1192
+   Archanis: !com.amp.tsp.parse.YamlPoint
+      x: 1179
+      y: 1033
+   Iconia: !com.amp.tsp.parse.YamlPoint
+      x: 1695
+      y: 628
+   Nimbus: !com.amp.tsp.parse.YamlPoint
+      x: 987
+      y: 277
+   Virinat: !com.amp.tsp.parse.YamlPoint
+      x: 1218
+      y: 787
+   Vendor: !com.amp.tsp.parse.YamlPoint
+      x: 1188
+      y: 502
+   Gamma Eridon: !com.amp.tsp.parse.YamlPoint
+      x: 1521
+      y: 757
+   Vorn: !com.amp.tsp.parse.YamlPoint
+      x: 1659
+      y: 439
+   Orion: !com.amp.tsp.parse.YamlPoint
+      x: 870
+      y: 730
+   Traelus: !com.amp.tsp.parse.YamlPoint
+      x: 951
+      y: 1255
+   Zone Exit: !com.amp.tsp.parse.YamlPoint
+      x: 832
+      y: 570
+   Risa: !com.amp.tsp.parse.YamlPoint
+      x: 873
+      y: 874
+   Lirss: !com.amp.tsp.parse.YamlPoint
+      x: 1305
+      y: 292
+   Mylasa: !com.amp.tsp.parse.YamlPoint
+      x: 1470
+      y: 634
+   Argelius: !com.amp.tsp.parse.YamlPoint
+      x: 1077
+      y: 655
+   Teneebia: !com.amp.tsp.parse.YamlPoint
+      x: 867
+      y: 502
+startingPoints: []
+warpPoints: 
+- Warp Point 1

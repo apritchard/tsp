@@ -1,0 +1,288 @@
+<!doctype html>
+
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>The Traveling Starship Problem</title>
+	<meta name="description" content="Using a traveling salesman algorithm to find optimal solutions to Tour the Galaxy mission in Star Trek Online">
+	<meta name="author" content="Alex Pritchard">
+	
+	<link rel="stylesheet" href="css/styles.css">
+</head>
+
+<body>
+	<h1>Tour The Galaxy</h1>
+	<h2>The Problem</h2>
+	<p>Tour the Galaxy is a Star Trek Online mission that asks a player to fly to as many star systems as they can in a 15 minute window. The available systems are specified by the mission and the more of them a player reaches, the better the rewards. However, there is not enough time to easily fly to them all. A few strategies can be employed to increase ship speed, but this page focuses on the algorithmic problem of devising the shortest travel route between the systems.</p>
+	
+	<h2>The Solution(s)</h2>
+	<p>For a short video demonstrating how the below data was gathered, please visit <a href="https://www.youtube.com/watch?v=tZWqS0-JmX8">The Youtubes</a>.</p>
+	<p>Want to make your own routes? <a href="files/TravelingStarshipSolver.jar" download>Download the program</a>. I made this for my own amusement, but if you find any bugs, feel free to let me know (or fix them yourself!) through my contact info at the <a href="https://github.com/apritchard/tsp">github repo</a>.<p>
+	<ul>
+		<li><a href="#standalone">Standalone solutions for each quadrant</a></li>
+		<li><a href="#transwarp">Shortest paths that begin at Transwarp destinations</a></li>
+		<li><a href="#zoneboundary">Shortest paths that start or end at easily accessible zone boundaries</a></li>
+		<li><a href="#summary">TL;DR Show me all the numbers</a></li>
+	</ul>
+	<p>I've used the following two images to perform a number of shortest path analyses based on pixel distances. The Tour the Galaxy destinations are marked in red on the map to help me click them when generating paths.</p>
+	<figure>
+		<img class="half" src="images/alpha-quadrant.PNG" title = "Alpha Quadrant" alt="Alpha Quadrant">
+		<img class="half" src="images/beta-quadrant.PNG" title = "Beta Quadrant" alt="Beta Quadrant">
+		<figcaption>Base maps for Alpha and Beta Quadrants</figcaption>
+	</figure>
+	
+	<h2 id="standalone">Standalone Solutions</h2>
+	<p>These solutions produce the minimum total pixel distance route that covers all the desired points. The arrows are just for clarity; the routes may be traveled in either direction.</p>
+	<figure id="optimal">
+		<img class="half" src="images/alpha-optimal.PNG" title = "Optimal standalone Alpha Quadrant Solution" alt="Optimal standalone Alpha Quadrant Solution">
+		<img class="half" src="images/beta-optimal.PNG" title = "Optimal standalone Beta Quadrant Solution" alt="Optimal standalone Beta Quadrant Solution">
+		<figcaption>Optimal paths for Alpha and Beta Quadrants individually</figcaption>
+	</figure>
+	<p>A variation on the standalone optimal solution involves using an Instance Change to reposition yourself within the zone. I reran the standalone maps and specified a Warp Point to which all other points can travel for cheap (20px for this calculation).
+	<figure>
+		<img class="half" src="images/alpha-warp-1.gif" title = "Optimal Alpha Quadrant with Instance Change Solution" alt="Optimal Alpha Quadrant with Instance Change Solution">
+		<img class="half" src="images/beta-warp-1.gif" title = "Optimal Beta Quadrant with Instance Change Solution" alt="Optimal Beta Quadrant with Instance Change Solution">
+		<figcaption>Optimal individual quadrant paths in which an Instance Change is used</figcaption>
+	</figure>
+	
+	<table>
+		<caption>Optimal Standalone Routes
+		<tr><th>Quadrant</th><th>Route</th><th>Distance*</th></tr>
+		<tr>
+			<td>Alpha</td>
+			<td>Arawath, Algira, DS9, Corwin, Betazed, Chapel, Tellar, Mizar, Tzenketh, Defera, Ferenginar, Breen</td>
+			<td>2871</td>
+		</tr>
+		<tr>
+			<td>Alpha (Instance)</td>
+			<td>Ferenginar, Breen, Warp Point, DS9, Corwin, Betazed, Chapel, Tellar, Mizar, Tzenketh, Defera, Arawath, Algira</td>
+			<td>2677</td>
+		</tr>
+		<tr>
+			<td>Beta</td>
+			<td>Sanek, Qo'noS, Khitomer, New Romulus, Mylasa, Gamma Eridon, Pheben, Iconia, Vorn, Alini, Lirss, Vendor, Argelius, Virinat, Archanis, Drozana, Traelus, Risa, Orion, Teneebia, Nimbus</td>
+			<td>4068</td>
+		</tr>
+		<tr>
+			<td>Beta (Instance)</td>
+			<td>Traelus, Drozana, Archanis, Virinat, Argelius, Orion, Risa, Warp Point 1, Teneebia, Nimbus, Vendor, Lirss, Alini, Vorn, Iconia, Pheben, Gamma Eridon, Mylasa, New Romulus, Khitomer, Qo'noS, Sanek</td>
+			<td>3870</td>
+		</tr>
+	</table>
+	<p>*Note that these distances are in pixels on the maps for the respective quadrants, which do not have the same scale in this instance.</p>
+	
+	<h2 id="transwarp">Transwarp Solutions</h2>
+	<p>Most players will have at least one transwarp available during the course of this mission. These images compare routes with different transwarp options. The idea is that you would travel the optimal route for one quadrant, then transwarp to the other quadrant and follow the most optimal route given your starting point.</p>
+	
+	<h3>Transwarp to Alpha Quadrant</h3>
+	<p>In these examples, you follow the <a href="#optimal">optimal Beta Quadrant solution</a> and then transwarp to the Alpha Quadrant.<p>
+	<figure id="defera">
+		<img class="half" src="images/alpha-optimal-defera.PNG" title="Optimal Alpha Quadrant route starting at Defera" alt="Optimal Alpha Quadrant route starting at Defera">
+		<figcaption>Optimal Alpha Quadrant route starting at Defera</figcaption>
+	</figure>
+	<figure id="ds9">
+		<img class="half" src="images/alpha-optimal-ds9.PNG" title="Optimal Alpha Quadrant route starting at DS9" alt="Optimal Alpha Quadrant route starting at DS9">
+		<figcaption>Optimal Alpha Quadrant route starting at DS9</figcaption>
+	</figure>
+	
+	<table>
+		<caption>Optimal Alpha Quadrant Transwarp Routes
+		<tr><th>Starting Sector</th><th>Route</th><th>Distance</th></tr>
+		<tr>
+			<td>Defera</td>
+			<td>Defera, Arawath, Algira, DS9, Corwin, Betazed, Chapel, Tellar, Mizar, Tzenketh, Ferenginar, Breen</td>
+			<td>2993</td>
+		</tr>
+		<tr>
+			<td>DS9</td>
+			<td>DS9, Algira, Arawath, Defera, Tzenketh, Mizar, Corwin, Betazed, Chapel, Tellar, Ferenginar, Breen</td>
+			<td>3121</td>
+		</tr>
+	</table>
+	
+	<h3>Transwarp to Beta Quadrant</h3>
+	<p>In these examples, you follow the <a href="#optimal">optimal Alpha Quadrant solution</a> and then transwarp to the Beta Quadrant. One point of note is that, unlike all the other transwarps, "Beta Quadrant" transwarp takes you directly to Sector Space, which saves you time not reflected in this data.<p>
+	<figure id="sol">
+		<img class="half" src="images/beta-optimal-sol.PNG" title="Optimal Beta Quadrant route starting at Sol System" alt="Optimal Beta Quadrant route starting at Sol System">
+		<figcaption>Optimal Beta Quadrant route starting at Sol System</figcaption>
+	</figure>
+	<figure id="bqtrans">
+		<img class="half" src="images/beta-optimal-bqtrans.PNG" title="Optimal Beta Quadrant route starting at Beta Quadrant Transwarp" alt="Optimal Beta Quadrant route starting at Beta Quadrant Transwarp">
+		<figcaption>Optimal Beta Quadrant route starting at Beta Quadrant Transwarp</figcaption>
+	</figure>
+	<figure id="sbk7">
+		<img class="half" src="images/beta-optimal-sbk7.PNG" title="Optimal Beta Quadrant route starting at Starbase K7" alt="Optimal Beta Quadrant route starting at Starbase K7">
+		<figcaption>Optimal Beta Quadrant route starting at Starbase K7</figcaption>
+	</figure>
+	<figure id="sb39">
+		<img class="half" src="images/beta-optimal-sb39.PNG" title="Optimal Beta Quadrant route starting at Starbase 39" alt="Optimal Beta Quadrant route starting at Starbase 39">
+		<figcaption>Optimal Beta Quadrant route starting at Starbase 39</figcaption>
+	</figure>
+
+	<table>
+		<caption>Optimal Beta Quadrant Transwarp Routes
+		<tr><th>Starting Sector</th><th>Route</th><th>Distance</th></tr>
+		<tr>
+			<td>Sol System</td>
+			<td>Sol System - Transwarp, Teneebia, Orion, Risa, Traelus, Drozana, Archanis, Virinat, Argelius, Vendor, Nimbus, Lirss, Alini, Vorn, Iconia, Pheben, Gamma Eridon, Mylasa, New Romulus, Khitomer, Qo'noS, Sanek</td>
+			<td>4249</td>
+		</tr>
+		<tr>
+			<td>Beta Quadrant Transwarp</td>
+			<td>Beta Sector - Transwarp, Khitomer, Qo'noS, Sanek, Pheben, Gamma Eridon, New Romulus, Mylasa, Iconia, Vorn, Alini, Lirss, Vendor, Argelius, Virinat, Archanis, Drozana, Traelus, Risa, Orion, Teneebia, Nimbus</td>
+			<td>4277</td>
+		</tr>
+		<tr>
+			<td>Starbase K7</td>
+			<td>Starbase K7 - Transwarp, Traelus, Drozana, Archanis, Virinat, Argelius, Risa, Orion, Teneebia, Nimbus, Vendor, Lirss, Alini, Vorn, Iconia, Pheben, Gamma Eridon, Mylasa, New Romulus, Khitomer, Qo'noS, Sanek</td>
+			<td>4297</td>
+		</tr>
+		<tr>
+			<td>Starbase 39</td>
+			<td>Starbase 39 - Transwarp, Vendor, Argelius, Virinat, Archanis, Drozana, Traelus, Risa, Orion, Teneebia, Nimbus, Lirss, Alini, Vorn, Iconia, Pheben, Gamma Eridon, Mylasa, New Romulus, Khitomer, Qo'noS, Sanek</td>
+			<td>4303</td>
+		</tr>
+	</table>
+	<h2 id="zoneboundary">Zone Boundary Solutions</h2>
+	<p>A number of Transwarps are inconveniently located or require you to pass a second loading screen to reach Sector Space. This motivated me to investigate a couple of Zone Boundary solutions as well. These solutions require both a modified Alpha and Beta Quadrant map for each approach.</p>
+	<p><em>NOTE: Because of the way my program specifies required nodes, the first half of the routes are listed in reverse. Just follow them backward.</em></p>
+	<h3>Tellar -> Teneebia</h3>
+	<p>Zoning out from the top of the Alpha Quadrant puts you almost right next to Teneebia and is not too far from Tellar, so that is the only Alpha -> Beta zone transition I evaluated so far.</p>
+	<figure id="tellar">
+		<img class="half" src="images/alpha-optimal-zone-tellar.PNG" title="Optimal Beta Quadrant route ending at zone boundary near Tellar" alt="Optimal Beta Quadrant route ending at zone boundary near Tellar">
+		<img class="half" src="images/beta-optimal-zone-tellar.PNG" title="Optimal Alpha Quadrant route starting from zone boundery near Tellar" alt="Optimal Alpha Quadrant route starting from zone boundery near Tellar">
+		<figcaption>Route beginning in Alpha Quadrant and crossing Zone Boundary to the right of Tellar, continuing in Alpha Quadrant</figcaption>
+	</figure>
+	<h3>Teneebia -> Tellar</h3>
+	<p>Very similar to the above, this one is slightly different in that your zone in location on the Alpha quadrant is not as favorable.</p>
+	<figure id="teneebia">
+		<img class="half" src="images/alpha-optimal-zone-teneebia.PNG" title="Optimal Beta Quadrant route starting at zone boundary near Teneebia" alt="Optimal Beta Quadrant route starting at zone boundary near Teneebia">	
+		<img class="half" src="images/beta-optimal-zone-teneebia.PNG" title="Optimal Alpha Quadrant route ending at the zone boundery near Teneebia" alt="Optimal Alpha Quadrant route ending at the zone boundery near Teneebia">
+		<figcaption>Route beginning in Beta Quadrant and crossing Zone Boundary to the left of Teneebia, continuing in Beta Quadrant</figcaption>
+	</figure>
+	<h3>Orion -> Chapel</h3>
+	<figure id="orion">
+		<img class="half" src="images/alpha-optimal-zone-orion.PNG" title="Optimal Beta Quadrant route starting at zone boundary near Orion" alt="Optimal Beta Quadrant route starting at zone boundary near Orion">	
+		<img class="half" src="images/beta-optimal-zone-orion.PNG" title="Optimal Alpha Quadrant route ending at the zone boundery near Orion" alt="Optimal Alpha Quadrant route ending at the zone boundery near Orion">
+		<figcaption>Route beginning in Beta Quadrant and crossing Zone Boundary to the left of Orion, continuing in Beta Quadrant</figcaption>
+	</figure>
+	<h3>Risa -> Betazed</h3>
+	<figure id="risa">
+		<img class="half" src="images/alpha-optimal-zone-risa.PNG" title="Optimal Beta Quadrant route starting at zone boundary near Risa" alt="Optimal Beta Quadrant route starting at zone boundary near Risa">	
+		<img class="half" src="images/beta-optimal-zone-risa.PNG" title="Optimal Alpha Quadrant route ending at the zone boundery near Risa" alt="Optimal Alpha Quadrant route ending at the zone boundery near Risa">
+		<figcaption>Route beginning in Beta Quadrant and crossing Zone Boundary to the left of Risa, continuing in Beta Quadrant</figcaption>
+	</figure>
+	
+	<table>
+		<caption>Optimal Zone Boundary Routes
+		<tr><th>Zone Systems</th><th>Route</th><th>Distance: Alpha</th><th>Distance: Beta</th></tr>
+		<tr>
+			<td>Tellar -> Teneebia</td>
+			<td>Breen, Ferenginar, Mizar, Tzenketh, Defera, Arawath, Algira, DS9, Corwin, Betazed, Chapel, Tellar, ZONE BOUNDARY, Teneebia, Orion, Risa, Traelus, Drozana, Archanis, Virinat, Argelius, Vendor, Nimbus, Lirss, Alini, Vorn, Iconia, Pheben, Gamma Eridon, Mylasa, New Romulus, Khitomer, Qo'noS, Sanek</td>
+			<td>3106</td>
+			<td>4215</td>
+		</tr>
+		<tr>
+			<td>Teneebia -> Tellar</td>
+			<td>Sanek, Qo'noS, Khitomer, New Romulus, Mylasa, Gamma Eridon, Pheben, Iconia, Vorn, Alini, Lirss, Nimbus, Vendor, Argelius, Virinat, Archanis, Drozana, Traelus, Risa, Orion, Teneebia, ZONE BOUNDARY, Tellar, Chapel, Betazed, Corwin, DS9, Algira, Arawath, Defera, Tzenketh, Mizar, Ferenginar, Breen</td>
+			<td>3149</td>
+			<td>4221</td>
+		</tr>
+		<tr>
+			<td>Orion -> Chapel</td>
+			<td>Sanek, Qo'noS, Khitomer, New Romulus, Mylasa, Gama Eridon, Pheben, Iconia, Vorn, Alini, Lirss, Vendor, Nimbus, Teneebia, Argelius, Virinat, Archanis, Drozana, Traelus, Risa, Orion, ZONE BOUNDARY, Chapel, Betazed, Corwin, DS9, Algira, Arawath, Defera, Tzenketh, Mizar, Tellar, Ferenginar, Breen</td>
+			<td>3146</td>
+			<td>4243</td>
+		</tr>
+		<tr>
+			<td>Risa -> Betazed</td>
+			<td>Traelus, Drozana, Archanis, Virinat, New Romulus, Khitomer, Qo'noS, Sanek, Pheben, Gamma Eridon, Mylasa, Iconia, Vorn, Alini, Lirss, Vendor, Nimbus, Teneebia, Argelius, Orion, Risa, ZONE BOUNDARY, Betazed, Corwin, Chapel, Tellar, Mizar, Tzenketh, DS9, Algira, Arawath, Defera, Ferenginar, Breen</td>
+			<td>3192</td>
+			<td>4212</td>
+		</tr>
+	</table>
+	<h2 id="summary">Summary</h2>
+	<p>To try and normalize this data, I used a teammate to measure some distances in lightyears and compare them to pixel distances. For the Alpha Quadrant map, we came up with a value of about 8.39 pixels per lightyear, and for the Beta Quadrant map, about 6.14 pixels per lightyear. I then combine both paths to find a total distance metric.</p>
+	<table>
+		<tr><th>Strategy</th><th>Route</th><th>Alpha px</th><th>Delta px</th><th>Total LY</th></tr>
+		<tr>
+			<td><a href="#defera">TW to Defera</a></td>
+			<td>Sanek, Qo'noS, Khitomer, New Romulus, Mylasa, Gamma Eridon, Pheben, Iconia, Vorn, Alini, Lirss, Vendor, Argelius, Virinat, Archanis, Drozana, Traelus, Risa, Orion, Teneebia, Nimbus, TRANSWARP to Defera, Defera, Arawath, Algira, DS9, Corwin, Betazed, Chapel, Tellar, Mizar, Tzenketh, Ferenginar, Breen </td>
+			<td>2993</td>
+			<td>4068</td>
+			<td>1018.9</td>
+		</tr>
+		<tr>
+			<td><a href="#sol">TW to Sol</a></td>
+			<td>Arawath, Algira, DS9, Corwin, Betazed, Chapel, Tellar, Mizar, Tzenketh, Defera, Ferenginar, Breen, TRANSWARP to Sol, Teneebia, Orion, Risa, Traelus, Drozana, Archanis, Virinat, Argelius, Vendor, Nimbus, Lirss, Alini, Vorn, Iconia, Pheben, Gamma Eridon, Mylasa, New Romulus, Khitomer, Qo'noS, Sanek</td>
+			<td>2871</td>
+			<td>4249</td>
+			<td>1033.8</td>
+		</tr>		
+		<tr>
+			<td><a href="#ds9">TW to DS9</a></td>
+			<td>Sanek, Qo'noS, Khitomer, New Romulus, Mylasa, Gamma Eridon, Pheben, Iconia, Vorn, Alini, Lirss, Vendor, Argelius, Virinat, Archanis, Drozana, Traelus, Risa, Orion, Teneebia, Nimbus, TRANSWARP to DS9, DS9, Algira, Arawath, Defera, Tzenketh, Mizar, Corwin, Betazed, Chapel, Tellar, Ferenginar, Breen</td>
+			<td>3121</td>
+			<td>4068</td>
+			<td>1034.1</td>
+		</tr>
+		<tr>
+			<td><a href="#bqtrans">TW to Beta Quadrant</a></td>
+			<td>Arawath, Algira, DS9, Corwin, Betazed, Chapel, Tellar, Mizar, Tzenketh, Defera, Ferenginar, Breen, TRANSWARP to Beta Quadrant, Khitomer, Qo'noS, Sanek, Pheben, Gamma Eridon, New Romulus, Mylasa, Iconia, Vorn, Alini, Lirss, Vendor, Argelius, Virinat, Archanis, Drozana, Traelus, Risa, Orion, Teneebia, Nimbus</td>
+			<td>2871</td>
+			<td>4277</td>
+			<td>1038.3</td>
+		</tr>
+		<tr>
+			<td><a href="#sbk7">TW to K7</a></td>
+			<td>Arawath, Algira, DS9, Corwin, Betazed, Chapel, Tellar, Mizar, Tzenketh, Defera, Ferenginar, Breen, TRANSWARP to K7, Traelus, Drozana, Archanis, Virinat, Argelius, Risa, Orion, Teneebia, Nimbus, Vendor, Lirss, Alini, Vorn, Iconia, Pheben, Gamma Eridon, Mylasa, New Romulus, Khitomer, Qo'noS, Sanek</td>
+			<td>2871</td>
+			<td>4297</td>
+			<td>1041.6</td>
+		</tr>	
+		<tr>
+			<td><a href="#sb39">TW to 39</a></td>
+			<td>Arawath, Algira, DS9, Corwin, Betazed, Chapel, Tellar, Mizar, Tzenketh, Defera, Ferenginar, Breen, TRANSWARP to 39, Vendor, Argelius, Virinat, Archanis, Drozana, Traelus, Risa, Orion, Teneebia, Nimbus, Lirss, Alini, Vorn, Iconia, Pheben, Gamma Eridon, Mylasa, New Romulus, Khitomer, Qo'noS, Sanek</td>
+			<td>2871</td>
+			<td>4303</td>
+			<td>1042.6</td>
+		</tr>	
+		<tr>
+			<td><a href="#tellar">Tellar -> Teneebia</a></td>
+			<td>Breen, Ferenginar, Mizar, Tzenketh, Defera, Arawath, Algira, DS9, Corwin, Betazed, Chapel, Tellar, ZONE BOUNDARY, Teneebia, Orion, Risa, Traelus, Drozana, Archanis, Virinat, Argelius, Vendor, Nimbus, Lirss, Alini, Vorn, Iconia, Pheben, Gamma Eridon, Mylasa, New Romulus, Khitomer, Qo'noS, Sanek</td>
+			<td>3106</td>
+			<td>4215</td>
+			<td>1056.3</td>
+		</tr>
+		<tr>
+			<td><a href="#teneebia">Teneebia -> Tellar</a></td>
+			<td>Sanek, Qo'noS, Khitomer, New Romulus, Mylasa, Gamma Eridon, Pheben, Iconia, Vorn, Alini, Lirss, Nimbus, Vendor, Argelius, Virinat, Archanis, Drozana, Traelus, Risa, Orion, Teneebia, ZONE BOUNDARY, Tellar, Chapel, Betazed, Corwin, DS9, Algira, Arawath, Defera, Tzenketh, Mizar, Ferenginar, Breen</td>
+			<td>3149</td>
+			<td>4221</td>
+			<td>1062.4</td>
+		</tr>
+		<tr>
+			<td><a href="#orion">Orion -> Chapel</a></td>
+			<td>Sanek, Qo'noS, Khitomer, New Romulus, Mylasa, Gama Eridon, Pheben, Iconia, Vorn, Alini, Lirss, Vendor, Nimbus, Teneebia, Argelius, Virinat, Archanis, Drozana, Traelus, Risa, Orion, ZONE BOUNDARY, Chapel, Betazed, Corwin, DS9, Algira, Arawath, Defera, Tzenketh, Mizar, Tellar, Ferenginar, Breen</td>
+			<td>3146</td>
+			<td>4243</td>
+			<td>1065.6</td>
+		</tr>
+		<tr>
+			<td><a href="#risa">Risa -> Betazed</a></td>
+			<td>Traelus, Drozana, Archanis, Virinat, New Romulus, Khitomer, Qo'noS, Sanek, Pheben, Gamma Eridon, Mylasa, Iconia, Vorn, Alini, Lirss, Vendor, Nimbus, Teneebia, Argelius, Orion, Risa, ZONE BOUNDARY, Betazed, Corwin, Chapel, Tellar, Mizar, Tzenketh, DS9, Algira, Arawath, Defera, Ferenginar, Breen</td>
+			<td>3192</td>
+			<td>4212</td>
+			<td>1066.0</td>
+		</tr>
+	</table>
+	<p>The main point of note here is that doing optimal Beta Quadrant trumps most other optimization. Transwarping to Defera is faster than transwarping to DS9 by a substantial margin, making that route a clear leader, though starting BQ from Sol system is close enough to optimal that it is a reasonable alternative for people who cannot transwarp to Defera.</p>
+	<p>Another notable consideration is that the TW to Beta Quadrant solution is pretty competitive with other options and requires one fewer zone transfer. I don't know if that zone transfer is worth 20 LY of flying time, but it almost certainly pushes TW to Beta Quadrant into 2nd place. Similarly, the Zone Boundary crossings at the bottom of the list only require one zone transfer, and so could be reasonably competitive if you were not able or interested in using transwarp.</p>
+	
+	<figure>
+		<img class="half" src="images/tour-complete.png" title="Successful Tour" alt="Successful Tour">
+		<figcaption>Successful completion of Tour the Galaxy using the Transwarp to Defera method</figcaption>
+	</figure>
+</body>
+</html>
