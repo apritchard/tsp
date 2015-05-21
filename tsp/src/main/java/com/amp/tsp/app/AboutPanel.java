@@ -16,14 +16,16 @@ import net.miginfocom.swing.MigLayout;
 public class AboutPanel extends JPanel{
 	private static final long serialVersionUID = 1L;
 	private final String GITHUB_LINK = "https://github.com/apritchard/tsp";
+	private final String APP_VERSION = "1.0";
 	
 	public AboutPanel(){
 		setLayout(new MigLayout());
 		
 		StringBuilder sb = new StringBuilder();
-		sb.append("I wrote this program fun fun and to learn about solutions to the traveling salesman problem.");
+		sb.append("Version: ").append(APP_VERSION);
+		sb.append("<br>I wrote this program for fun and to learn about solutions to the traveling salesman problem.");
 		sb.append(" It's a work in progress, and if you're interested in updating to the newest version, the");
-		sb.append(" fastest way to do that is by visiting <a href='" + GITHUB_LINK + "'>github page</a>.");
+		sb.append(" fastest way to do that is by visiting my <a href='" + GITHUB_LINK + "'>github page</a>.");
 		sb.append(" If you find a bug or have feedback, my contact information is available on my github profile.");
 		
 		JTextPane tpAbout = new JTextPane();
@@ -31,11 +33,11 @@ public class AboutPanel extends JPanel{
 	    tpAbout.setOpaque(false);
 	    tpAbout.setEditable(false);
 	    tpAbout.setContentType("text/html");
-	    tpAbout.setText(sb.toString());
 	    tpAbout.setBackground(UIManager.getColor("Label.background"));
 	    tpAbout.setFont(UIManager.getFont("Label.font"));
 	    tpAbout.setBorder(UIManager.getBorder("Label.border"));
 	    tpAbout.setToolTipText(GITHUB_LINK);
+	    tpAbout.setText(sb.toString());
 
 	    tpAbout.addHyperlinkListener(new HyperlinkListener() {
 			

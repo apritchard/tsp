@@ -118,15 +118,19 @@ public class TspPanel extends JPanel implements SelectionListener {
 			}			
 		});
 
-		String instructions = "Press to create or load a map. Your primary monitor will tint, indicating recording is active. "
+		String instructions = "Press to create or load a map. This screen will disappear and your"
+				+ " primary monitor will tint, indicating recording is active. "
+				
 				+ "\nLeft click\tplace node on the map"
-				+ "\nShift-click\tNode required at beginning of path"
-				+ "\nCtrl-click\tNode required at end of path"
-				+ "\nAlt-click\tNode may be warped to (cost in preferences)"
+				+ "\nShift-click\tNode required at beginning of path (fast)"
+				+ "\nCtrl-click\tNode required at end of path (slow)"
+				+ "\nAlt-click\tNode may be warped to (edit cost in preferences)"
 				+ "\nRight-click\tSolve graph (press again to save solved graph)"
 				+ "\nEscape\tCancel map input"
-				+ "\n\nNodes may be either beginning or ending and also a warp node, but cannot be both beginning"
-				+ " and ending. Graphs containing more than 20 nodes may take some time to solve. Ending nodes decrease performance.";
+				
+				+ "\n\nNodes may be either beginning or ending nodes and also a warp node (use alt-shift or alt-ctrl), but"
+				+ " cannot be both beginning and ending nodes at the same time. Graphs containing more than 25 nodes may"
+				+ " not finish in a reasonable amount of time. Ending nodes decrease performance.";
 		
 		JTextArea taInstructions = new JTextArea();
 	    taInstructions.setText(instructions);
@@ -138,10 +142,11 @@ public class TspPanel extends JPanel implements SelectionListener {
 	    taInstructions.setFont(UIManager.getFont("Label.font"));
 	    taInstructions.setBorder(UIManager.getBorder("Label.border"));
 		
-		add(btnNewMap, "wrap");
+		add(taInstructions, "wrap, growx, pushx");
+	    add(btnNewMap, "wrap");
 		add(btnLastMap, "wrap");
 		add(btnLoadMap, "wrap");
-		add(taInstructions, "wrap, growx, pushx");
+
 	}
 
 	@Override
