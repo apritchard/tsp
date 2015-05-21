@@ -171,7 +171,7 @@ public abstract class TspSolver {
 		try{
 			return shortestPaths.get(s1).get(s2);
 		} catch (Exception e){
-			e.printStackTrace();
+			logger.error("No path between " + s1 + " and " + s2 + " found.", e);
 			throw e;
 		}
 	}

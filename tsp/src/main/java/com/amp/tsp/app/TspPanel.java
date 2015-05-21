@@ -69,7 +69,7 @@ public class TspPanel extends JPanel implements SelectionListener {
 						picker.getPoints().put(point.getKey(), p);
 					}
 				} catch (Exception ex){
-					ex.printStackTrace();
+					logger.error("Unable to load last map: " + ex);
 					JOptionPane.showMessageDialog(null, "No previous map found! Either make a new map, change your last map location in preferences, or load a saved map.");
 					getTopLevelAncestor().setVisible(true);
 					picker.dispose();
@@ -111,7 +111,7 @@ public class TspPanel extends JPanel implements SelectionListener {
 						picker.getPoints().put(point.getKey(), p);
 					}
 				} catch (MalformedURLException mue){
-					mue.printStackTrace();
+					logger.error("Unable to load map.", mue);
 				}
 				picker.setVisible(true);
 				

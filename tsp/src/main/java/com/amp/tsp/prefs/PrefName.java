@@ -50,8 +50,7 @@ public enum PrefName {
 			int value = Integer.parseInt(defaultValue.toString());
 			return value;
 		} catch (NumberFormatException nfe){
-			nfe.printStackTrace();
-			logger.info("Int requested from non-int preference value (" + defaultValue + ") on " + toString());
+			logger.error("Int requested from non-int preference value (" + defaultValue + ") on " + toString(), nfe);
 			return 0;
 		}
 	}

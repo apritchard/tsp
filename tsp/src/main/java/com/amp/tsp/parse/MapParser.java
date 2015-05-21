@@ -16,7 +16,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
-import java.util.logging.Level;
+
 import org.apache.log4j.Logger;
 
 import com.amp.tsp.mapping.Sector;
@@ -173,8 +173,7 @@ public class MapParser {
 			}
 			writer.close();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logger.error("Unable to write yaml objects to " + path, e);
 		}
 	}
 	

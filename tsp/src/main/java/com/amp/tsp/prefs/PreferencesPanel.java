@@ -23,11 +23,14 @@ import javax.swing.text.PlainDocument;
 
 import net.miginfocom.swing.MigLayout;
 
+import org.apache.log4j.Logger;
+
 import com.amp.tsp.app.IntegerFilter;
 import com.google.common.base.CaseFormat;
 
 public class PreferencesPanel extends JPanel {
 	private static final long serialVersionUID = 1L;
+	private static final Logger logger = Logger.getLogger(PreferencesPanel.class);
 
 	private static final Preferences prefs = Preferences.userNodeForPackage(PreferencesPanel.class);
 	
@@ -66,6 +69,8 @@ public class PreferencesPanel extends JPanel {
 			case FILE:
 				addDirectory(prefName, false);
 				break;
+			default:
+				logger.error("Unknown type for " + prefName + ": " + prefName.getType());
 			}
 		}
 		
@@ -140,9 +145,8 @@ public class PreferencesPanel extends JPanel {
 		try {
 
 			Class<Enum> enumClass = (Class<Enum>)Class.forName("com.amp.tsp.prefs." + enumClassName);
-			Method m = enumClass.getDeclaredMethod("values", null);
-			
-			Enum[] result = (Enum[])m.invoke(enumClass, null);
+			Method m = enumClass.getDeclaredMethod("values");
+			Enum[] result = (Enum[])m.invoke(enumClass);
 			for(Enum e : result){
 				enumBox.addItem(e.toString());
 			}
@@ -151,7 +155,7 @@ public class PreferencesPanel extends JPanel {
 			add(enumBox, "w 60%, wrap");
 			comboBoxes.put(enumBox, prefName);
 		} catch (Exception e){
-			e.printStackTrace(); //invalid path to enum matchup in PrefName
+			logger.error("Invalid path / enum match for " + prefName + " in PrefName", e);
 		}
 		
 	}

@@ -21,6 +21,8 @@ import javax.swing.UIManager;
 
 import net.miginfocom.swing.MigLayout;
 
+import org.apache.log4j.Logger;
+
 import com.amp.tsp.mapping.Sector;
 import com.amp.tsp.parse.MapParser;
 import com.amp.tsp.prefs.ImageFileType;
@@ -28,6 +30,7 @@ import com.amp.tsp.prefs.PrefName;
 
 public class DisplayImagePanel extends JPanel{
 	private static final long serialVersionUID = 1L;
+	private static final Logger logger = Logger.getLogger(DisplayImagePanel.class);
 
 	public DisplayImagePanel(final List<Sector> path, final BufferedImage image, int distance, 
 			final Map<String, Point> points, final List<String> startPoints, final List<String> endPoints, final List<String> warpPoints){
@@ -95,7 +98,7 @@ public class DisplayImagePanel extends JPanel{
 		try {
 			ImageIO.write(bi, type, file);
 		} catch (IOException e) {
-			e.printStackTrace();
+			logger.error("Unable to save image to " + file, e);
 		}
 	}
 	
