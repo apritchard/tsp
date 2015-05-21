@@ -16,13 +16,12 @@ import net.miginfocom.swing.MigLayout;
 public class AboutPanel extends JPanel{
 	private static final long serialVersionUID = 1L;
 	private final String GITHUB_LINK = "https://github.com/apritchard/tsp";
-	private final String APP_VERSION = "1.0";
 	
 	public AboutPanel(){
 		setLayout(new MigLayout());
 		
 		StringBuilder sb = new StringBuilder();
-		sb.append("Version: ").append(APP_VERSION);
+		sb.append("Version: ").append(TspGui.CURRENT_VERSION);
 		sb.append("<br>I wrote this program for fun and to learn about solutions to the traveling salesman problem.");
 		sb.append(" It's a work in progress, and if you're interested in updating to the newest version, the");
 		sb.append(" fastest way to do that is by visiting my <a href='" + GITHUB_LINK + "'>github page</a>.");
