@@ -17,7 +17,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 import java.util.logging.Level;
-import java.util.logging.Logger;
+import org.apache.log4j.Logger;
 
 import com.amp.tsp.mapping.Sector;
 import com.esotericsoftware.yamlbeans.YamlException;
@@ -28,7 +28,7 @@ import com.esotericsoftware.yamlbeans.YamlWriter;
  * Utility class to contain methods involving parsing maps from yaml files.
  */
 public class MapParser {
-	private static final Logger logger = Logger.getLogger(MapParser.class.getName());
+	private static final Logger logger = Logger.getLogger(MapParser.class);
 	
 	/**
 	 * Parse the provided file into a list of Sectors.  File should be in the following format:
@@ -48,7 +48,7 @@ public class MapParser {
 		List<YamlSector> yamlSectors = readYamlObjects(mapUrl, YamlSector.class);
 		
 		if(yamlSectors == null){
-			logger.severe("No Sector objects found in file " + mapUrl.getPath());
+			logger.error("No Sector objects found in file " + mapUrl.getPath());
 			return null;
 		}
 		
@@ -63,7 +63,7 @@ public class MapParser {
 		for(YamlSector s : yamlSectors){
 			for(Map.Entry<String, String> edge: s.edgeList.entrySet()){
 				if(!sectors.containsKey(edge.getKey())){
-					logger.warning("Unknown edge for " + s.name + " linking to " + edge.getKey());
+					logger.warn("Unknown edge for " + s.name + " linking to " + edge.getKey());
 					continue;
 				}
 
@@ -97,7 +97,7 @@ public class MapParser {
 		List<YamlPath> yamlPaths = readYamlObjects(seedUrl, YamlPath.class);
 		
 		if(yamlPaths == null){
-			logger.warning("No seeds found in file " + seedUrl.getPath());
+			logger.warn("No seeds found in file " + seedUrl.getPath());
 			return null;
 		}
 		
@@ -113,7 +113,7 @@ public class MapParser {
 			List<Sector> path = new ArrayList<>();
 			for(String name : p.path){
 				if(!sectorByName.containsKey(name)){
-					logger.warning("Invalid Seed " + name + " not found in map file; ignoring seed.");
+					logger.warn("Invalid Seed " + name + " not found in map file; ignoring seed.");
 				} else {
 					path.add(sectorByName.get(name));
 				}
@@ -196,11 +196,11 @@ public class MapParser {
             ts = readYamlObjects(reader, clazz);
             
         } catch (URISyntaxException use) {
-        	logger.log(Level.SEVERE, "Invalid file path provided for " + fileUrl.getPath(), use);
+        	logger.error("Invalid file path provided for " + fileUrl.getPath(), use);
         } catch (YamlException ye){
-        	logger.log(Level.SEVERE, "Invalid object interfered with parsing, halting.", ye);
+        	logger.error("Invalid object interfered with parsing, halting.", ye);
         } catch (IOException ioe) {
-			logger.log(Level.SEVERE, "Unable to access file " + fileUrl.getPath() + " with reader.", ioe);
+			logger.error("Unable to access file " + fileUrl.getPath() + " with reader.", ioe);
 		} 
         
         return ts;

@@ -11,7 +11,7 @@ import java.nio.file.Paths;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.logging.Logger;
+import org.apache.log4j.Logger;
 
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
@@ -34,7 +34,7 @@ import com.amp.tsp.prefs.PrefName;
 
 public class TspPanel extends JPanel implements SelectionListener {
 	private static final long serialVersionUID = 1L;
-	private static final Logger logger = Logger.getLogger(TspPanel.class.getName());
+	private static final Logger logger = Logger.getLogger(TspPanel.class);
 	
 	public TspPanel(){
 		super();

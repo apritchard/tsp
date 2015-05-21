@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
-import java.util.logging.Logger;
+import org.apache.log4j.Logger;
 
 import org.junit.Before;
 import org.junit.FixMethodOrder;
@@ -37,7 +37,7 @@ import com.amp.tsp.parse.MapParser;
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class PerformanceTest {
 
-	private static final Logger logger = Logger.getLogger(PerformanceTest.class.getName());
+	private static final Logger logger = Logger.getLogger(PerformanceTest.class);
 	
 	private Set<Sector> moderateSectors, longSectors, betaSectors;
 	private List<List<Sector>> longSeeds;

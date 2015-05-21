@@ -9,12 +9,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
-import java.util.logging.Logger;
+import org.apache.log4j.Logger;
 
 import com.amp.tsp.prefs.PrefName;
 
 public class TspUtilities {
-	private final static Logger logger = Logger.getLogger(TspUtilities.class.getName());
+	private final static Logger logger = Logger.getLogger(TspUtilities.class);
 	
 	
 	/**

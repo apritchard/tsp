@@ -11,7 +11,7 @@ import java.awt.image.BufferedImage;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.logging.Logger;
+import org.apache.log4j.Logger;
 
 import javax.swing.SwingUtilities;
 
@@ -24,7 +24,7 @@ import com.amp.tsp.parse.MapParser;
 import com.amp.tsp.prefs.PrefName;
 
 public class SolveAndDisplayPointListener implements PointListener {
-	private static final Logger logger = Logger.getLogger(SolveAndDisplayPointListener.class.getName());
+	private static final Logger logger = Logger.getLogger(SolveAndDisplayPointListener.class);
 	
 	private SelectionListener selectionListener; 
 	

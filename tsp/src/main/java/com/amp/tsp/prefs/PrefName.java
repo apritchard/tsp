@@ -1,6 +1,6 @@
 package com.amp.tsp.prefs;
 
-import java.util.logging.Logger;
+import org.apache.log4j.Logger;
 import java.util.prefs.Preferences;
 
 public enum PrefName {
@@ -15,7 +15,7 @@ public enum PrefName {
 	APP_HEIGHT("app-height", PrefType.INTEGER, 480, false);
 	
 	private static final Preferences prefs = Preferences.userNodeForPackage(PreferencesPanel.class);	
-	private static final Logger logger = Logger.getLogger(PrefName.class.getName());
+	private static final Logger logger = Logger.getLogger(PrefName.class);
 	
 	private String pathName; 
 	private PrefType type;

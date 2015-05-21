@@ -1,11 +1,8 @@
 package com.amp.tsp.capture;
 
 import java.awt.Color;
-import java.awt.Font;
 import java.awt.Graphics;
-import java.awt.Graphics2D;
 import java.awt.Point;
-import java.awt.RenderingHints;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseAdapter;
@@ -18,7 +15,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.logging.Logger;
+import org.apache.log4j.Logger;
 
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -32,7 +29,7 @@ import com.amp.tsp.parse.YamlPoint;
 
 
 public class SelectionPicker extends BlankFrame {
-	private static final Logger logger = Logger.getLogger(SelectionPicker.class.getName());
+	private static final Logger logger = Logger.getLogger(SelectionPicker.class);
 	private static final long serialVersionUID = 1L;
 	
 	private PointListener pointListener;
@@ -148,6 +145,7 @@ public class SelectionPicker extends BlankFrame {
 		@Override
 		public void mouseClicked(MouseEvent e){
 			if(SwingUtilities.isRightMouseButton(e)){
+				logger.info("Points selected: " + getPoints() + " Starting: " + getStartingPoints() + " Ending: " + getEndingPoints() + " Warp: " + getWarpPoints());
 				pointListener.notifySelection(getPoints(), getStartingPoints(), getEndingPoints(), getWarpPoints());
 				setVisible(false);
 				dispose();

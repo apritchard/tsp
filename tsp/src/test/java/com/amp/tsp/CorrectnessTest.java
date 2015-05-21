@@ -6,7 +6,7 @@ import java.net.URL;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.logging.Logger;
+import org.apache.log4j.Logger;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -29,7 +29,7 @@ import com.amp.tsp.parse.MapParser;
  */
 public class CorrectnessTest {
 	
-	private static final Logger logger = Logger.getLogger(CorrectnessTest.class.getName());
+	private static final Logger logger = Logger.getLogger(CorrectnessTest.class);
 
 	private final int SIMPLE_BOUND = 6;
 	private final int ASYM_BOUND = 6;
@@ -99,8 +99,8 @@ public class CorrectnessTest {
 		testSolver(new BasicTspSolver(simpleAsymSectors), ASYM_BOUND);
 		testSolver(new BasicTspSolver(simpleSectors, simpleSeeds, false), SEEDS_BOUND);
 		testSolver(new BasicTspSolver(simpleSectors, simpleSeeds, true), SEEDS_ONLY_BOUND);
-		testSolver(new BasicTspSolver(simplePartialSectors, simpleSeeds, false), PARTIAL_BOUND);
-		testSolver(new BasicTspSolver(simplePartialSectors, simpleSeeds, true), PARTIAL_SEEDS_ONLY_BOUND);
+		testSolver(new BasicTspSolver(simplePartialSectors, simplePartialSeeds, false), PARTIAL_BOUND);
+		testSolver(new BasicTspSolver(simplePartialSectors, simplePartialSeeds, true), PARTIAL_SEEDS_ONLY_BOUND);
 	}
 	
 	@Test
@@ -110,8 +110,8 @@ public class CorrectnessTest {
 		testSolver(new BasicOptimizedTspSolver(simpleAsymSectors), ASYM_BOUND);
 		testSolver(new BasicOptimizedTspSolver(simpleSectors, simpleSeeds, false), SEEDS_BOUND);
 		testSolver(new BasicOptimizedTspSolver(simpleSectors, simpleSeeds, true), SEEDS_ONLY_BOUND);
-		testSolver(new BasicOptimizedTspSolver(simplePartialSectors, simpleSeeds, false), PARTIAL_BOUND);
-		testSolver(new BasicOptimizedTspSolver(simplePartialSectors, simpleSeeds, true), PARTIAL_SEEDS_ONLY_BOUND);
+		testSolver(new BasicOptimizedTspSolver(simplePartialSectors, simplePartialSeeds, false), PARTIAL_BOUND);
+		testSolver(new BasicOptimizedTspSolver(simplePartialSectors, simplePartialSeeds, true), PARTIAL_SEEDS_ONLY_BOUND);
 	}
 	
 	@Test
@@ -121,8 +121,8 @@ public class CorrectnessTest {
 		testSolver(new MultiTspSolver(simpleAsymSectors), ASYM_BOUND);
 		testSolver(new MultiTspSolver(simpleSectors, simpleSeeds, false), SEEDS_BOUND);
 		testSolver(new MultiTspSolver(simpleSectors, simpleSeeds, true), SEEDS_ONLY_BOUND);
-		testSolver(new MultiTspSolver(simplePartialSectors, simpleSeeds, false), PARTIAL_BOUND);
-		testSolver(new MultiTspSolver(simplePartialSectors, simpleSeeds, true), PARTIAL_SEEDS_ONLY_BOUND);
+		testSolver(new MultiTspSolver(simplePartialSectors, simplePartialSeeds, false), PARTIAL_BOUND);
+		testSolver(new MultiTspSolver(simplePartialSectors, simplePartialSeeds, true), PARTIAL_SEEDS_ONLY_BOUND);
 	}
 	
 	@Test
@@ -132,8 +132,8 @@ public class CorrectnessTest {
 		testSolver(new MultiOptimizedTspSolver(simpleAsymSectors), ASYM_BOUND);
 		testSolver(new MultiOptimizedTspSolver(simpleSectors, simpleSeeds, false), SEEDS_BOUND);
 		testSolver(new MultiOptimizedTspSolver(simpleSectors, simpleSeeds, true), SEEDS_ONLY_BOUND);
-		testSolver(new MultiOptimizedTspSolver(simplePartialSectors, simpleSeeds, false), PARTIAL_BOUND);
-		testSolver(new MultiOptimizedTspSolver(simplePartialSectors, simpleSeeds, true), PARTIAL_SEEDS_ONLY_BOUND);
+		testSolver(new MultiOptimizedTspSolver(simplePartialSectors, simplePartialSeeds, false), PARTIAL_BOUND);
+		testSolver(new MultiOptimizedTspSolver(simplePartialSectors, simplePartialSeeds, true), PARTIAL_SEEDS_ONLY_BOUND);
 	}
 	
 	@Test
@@ -143,8 +143,8 @@ public class CorrectnessTest {
 		testSolver(new ForkJoinTspSolver(simpleAsymSectors), ASYM_BOUND);
 		testSolver(new MultiTspSolver(simpleSectors, simpleSeeds, false), SEEDS_BOUND);
 		testSolver(new MultiTspSolver(simpleSectors, simpleSeeds, true), SEEDS_ONLY_BOUND);
-		testSolver(new MultiTspSolver(simplePartialSectors, simpleSeeds, false), PARTIAL_BOUND);
-		testSolver(new MultiTspSolver(simplePartialSectors, simpleSeeds, true), PARTIAL_SEEDS_ONLY_BOUND);
+		testSolver(new MultiTspSolver(simplePartialSectors, simplePartialSeeds, false), PARTIAL_BOUND);
+		testSolver(new MultiTspSolver(simplePartialSectors, simplePartialSeeds, true), PARTIAL_SEEDS_ONLY_BOUND);
 	}
 	
 	private void testSolver(TspSolver solver, int expectedBound){

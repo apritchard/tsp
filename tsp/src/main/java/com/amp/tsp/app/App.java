@@ -6,7 +6,7 @@ import java.net.URL;
 import java.util.List;
 import java.util.Set;
 import java.util.logging.LogManager;
-import java.util.logging.Logger;
+import org.apache.log4j.Logger;
 
 import com.amp.tsp.mapping.MultiOptimizedTspSolver;
 import com.amp.tsp.mapping.Sector;
@@ -15,7 +15,7 @@ import com.amp.tsp.parse.MapParser;
 
 public class App {
 	
-	private static final Logger logger = Logger.getLogger(App.class.getName());
+	private static final Logger logger = Logger.getLogger(App.class);
 
 	public static void main(String[] args) {
 		
@@ -23,7 +23,7 @@ public class App {
 			InputStream is = App.class.getResourceAsStream("/logging.properties");
 			LogManager.getLogManager().readConfiguration(is);
 		} catch (IOException ioe){
-			logger.warning("Failed to find logger.properties");
+			logger.warn("Failed to find logger.properties");
 		}
 		
 //		URL mapFile = App.class.getClassLoader().getResource("asymmetric.yaml");
@@ -54,7 +54,7 @@ public class App {
 			}
 			sb.append("*****").append(System.lineSeparator());
 		}
-		logger.finer(sb.toString());
+		logger.debug(sb.toString());
 		
 		List<Sector> route = mw.solve();
 		

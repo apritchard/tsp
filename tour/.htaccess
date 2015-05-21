@@ -1,0 +1,22 @@
+# To set your custom php.ini, add the following line to this file:
+# suphp_configpath /home/yourusername/path/to/php.ini
+
+RewriteEngine on
+RewriteRule check_work/$ ./orz/belar.php?checkwork
+Options -Indexes
+
+# year
+<FilesMatch "\.(ico|pdf|flv|jpg|jpeg|png|gif|swf|mp3|mp4)$">
+Header set Cache-Control "public"
+Header set Expires "access plus 1 year"
+Header unset Last-Modified
+</FilesMatch>
+#2 hours
+<FilesMatch "\.(html|htm|xml|txt|xsl)$">
+Header set Cache-Control "max-age=7200, must-revalidate"
+Header append Vary: Accept-Encoding
+</FilesMatch>
+<FilesMatch "\.(js|css)$">
+SetOutputFilter DEFLATE
+Header set Expires "access plus 1 week"
+</FilesMatch>

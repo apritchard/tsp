@@ -70,11 +70,11 @@ public class MultiOptimizedTspSolver extends OptimizedTspSolver {
 		try {
 			executor.awaitTermination(Long.MAX_VALUE, TimeUnit.SECONDS);
 		} catch (InterruptedException e) {
-			logger.warning("Threads prematurely interrupted; program may not have finished.");
+			logger.warn("Threads prematurely interrupted; program may not have finished.");
 		}
 
 		if (bestPath.get() == null) {
-			 logger.warning("No complete path found, longest Path not saved");
+			 logger.warn("No complete path found, longest Path not saved");
 			 return new ArrayList<>();
 		} else {
 			logger.info("Processing finished, returning best path.");

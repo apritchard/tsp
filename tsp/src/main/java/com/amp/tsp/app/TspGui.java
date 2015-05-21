@@ -3,7 +3,6 @@ package com.amp.tsp.app;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
-import java.util.logging.Logger;
 
 import javax.swing.JFrame;
 import javax.swing.JMenu;
@@ -17,7 +16,6 @@ import com.amp.tsp.prefs.PreferencesPanel;
 public class TspGui extends JFrame {
 	private static final long serialVersionUID = 1L;
 	
-	private final static Logger logger = Logger.getLogger(TspGui.class.getName());
 	private final static PreferencesPanel preferencesPanel = new PreferencesPanel();
 	private final static AboutPanel aboutPanel = new AboutPanel();
 	private final static TspPanel tspPanel = new TspPanel();

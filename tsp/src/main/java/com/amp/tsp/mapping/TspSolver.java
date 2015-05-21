@@ -6,10 +6,10 @@ import java.util.Map;
 import java.util.PriorityQueue;
 import java.util.Queue;
 import java.util.Set;
-import java.util.logging.Logger;
+import org.apache.log4j.Logger;
 
 public abstract class TspSolver {
-	protected final Logger logger = Logger.getLogger(TspSolver.class.getName()); 
+	protected final Logger logger = Logger.getLogger(TspSolver.class); 
 	protected final Set<Sector> sectors;
 	protected final Map<Sector, Map<Sector, Integer>> shortestPaths;
 	
@@ -178,8 +178,8 @@ public abstract class TspSolver {
 	
 	protected void logState(int queueSize, int currentBound, List<Sector> bestPath, List<Sector> longestPath){
 		StringBuilder sb = new StringBuilder();
-		sb.append("Trace:").append(System.lineSeparator());
-		sb.append("\tQueue size: ").append(queueSize).append(System.lineSeparator());
+		sb.append("Trace:");
+		sb.append("\tQueue size: ").append(queueSize);
 		sb.append("\tCurrent bound: ").append(currentBound).append(System.lineSeparator());
 		if(bestPath != null) {
 			sb.append("\tBest Complete Path: ").append(TspUtilities.routeString(bestPath));

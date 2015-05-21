@@ -11,7 +11,6 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
-import java.util.logging.Logger;
 
 public class MultiTspSolver extends TspSolver {
 	
@@ -84,11 +83,11 @@ public class MultiTspSolver extends TspSolver {
 		try {
 			executor.awaitTermination(Long.MAX_VALUE, TimeUnit.SECONDS);
 		} catch (InterruptedException e) {
-			logger.warning("Threads prematurely interrupted; program may not have finished.");
+			logger.warn("Threads prematurely interrupted; program may not have finished.");
 		}
 
 		if (bestPath.get() == null) {
-			logger.warning("No complete path found, returning longest path");
+			logger.warn("No complete path found, returning longest path");
 			return longestPath.get();
 		} else {
 			logger.info("Processing finished, returning best path.");

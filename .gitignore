@@ -6,3 +6,5 @@
 # Maven
 log/
 target/
+tsp/mapText.yaml
+tsp/clickMap.yaml
