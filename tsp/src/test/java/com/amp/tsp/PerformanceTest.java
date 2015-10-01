@@ -2,14 +2,21 @@ package com.amp.tsp;
 
 import static org.junit.Assert.assertEquals;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
-import org.apache.log4j.Logger;
+import java.util.concurrent.atomic.AtomicReference;
+import java.util.function.Function;
+import java.util.function.Supplier;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
+import org.apache.log4j.Logger;
 import org.junit.Before;
 import org.junit.FixMethodOrder;
 import org.junit.Test;
@@ -18,8 +25,10 @@ import org.junit.runners.MethodSorters;
 import com.amp.tsp.mapping.BasicOptimizedTspSolver;
 import com.amp.tsp.mapping.BasicTspSolver;
 import com.amp.tsp.mapping.ForkJoinTspSolver;
+import com.amp.tsp.mapping.LambdaSolver;
 import com.amp.tsp.mapping.MultiOptimizedTspSolver;
 import com.amp.tsp.mapping.MultiTspSolver;
+import com.amp.tsp.mapping.OptimizedLambdaSolver;
 import com.amp.tsp.mapping.Sector;
 import com.amp.tsp.mapping.TspSolver;
 import com.amp.tsp.parse.MapParser;
@@ -64,43 +73,31 @@ public class PerformanceTest {
 	 */
 	@Test
 	public void test00Moderate(){
-		TspSolver solver;
 		
-		long tsp, tspInt, multi, multiInt, fj;
-		long start; 
+		Function<TspSolver, String> classNameMapper = 
+				(c) -> c.getClass().getSimpleName();
+			
+		Function<TspSolver, Double> solveTimer = 
+				(s) -> {
+					long start = System.nanoTime();
+					List<Sector> route = s.solve();
+					long time = System.nanoTime() - start;
+					assertEquals("Incorrect bound for moderate tsp", MODERATE_MIN_BOUND, s.getBoundForPath(route));
+					return (new BigDecimal(time)).divide(new BigDecimal(1000000000)).setScale(2, RoundingMode.HALF_UP).doubleValue();
+				};
 				
-		start = System.nanoTime();
-		solver = new BasicTspSolver(moderateSectors);
-		List<Sector> routeTsp = solver.solve();
-		tsp = System.nanoTime() - start;
+		Map<String, Double> results = Stream.of(
+//				new BasicTspSolver(moderateSectors),
+//				new BasicOptimizedTspSolver(moderateSectors),
+//				new MultiTspSolver(moderateSectors),
+//				new MultiOptimizedTspSolver(moderateSectors),
+				new LambdaSolver(moderateSectors)
+//				new OptimizedLambdaSolver(moderateSectors)
+//				new ForkJoinTspSolver(moderateSectors)
+				)
+			.collect(Collectors.toMap(classNameMapper, solveTimer));
 		
-		start = System.nanoTime();
-		solver = new BasicOptimizedTspSolver(moderateSectors);
-		List<Sector> routeTspInt = solver.solve();
-		tspInt = System.nanoTime() - start;
-		
-		start = System.nanoTime();
-		solver = new MultiTspSolver(moderateSectors);
-		List<Sector> routeTspMulti = solver.solve();
-		multi = System.nanoTime() - start;
-		
-		start = System.nanoTime();
-		solver = new MultiOptimizedTspSolver(moderateSectors);
-		List<Sector> routeTspMultiInt = solver.solve();
-		multiInt = System.nanoTime() - start;
-		
-		start = System.nanoTime();
-		solver = new ForkJoinTspSolver(moderateSectors);
-		List<Sector> routeTspFJ = solver.solve();
-		fj = System.nanoTime() - start;
-		
-		logger.info(String.format("Moderate Length times milli: tsp(%d) tspInt(%d) multi(%d) multiInt(%d) fj(%d)", tsp/1000000, tspInt/1000000, multi/1000000, multiInt/1000000, fj/1000000));
-		
-		assertEquals("Incorrect bound for moderate tsp", MODERATE_MIN_BOUND, solver.getBoundForPath(routeTsp));
-		assertEquals("Incorrect bound for moderate tspInt", MODERATE_MIN_BOUND, solver.getBoundForPath(routeTspInt));
-		assertEquals("Incorrect bound for moderate tspMulti", MODERATE_MIN_BOUND, solver.getBoundForPath(routeTspMulti));
-		assertEquals("Incorrect bound for moderate tspMulti", MODERATE_MIN_BOUND, solver.getBoundForPath(routeTspMultiInt));
-		assertEquals("Incorrect bound for moderate tspFJ", MODERATE_MIN_BOUND, solver.getBoundForPath(routeTspFJ));
+		logger.info(results);
 	}
 	
 	@Test

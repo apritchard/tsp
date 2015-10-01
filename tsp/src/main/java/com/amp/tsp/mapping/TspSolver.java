@@ -6,6 +6,8 @@ import java.util.Map;
 import java.util.PriorityQueue;
 import java.util.Queue;
 import java.util.Set;
+import java.util.stream.IntStream;
+
 import org.apache.log4j.Logger;
 
 public abstract class TspSolver {
@@ -121,7 +123,7 @@ public abstract class TspSolver {
 		}
 		return nodes;
 		
-	}	
+	}
 	
 	/**
 	 * Calculate and return the lower bound for the cost of the provided
@@ -130,6 +132,7 @@ public abstract class TspSolver {
 	 * @return
 	 */
 	public int getBoundForPath(List<Sector> path){
+		
 		int bound = 0;
 		
 		if(path.size() == 1){

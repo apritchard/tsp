@@ -6,14 +6,15 @@ import java.net.URL;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import org.apache.log4j.Logger;
 
+import org.apache.log4j.Logger;
 import org.junit.Before;
 import org.junit.Test;
 
 import com.amp.tsp.mapping.BasicOptimizedTspSolver;
 import com.amp.tsp.mapping.BasicTspSolver;
 import com.amp.tsp.mapping.ForkJoinTspSolver;
+import com.amp.tsp.mapping.LambdaSolver;
 import com.amp.tsp.mapping.MultiOptimizedTspSolver;
 import com.amp.tsp.mapping.MultiTspSolver;
 import com.amp.tsp.mapping.Sector;
@@ -141,10 +142,21 @@ public class CorrectnessTest {
 		testSolver(new ForkJoinTspSolver(simpleSectors), SIMPLE_BOUND);
 		testSolver(new ForkJoinTspSolver(simplePartialSectors), PARTIAL_BOUND);
 		testSolver(new ForkJoinTspSolver(simpleAsymSectors), ASYM_BOUND);
-		testSolver(new MultiTspSolver(simpleSectors, simpleSeeds, false), SEEDS_BOUND);
-		testSolver(new MultiTspSolver(simpleSectors, simpleSeeds, true), SEEDS_ONLY_BOUND);
-		testSolver(new MultiTspSolver(simplePartialSectors, simplePartialSeeds, false), PARTIAL_BOUND);
-		testSolver(new MultiTspSolver(simplePartialSectors, simplePartialSeeds, true), PARTIAL_SEEDS_ONLY_BOUND);
+		testSolver(new ForkJoinTspSolver(simpleSectors, simpleSeeds, false), SEEDS_BOUND);
+		testSolver(new ForkJoinTspSolver(simpleSectors, simpleSeeds, true), SEEDS_ONLY_BOUND);
+		testSolver(new ForkJoinTspSolver(simplePartialSectors, simplePartialSeeds, false), PARTIAL_BOUND);
+		testSolver(new ForkJoinTspSolver(simplePartialSectors, simplePartialSeeds, true), PARTIAL_SEEDS_ONLY_BOUND);
+	}
+	
+	@Test
+	public void testLambda(){
+//		testSolver(new LambdaSolver(simpleSectors), SIMPLE_BOUND);
+//		testSolver(new LambdaSolver(simplePartialSectors), PARTIAL_BOUND);
+//		testSolver(new LambdaSolver(simpleAsymSectors), ASYM_BOUND);
+//		testSolver(new LambdaSolver(simpleSectors, simpleSeeds, false), SEEDS_BOUND);
+//		testSolver(new LambdaSolver(simpleSectors, simpleSeeds, true), SEEDS_ONLY_BOUND);
+		testSolver(new LambdaSolver(simplePartialSectors, simplePartialSeeds, false), PARTIAL_BOUND);
+		testSolver(new LambdaSolver(simplePartialSectors, simplePartialSeeds, true), PARTIAL_SEEDS_ONLY_BOUND);
 	}
 	
 	private void testSolver(TspSolver solver, int expectedBound){
