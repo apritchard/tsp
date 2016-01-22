@@ -10,9 +10,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
-import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Function;
-import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -22,13 +20,15 @@ import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runners.MethodSorters;
 
+import com.amp.tsp.mapping.BasicOptimizedNearestNeighborTspSolver;
 import com.amp.tsp.mapping.BasicOptimizedTspSolver;
 import com.amp.tsp.mapping.BasicTspSolver;
 import com.amp.tsp.mapping.ForkJoinTspSolver;
 import com.amp.tsp.mapping.LambdaSolver;
+import com.amp.tsp.mapping.MultiOptimizedNearestNeighborTspSolver;
 import com.amp.tsp.mapping.MultiOptimizedTspSolver;
 import com.amp.tsp.mapping.MultiTspSolver;
-import com.amp.tsp.mapping.OptimizedLambdaSolver;
+import com.amp.tsp.mapping.NearestNeighborSolver;
 import com.amp.tsp.mapping.Sector;
 import com.amp.tsp.mapping.TspSolver;
 import com.amp.tsp.parse.MapParser;
@@ -120,7 +120,7 @@ public class PerformanceTest {
 	public void test40NewBetaQuadrant(){
 		TspSolver mw;
 		
-		long tsp, tspInt, multi, multiInt, fj;
+		long tsp, tspInt, multi, multiInt, fj, nn, onn, monn;
 		long start;
 		
 		start = System.nanoTime();
@@ -148,13 +148,31 @@ public class PerformanceTest {
 		List<Sector> routeTspFJ = mw.solve();
 		fj = System.nanoTime() - start;
 		
-		logger.info(String.format("Beta Quadrant solver times milli: tsp(%d) int(%d) multi(%d) multiInt(%d) fj(%d)", tsp/1000000, tspInt/1000000, multi/1000000, multiInt/1000000, fj/1000000));
+		start = System.nanoTime();
+		mw = new NearestNeighborSolver(3, betaSectors);
+		List<Sector> routeNN = mw.solve();
+		nn = System.nanoTime() - start;
+		
+		start = System.nanoTime();
+		mw = new BasicOptimizedNearestNeighborTspSolver(3, betaSectors);
+		List<Sector> routeOptimizedNN = mw.solve();
+		onn = System.nanoTime() - start;
+		
+		start = System.nanoTime();
+		mw = new MultiOptimizedNearestNeighborTspSolver(3, betaSectors);
+		List<Sector> routeMultiOptimizedNN = mw.solve();
+		monn = System.nanoTime() - start;
+		
+		logger.info(String.format("Beta Quadrant solver times milli: tsp(%d) int(%d) multi(%d) multiInt(%d) fj(%d) nn(%d) onn(%d) monn(%d)", tsp/1000000, tspInt/1000000, multi/1000000, multiInt/1000000, fj/1000000, nn/1000000, onn/1000000, monn/1000000));
 		
 		assertEquals("Incorrect bound for moderate tsp", BETA_MIN_BOUND, mw.getBoundForPath(routeTsp));
 		assertEquals("Incorrect bound for moderate tsp", BETA_MIN_BOUND, mw.getBoundForPath(routeTspInt));
 		assertEquals("Incorrect bound for moderate tspMulti", BETA_MIN_BOUND, mw.getBoundForPath(routeTspMulti));
 		assertEquals("Incorrect bound for moderate tspMulti", BETA_MIN_BOUND, mw.getBoundForPath(routeTspMultiInt));
 		assertEquals("Incorrect bound for moderate tspFJ", BETA_MIN_BOUND, mw.getBoundForPath(routeTspFJ));
+		assertEquals("Incorrect bound for moderate nn", BETA_MIN_BOUND, mw.getBoundForPath(routeNN));
+		assertEquals("Incorrect bound for moderate onn", BETA_MIN_BOUND, mw.getBoundForPath(routeOptimizedNN));
+		assertEquals("Incorrect bound for moderate monn", BETA_MIN_BOUND, mw.getBoundForPath(routeMultiOptimizedNN));
 	}
 	
 	/**
@@ -215,6 +233,36 @@ public class PerformanceTest {
 		for(Entry<Integer, Long> entry : times.entrySet()){
 			sb.append("(").append(entry.getKey()).append(", ").append(entry.getValue()/1000000).append("ms)");
 		}
+		logger.info(sb.toString());
+	}
+	
+	@Test
+	public void test80NearestNeighborCompare(){
+		int MAX_NEIGHBORS = 5;
+		long start, time;
+		TspSolver solver;
+		List<Sector> route;
+		StringBuilder sb = new StringBuilder();
+		
+		for(int i = 1; i <= MAX_NEIGHBORS; i++){
+			sb.append("Neighbors(").append(i).append(")").append(System.getProperty("line.separator"));
+			start = System.nanoTime();			
+			solver = new MultiOptimizedNearestNeighborTspSolver(i, moderateSectors);
+			route = solver.solve();
+			time = (System.nanoTime() - start)/1000000;
+			sb.append("moderate(").append(time).append(")(").append(solver.getBoundForPath(route)).append(") ");
+			start = System.nanoTime();
+			solver = new MultiOptimizedNearestNeighborTspSolver(i, longSectors);
+			route = solver.solve();
+			time = (System.nanoTime() - start)/1000000;
+			sb.append("long(").append(time).append(")(").append(solver.getBoundForPath(route)).append(") ");
+			start = System.nanoTime();
+			solver = new MultiOptimizedNearestNeighborTspSolver(i, betaSectors);
+			route = solver.solve();
+			time = (System.nanoTime() - start)/1000000;
+			sb.append("beta(").append(time).append(")(").append(solver.getBoundForPath(route)).append(") ").append(System.getProperty("line.separator"));
+		}
+		sb.append("Moderate actual: ").append(MODERATE_MIN_BOUND).append(" Long actual: ").append(LONG_MIN_BOUND).append(" Beta actual: ").append(BETA_MIN_BOUND);
 		logger.info(sb.toString());
 	}
 	

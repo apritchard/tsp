@@ -17,6 +17,7 @@ import com.amp.tsp.mapping.ForkJoinTspSolver;
 import com.amp.tsp.mapping.LambdaSolver;
 import com.amp.tsp.mapping.MultiOptimizedTspSolver;
 import com.amp.tsp.mapping.MultiTspSolver;
+import com.amp.tsp.mapping.NearestNeighborSolver;
 import com.amp.tsp.mapping.Sector;
 import com.amp.tsp.mapping.TspSolver;
 import com.amp.tsp.mapping.TspUtilities;
@@ -136,6 +137,17 @@ public class CorrectnessTest {
 		testSolver(new MultiOptimizedTspSolver(simplePartialSectors, simplePartialSeeds, false), PARTIAL_BOUND);
 		testSolver(new MultiOptimizedTspSolver(simplePartialSectors, simplePartialSeeds, true), PARTIAL_SEEDS_ONLY_BOUND);
 	}
+	
+	@Test
+	public void testNearestNeighbor(){
+		testSolver(new NearestNeighborSolver(3, simpleSectors), SIMPLE_BOUND);
+		testSolver(new NearestNeighborSolver(3, simplePartialSectors), PARTIAL_BOUND);
+		testSolver(new NearestNeighborSolver(3, simpleAsymSectors), ASYM_BOUND);
+		testSolver(new NearestNeighborSolver(3, simpleSectors, simpleSeeds, false), SEEDS_BOUND);
+		testSolver(new NearestNeighborSolver(3, simpleSectors, simpleSeeds, true), SEEDS_ONLY_BOUND);
+		testSolver(new NearestNeighborSolver(3, simplePartialSectors, simplePartialSeeds, false), PARTIAL_BOUND);
+		testSolver(new NearestNeighborSolver(3, simplePartialSectors, simplePartialSeeds, true), PARTIAL_SEEDS_ONLY_BOUND);
+	}	
 	
 	@Test
 	public void testSimpleTspForkJoin(){

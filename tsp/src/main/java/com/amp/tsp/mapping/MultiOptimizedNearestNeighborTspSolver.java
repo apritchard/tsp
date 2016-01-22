@@ -3,6 +3,7 @@ package com.amp.tsp.mapping;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Queue;
@@ -13,8 +14,9 @@ import java.util.concurrent.PriorityBlockingQueue;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.stream.Collectors;
 
-public class MultiOptimizedTspSolver extends OptimizedTspSolver {
+public class MultiOptimizedNearestNeighborTspSolver extends OptimizedTspSolver {
 
 	private final TspSolver theSolver = this; //for synchronization
 	
@@ -22,17 +24,20 @@ public class MultiOptimizedTspSolver extends OptimizedTspSolver {
 	AtomicReference<byte[]> bestPath;
 	Queue<TspNode2> queue;
 	
+	private Map<Byte, byte[]> nearestNeighbors;
+	private int nNearest;
+	
 	/**
 	 * @see TspSolver#TspSolver(Set)
 	 */
-	public MultiOptimizedTspSolver(Set<Sector> sectors) {
+	public MultiOptimizedNearestNeighborTspSolver(Set<Sector> sectors) {
 		super(sectors);
 	}
 
 	/**
 	 * @see TspSolver#TspSolver(Set, List, boolean)
 	 */
-	public MultiOptimizedTspSolver(Set<Sector> sectors,
+	public MultiOptimizedNearestNeighborTspSolver(Set<Sector> sectors,
 			List<List<Sector>> seeds, boolean useSeedsOnly) {
 		super(sectors, seeds, useSeedsOnly);
 	}
@@ -40,10 +45,64 @@ public class MultiOptimizedTspSolver extends OptimizedTspSolver {
 	/**
 	 * @see TspSolver#TspSolver(Set, List)
 	 */
-	public MultiOptimizedTspSolver(Set<Sector> sectors,
+	public MultiOptimizedNearestNeighborTspSolver(Set<Sector> sectors,
 			List<Constraint> constraints) {
 		super(sectors, constraints);
 	}
+	
+	/**
+	 * @see TspSolver#TspSolver(Set)
+	 */
+	public MultiOptimizedNearestNeighborTspSolver(int n, Set<Sector> sectors) {
+		super(sectors);
+		setNNearest(n);
+	}
+	
+	/**
+	 * @see TspSolver#TspSolver(Set, List, boolean)
+	 */
+	public MultiOptimizedNearestNeighborTspSolver(int n, Set<Sector> sectors,
+			List<List<Sector>> seeds, boolean useSeedsOnly) {
+		super(sectors, seeds, useSeedsOnly);
+		setNNearest(n);
+	}
+	
+	/**
+	 * @see TspSolver#TspSolver(Set, List)
+	 */
+	public MultiOptimizedNearestNeighborTspSolver(int n, Set<Sector> sectors,
+			List<Constraint> constraints) {
+		super(sectors, constraints);
+		setNNearest(n);
+	}
+	
+	private void orderNeighbors(){
+		nearestNeighbors = new HashMap<>();
+		sectors.stream().forEach(s -> {
+			
+			List<Sector> sectorList = sectors.stream()
+				.filter(s1 -> !s1.equals(s))
+				.filter(s1 -> shortestPaths.get(s).containsKey(s1))
+				.sorted((s1, s2) -> shortestPaths.get(s).get(s1).compareTo(shortestPaths.get(s).get(s2)))
+				.collect(Collectors.toList());
+			
+			nearestNeighbors.put(sectorMap.get(s), sectorListToByteArray(sectorList));
+		});
+	}
+	
+	private byte[] sectorListToByteArray(List<Sector> sectors){
+		byte[] array = new byte[sectors.size()];
+		int i = 0;
+		for(Sector s : sectors){
+			array[i++] = sectorMap.get(s);
+		}
+		return array;
+	}
+	
+	
+	private void setNNearest(int n){
+		this.nNearest = n;
+	}	
 
 	/**
 	 * Calculate shortest route using a single-threaded branch and bound
@@ -53,6 +112,16 @@ public class MultiOptimizedTspSolver extends OptimizedTspSolver {
 	 */
 	@Override
 	public List<Sector> solve() {
+		if(nearestNeighbors == null){
+			orderNeighbors();
+		}
+		if(nNearest < 1){
+			nNearest = 1;
+		}
+		if(nNearest > sectors.size()){
+			nNearest = sectors.size();
+		}
+		
 		int numThreads = Runtime.getRuntime().availableProcessors() * 2;
 
 		queue = new PriorityBlockingQueue<>(TspNode2.queueFrom(getInitialNodes(), sectorMap));
@@ -168,8 +237,12 @@ public class MultiOptimizedTspSolver extends OptimizedTspSolver {
 					}
 				}
 				
+				byte[] currPath = curr.getPath();
+				byte[] nearest = nearestNeighbors.get(currPath[curr.getLength()-1]);
+				int cnt = 0;
+
 				//Add all next steps to queue (which will sort them by bound)
-				for(byte i = 1; i <= numSectors; i++){
+				for(byte i : nearest){
 					if(!usedSectors[i]){
 						byte[] newPath = Arrays.copyOf(curr.getPath(), numSectors);
 						newPath[curr.getLength()] = i;
@@ -177,6 +250,9 @@ public class MultiOptimizedTspSolver extends OptimizedTspSolver {
 						if(newBound <= bound.get()){
 							queue.add(new TspNode2(newBound, newPath, curr.getEnding(), curr.getLength() + 1));
 						}
+						if (++cnt == nNearest){
+							break;
+						}						
 					}
 				}
 			}

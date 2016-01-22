@@ -16,6 +16,7 @@ import javax.swing.JButton;
 import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.UIManager;
 
@@ -88,7 +89,7 @@ public class DisplayImagePanel extends JPanel{
 				
 			}			
 		});
-		add(lblImage, "wrap");
+		add(new JScrollPane(lblImage), "wrap");
 		add(taPath, "wrap, grow, push");
 		add(btnSave);
 		add(btnSaveMap);
