@@ -1,10 +1,8 @@
 package com.amp.tsp.mapping;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Queue;
-import java.util.Set;
 import java.util.concurrent.PriorityBlockingQueue;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
@@ -12,29 +10,15 @@ import java.util.function.Consumer;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
+import com.amp.tsp.mapping.TspSolution.TspBuilder;
+
 public class OptimizedLambdaSolver extends OptimizedTspSolver {
 
 	/**
-	 * @see TspSolver#TspSolver(Set)
+	 * @see TspSolver#TspSolver(TspBuilder)
 	 */
-	public OptimizedLambdaSolver(Set<Sector> sectors) {
-		super(sectors);
-	}
-
-	/**
-	 * @see TspSolver#TspSolver(Set, List, boolean)
-	 */
-	public OptimizedLambdaSolver(Set<Sector> sectors,
-			List<List<Sector>> seeds, boolean useSeedsOnly) {
-		super(sectors, seeds, useSeedsOnly);
-	}
-
-	/**
-	 * @see TspSolver#TspSolver(Set, List)
-	 */
-	public OptimizedLambdaSolver(Set<Sector> sectors,
-			List<Constraint> constraints) {
-		super(sectors, constraints);
+	public OptimizedLambdaSolver(TspBuilder builder) {
+		super(builder);
 	}
 
 	@Override

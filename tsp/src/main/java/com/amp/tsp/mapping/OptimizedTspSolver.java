@@ -4,7 +4,8 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
+
+import com.amp.tsp.mapping.TspSolution.TspBuilder;
 
 /**
  * This solver uses a version of getBoundForPath that operates on
@@ -16,12 +17,12 @@ public abstract class OptimizedTspSolver extends TspSolver {
 	protected final Sector[] sectorList;
 	protected final Map<Sector, Byte> sectorMap;
 	protected final int numSectors;
-	
+
 	/**
-	 * @see TspSolver#TspSolver(Set)
+	 * @see TspSolver#TspSolver(TspBuilder)
 	 */
-	public OptimizedTspSolver(Set<Sector> sectors) {
-		super(sectors);
+	public OptimizedTspSolver(TspBuilder builder){
+		super(builder);
 		sectorList = new Sector[sectors.size() + 1];
 		sectorMap = new HashMap<>();
 		byte i = 1;
@@ -29,38 +30,9 @@ public abstract class OptimizedTspSolver extends TspSolver {
 			sectorMap.put(s, i);
 			sectorList[i++] = s;
 		}
-		numSectors = sectors.size();
+		numSectors = sectors.size();		
 	}
-	
-	/**
-	 * @see TspSolver#TspSolver(Set, List, boolean)
-	 */
-	public OptimizedTspSolver(Set<Sector> sectors, List<List<Sector>> seeds, boolean useSeedsOnly){
-		super(sectors, seeds, useSeedsOnly);
-		sectorList = new Sector[sectors.size() + 1];
-		sectorMap = new HashMap<>();
-		byte i = 1;
-		for(Sector s : sectors){
-			sectorMap.put(s, i);
-			sectorList[i++] = s;
-		}
-		numSectors = sectors.size();
-	}
-	
-	/**
-	 * @see TspSolver#TspSolver(Set, List)
-	 */
-	public OptimizedTspSolver(Set<Sector> sectors, List<Constraint> constraints){
-		super(sectors, constraints);
-		sectorList = new Sector[sectors.size() + 1];
-		sectorMap = new HashMap<>();
-		byte i = 1;
-		for(Sector s : sectors){
-			sectorMap.put(s, i);
-			sectorList[i++] = s;
-		}
-		numSectors = sectors.size();
-	}
+
 	
 	/**
 	 * Similar to {@link TspSolver#getBoundForPath(List)} but operates on

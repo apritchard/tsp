@@ -3,7 +3,6 @@ package com.amp.tsp.mapping;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Queue;
@@ -15,6 +14,8 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
+
+import com.amp.tsp.mapping.TspSolution.TspBuilder;
 
 public class MultiOptimizedNearestNeighborTspSolver extends OptimizedTspSolver {
 
@@ -28,51 +29,14 @@ public class MultiOptimizedNearestNeighborTspSolver extends OptimizedTspSolver {
 	private int nNearest;
 	
 	/**
-	 * @see TspSolver#TspSolver(Set)
+	 * @see TspSolver#TspSolver(TspBuilder)
 	 */
-	public MultiOptimizedNearestNeighborTspSolver(Set<Sector> sectors) {
-		super(sectors);
-	}
-
-	/**
-	 * @see TspSolver#TspSolver(Set, List, boolean)
-	 */
-	public MultiOptimizedNearestNeighborTspSolver(Set<Sector> sectors,
-			List<List<Sector>> seeds, boolean useSeedsOnly) {
-		super(sectors, seeds, useSeedsOnly);
-	}
-
-	/**
-	 * @see TspSolver#TspSolver(Set, List)
-	 */
-	public MultiOptimizedNearestNeighborTspSolver(Set<Sector> sectors,
-			List<Constraint> constraints) {
-		super(sectors, constraints);
+	public MultiOptimizedNearestNeighborTspSolver(TspBuilder builder) {
+		super(builder);
 	}
 	
-	/**
-	 * @see TspSolver#TspSolver(Set)
-	 */
-	public MultiOptimizedNearestNeighborTspSolver(int n, Set<Sector> sectors) {
-		super(sectors);
-		setNNearest(n);
-	}
-	
-	/**
-	 * @see TspSolver#TspSolver(Set, List, boolean)
-	 */
-	public MultiOptimizedNearestNeighborTspSolver(int n, Set<Sector> sectors,
-			List<List<Sector>> seeds, boolean useSeedsOnly) {
-		super(sectors, seeds, useSeedsOnly);
-		setNNearest(n);
-	}
-	
-	/**
-	 * @see TspSolver#TspSolver(Set, List)
-	 */
-	public MultiOptimizedNearestNeighborTspSolver(int n, Set<Sector> sectors,
-			List<Constraint> constraints) {
-		super(sectors, constraints);
+	public MultiOptimizedNearestNeighborTspSolver(int n, TspBuilder builder){
+		super(builder);
 		setNNearest(n);
 	}
 	

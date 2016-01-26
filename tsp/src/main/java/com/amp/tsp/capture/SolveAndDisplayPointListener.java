@@ -11,13 +11,15 @@ import java.awt.image.BufferedImage;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import org.apache.log4j.Logger;
 
 import javax.swing.SwingUtilities;
 
+import org.apache.log4j.Logger;
+
 import com.amp.tsp.app.SelectionListener;
-import com.amp.tsp.mapping.MultiOptimizedTspSolver;
+import com.amp.tsp.mapping.Constraint;
 import com.amp.tsp.mapping.Sector;
+import com.amp.tsp.mapping.TspSolution;
 import com.amp.tsp.mapping.TspSolver;
 import com.amp.tsp.mapping.TspUtilities;
 import com.amp.tsp.parse.MapParser;
@@ -43,7 +45,11 @@ public class SolveAndDisplayPointListener implements PointListener {
 		MapParser.writeMapFile("mapText.yaml", sectors);
 		MapParser.writeClickMap(PrefName.LAST_MAP_LOCATION.get(), points, startingPoints, endingPoints, warpPoints);
 		
-		TspSolver solver = new MultiOptimizedTspSolver(sectors, TspUtilities.stringsToConstraints(startingPoints, endingPoints, sectors));
+		List<Constraint> constraints = TspUtilities.stringsToConstraints(startingPoints, endingPoints, sectors);
+		TspSolver solver = TspSolution.forSectors(sectors).usingConstraints(constraints).accuracy(PrefName.ALGORITHM_ACCURACY.getInt());
+		
+//		TspSolver solver = new MultiOptimizedTspSolver(sectors, TspUtilities.stringsToConstraints(startingPoints, endingPoints, sectors));
+//		TspSolver solver = new MultiOptimizedNearestNeighborTspSolver(3, sectors, TspUtilities.stringsToConstraints(startingPoints, endingPoints, sectors));
 		final List<Sector> path = solver.solve();
 		final int distance = solver.getBoundForPath(path);
 		

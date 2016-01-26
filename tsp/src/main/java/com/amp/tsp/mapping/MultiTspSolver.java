@@ -12,30 +12,18 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
 
+import com.amp.tsp.mapping.TspSolution.TspBuilder;
+
 public class MultiTspSolver extends TspSolver {
 	
 	private final TspSolver theSolver = this; //for synchronization
 
 	/**
-	 * @see TspSolver#TspSolver(Set)
+	 * @see TspSolver#TspSolver(TspBuilder)
 	 */
-	public MultiTspSolver(Set<Sector> sectors) {
-		super(sectors);
+	public MultiTspSolver(TspBuilder builder) {
+		super(builder);
 	}
-	
-	/**
-	 * @see TspSolver#TspSolver(Set, List, boolean)
-	 */
-	public MultiTspSolver(Set<Sector> sectors, List<List<Sector>> seeds, boolean useSeedsOnly){
-		super(sectors, seeds, useSeedsOnly);
-	}
-	
-	/**
-	 * @see TspSolver#TspSolver(Set, List)
-	 */
-	public MultiTspSolver(Set<Sector> sectors, List<Constraint> constraints){
-		super(sectors, constraints);
-	}	
 
 	/**
 	 * Calculate shortest route using a multi-threaded branch and bound algorithm.

@@ -11,18 +11,22 @@ import java.nio.file.Paths;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import org.apache.log4j.Logger;
 
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JSlider;
 import javax.swing.JTextArea;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 
 import net.miginfocom.swing.MigLayout;
+
+import org.apache.log4j.Logger;
 
 import com.amp.tsp.capture.SelectionPicker;
 import com.amp.tsp.capture.SolveAndDisplayPointListener;
@@ -132,6 +136,7 @@ public class TspPanel extends JPanel implements SelectionListener {
 				+ " cannot be both beginning and ending nodes at the same time. Graphs containing more than 25 nodes may"
 				+ " not finish in a reasonable amount of time. Ending nodes decrease performance.";
 		
+		
 		JTextArea taInstructions = new JTextArea();
 	    taInstructions.setText(instructions);
 	    taInstructions.setWrapStyleWord(true);
@@ -141,7 +146,17 @@ public class TspPanel extends JPanel implements SelectionListener {
 	    taInstructions.setBackground(UIManager.getColor("Label.background"));
 	    taInstructions.setFont(UIManager.getFont("Label.font"));
 	    taInstructions.setBorder(UIManager.getBorder("Label.border"));
-		
+	    
+	    JSlider sldrComplexity = new JSlider(1, 5, PrefName.ALGORITHM_ACCURACY.getInt());
+		sldrComplexity.addChangeListener(new ChangeListener() {
+			@Override
+			public void stateChanged(ChangeEvent e) {
+				JSlider source = (JSlider)e.getSource();
+				if(!source.getValueIsAdjusting()){
+					PrefName.ALGORITHM_ACCURACY.putInt(source.getValue());
+				}
+			}
+		});
 		add(taInstructions, "wrap, growx, pushx");
 	    add(btnNewMap, "wrap");
 		add(btnLastMap, "wrap");

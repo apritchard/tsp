@@ -19,6 +19,7 @@ import com.amp.tsp.mapping.MultiOptimizedTspSolver;
 import com.amp.tsp.mapping.MultiTspSolver;
 import com.amp.tsp.mapping.NearestNeighborSolver;
 import com.amp.tsp.mapping.Sector;
+import com.amp.tsp.mapping.TspSolution;
 import com.amp.tsp.mapping.TspSolver;
 import com.amp.tsp.mapping.TspUtilities;
 import com.amp.tsp.parse.MapParser;

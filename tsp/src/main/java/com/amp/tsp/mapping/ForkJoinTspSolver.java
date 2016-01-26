@@ -11,6 +11,8 @@ import java.util.concurrent.RecursiveAction;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
 
+import com.amp.tsp.mapping.TspSolution.TspBuilder;
+
 public class ForkJoinTspSolver extends TspSolver {
 	
 	//Statistics gathering across all actions
@@ -21,24 +23,10 @@ public class ForkJoinTspSolver extends TspSolver {
 	private TspNode bestPath;
 	
 	/**
-	 * @see TspSolver#TspSolver(Set)
+	 * @see TspSolver#TspSolver(TspBuilder)
 	 */
-	public ForkJoinTspSolver(Set<Sector> sectors) {
-		super(sectors);
-	}
-	
-	/**
-	 * @see TspSolver#TspSolver(Set, List, boolean)
-	 */
-	public ForkJoinTspSolver(Set<Sector> sectors, List<List<Sector>> seeds, boolean useSeedsOnly){
-		super(sectors, seeds, useSeedsOnly);
-	}
-	
-	/**
-	 * @see TspSolver#TspSolver(Set, List)
-	 */
-	public ForkJoinTspSolver(Set<Sector> sectors, List<Constraint> constraints){
-		super(sectors, constraints);
+	public ForkJoinTspSolver(TspBuilder builder) {
+		super(builder);
 	}
 
 	/**

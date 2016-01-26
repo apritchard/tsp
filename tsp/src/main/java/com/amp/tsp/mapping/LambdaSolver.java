@@ -3,7 +3,6 @@ package com.amp.tsp.mapping;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Queue;
-import java.util.Set;
 import java.util.concurrent.PriorityBlockingQueue;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
@@ -14,18 +13,12 @@ import java.util.function.ToIntFunction;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
+import com.amp.tsp.mapping.TspSolution.TspBuilder;
+
 public class LambdaSolver extends TspSolver {
 
-	public LambdaSolver(Set<Sector> sectors) {
-		super(sectors);
-	}
-	
-	public LambdaSolver(Set<Sector> sectors, List<List<Sector>> seeds, boolean useSeedsOnly) {
-		super(sectors, seeds, useSeedsOnly);
-	}
-	
-	public LambdaSolver(Set<Sector> sectors, List<Constraint> constraints){
-		super(sectors, constraints);
+	public LambdaSolver(TspBuilder builder) {
+		super(builder);
 	}
 	
 	public int getBoundForPath(List<Sector> path) {

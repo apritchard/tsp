@@ -12,7 +12,8 @@ public enum PrefName {
 	APP_X("app-x", PrefType.INTEGER, 0, false),
 	APP_Y("app-y", PrefType.INTEGER, 0, false),
 	APP_WIDTH("app-width", PrefType.INTEGER, 640, false),
-	APP_HEIGHT("app-height", PrefType.INTEGER, 480, false);
+	APP_HEIGHT("app-height", PrefType.INTEGER, 480, false),
+	ALGORITHM_ACCURACY("algorithm-accuracy", PrefType.INTEGER, 3, false);
 	
 	private static final Preferences prefs = Preferences.userNodeForPackage(PreferencesPanel.class);	
 	private static final Logger logger = Logger.getLogger(PrefName.class);

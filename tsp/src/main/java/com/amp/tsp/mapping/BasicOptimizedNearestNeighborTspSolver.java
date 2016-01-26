@@ -5,8 +5,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Queue;
-import java.util.Set;
 import java.util.stream.Collectors;
+
+import com.amp.tsp.mapping.TspSolution.TspBuilder;
 
 public class BasicOptimizedNearestNeighborTspSolver extends OptimizedTspSolver {
 
@@ -14,47 +15,14 @@ public class BasicOptimizedNearestNeighborTspSolver extends OptimizedTspSolver {
 	private int nNearest;
 	
 	/**
-	 * @see TspSolver#TspSolver(Set)
+	 * @see TspSolver#TspSolver(TspBuilder)
 	 */
-	public BasicOptimizedNearestNeighborTspSolver(Set<Sector> sectors) {
-		super(sectors);
+	public BasicOptimizedNearestNeighborTspSolver(TspBuilder builder) {
+		super(builder);
 	}
-	
-	/**
-	 * @see TspSolver#TspSolver(Set, List, boolean)
-	 */
-	public BasicOptimizedNearestNeighborTspSolver(Set<Sector> sectors, List<List<Sector>> seeds, boolean useSeedsOnly){
-		super(sectors, seeds, useSeedsOnly);
-	}
-	
-	/**
-	 * @see TspSolver#TspSolver(Set, List)
-	 */
-	public BasicOptimizedNearestNeighborTspSolver(Set<Sector> sectors, List<Constraint> constraints){
-		super(sectors, constraints);
-	}
-	
-	/**
-	 * @see TspSolver#TspSolver(Set)
-	 */
-	public BasicOptimizedNearestNeighborTspSolver(int n, Set<Sector> sectors) {
-		super(sectors);
-		setNNearest(n);
-	}
-	
-	/**
-	 * @see TspSolver#TspSolver(Set, List, boolean)
-	 */
-	public BasicOptimizedNearestNeighborTspSolver(int n, Set<Sector> sectors, List<List<Sector>> seeds, boolean useSeedsOnly){
-		super(sectors, seeds, useSeedsOnly);
-		setNNearest(n);
-	}
-	
-	/**
-	 * @see TspSolver#TspSolver(Set, List)
-	 */
-	public BasicOptimizedNearestNeighborTspSolver(int n, Set<Sector> sectors, List<Constraint> constraints){
-		super(sectors, constraints);
+
+	public BasicOptimizedNearestNeighborTspSolver(int n, TspBuilder builder) {
+		super(builder);
 		setNNearest(n);
 	}
 	

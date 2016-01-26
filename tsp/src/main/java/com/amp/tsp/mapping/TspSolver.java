@@ -10,6 +10,8 @@ import java.util.stream.IntStream;
 
 import org.apache.log4j.Logger;
 
+import com.amp.tsp.mapping.TspSolution.TspBuilder;
+
 public abstract class TspSolver {
 	protected final Logger logger = Logger.getLogger(TspSolver.class); 
 	protected final Set<Sector> sectors;
@@ -23,64 +25,40 @@ public abstract class TspSolver {
 	
 	public abstract List<Sector> solve();
 	
-	/**
-	 * Creates a new map represented by the provided sectors and calculates the
-	 * shortest paths between them.  Does not provide any seed paths.
-	 * @param sectors
-	 */
-	protected TspSolver(Set<Sector> sectors){
-		this.sectors = sectors;
-		this.shortestPaths = TspUtilities.calculateShortestPathsStatic(sectors);
+	protected TspSolver(TspBuilder builder){
+		this.sectors = builder.getSectors();
+		this.shortestPaths = TspUtilities.calculateShortestPaths(sectors);
 		this.seeds = new ArrayList<>();
-		useSeedsOnly = false;
-	}	
-	
-	/**
-	 * Creates a new map represented by the provided sectors and calculates the
-	 * shortest paths between them.  Uses the provided seed paths as starting points
-	 * for possible optimal routes.
-	 * @param sectors
-	 * @param seeds
-	 */
-	protected TspSolver(Set<Sector> sectors, List<List<Sector>> seeds, boolean useSeedsOnly){
-		this(sectors);
-		this.useSeedsOnly = useSeedsOnly;
+		this.useSeedsOnly = builder.isUseSeedsOnly();
 		
-		for(List<Sector> seed: seeds){
-			this.seeds.add(new TspNode(seed, getBoundForPath(seed)));
+		if(builder.getSeeds() != null){
+			for(List<Sector> seed: builder.getSeeds()){
+				this.seeds.add(new TspNode(seed, getBoundForPath(seed)));
+			}			
 		}
-	}
 	
-	/**
-	 * Create a new map represented by the provided sectors and calculates the
-	 * shortest path between them. Uses the provided constraints that specify both
-	 * starting and ending points.
-	 * @param sectors
-	 * @param constraints
-	 */
-	protected TspSolver(Set<Sector> sectors, List<Constraint> constraints){
-		this(sectors);
-		this.useSeedsOnly = true;
-		
-		for(Constraint constraint : constraints){
-			if(constraint.getStarting().isEmpty() && !constraint.getEnding().isEmpty()){
-				//annoying - ending only, can't reverse because of asymmetry, so make 1 seed for each sector
-				for(Sector s : sectors){
-					List<Sector> l = new ArrayList<>();
-					l.add(s);
-					this.seeds.add(	new TspNode(l, getBoundForPath(l), constraint.getEnding()));
+		if(builder.getConstraints() != null){
+			for(Constraint constraint : builder.getConstraints()){
+				if(constraint.getStarting().isEmpty() && !constraint.getEnding().isEmpty()){
+					//annoying - ending only, can't reverse because of asymmetry, so make 1 seed for each sector
+					for(Sector s : sectors){
+						List<Sector> l = new ArrayList<>();
+						l.add(s);
+						this.seeds.add(	new TspNode(l, getBoundForPath(l), constraint.getEnding()));
+					}
+				} else if (!constraint.getStarting().isEmpty() && constraint.getEnding().isEmpty()) {
+					//if only a starting, then use the seed-only approach
+					this.seeds.add(new TspNode(constraint.getStarting(), getBoundForPath(constraint.getStarting())));
+				} else if(!constraint.getStarting().isEmpty() && !constraint.getEnding().isEmpty()){
+					//both starting and ending constraint
+					this.seeds.add(new TspNode(constraint.getStarting(), getBoundForPath(constraint.getStarting()), constraint.getEnding()));
+				} else {
+					//neither starting nor ending nodes, skip
+					continue;
 				}
-			} else if (!constraint.getStarting().isEmpty() && constraint.getEnding().isEmpty()) {
-				//if only a starting, then use the seed-only approach
-				this.seeds.add(new TspNode(constraint.getStarting(), getBoundForPath(constraint.getStarting())));
-			} else if(!constraint.getStarting().isEmpty() && !constraint.getEnding().isEmpty()){
-				//both starting and ending constraint
-				this.seeds.add(new TspNode(constraint.getStarting(), getBoundForPath(constraint.getStarting()), constraint.getEnding()));
-			} else {
-				//neither starting nor ending nodes, skip
-				continue;
-			}
+			}			
 		}
+
 	}
 	
 	public String toString(){

@@ -5,27 +5,15 @@ import java.util.List;
 import java.util.Queue;
 import java.util.Set;
 
+import com.amp.tsp.mapping.TspSolution.TspBuilder;
+
 public class BasicOptimizedTspSolver extends OptimizedTspSolver {
 
 	/**
-	 * @see TspSolver#TspSolver(Set)
+	 * @see TspSolver#TspSolver(TspBuilder)
 	 */
-	public BasicOptimizedTspSolver(Set<Sector> sectors) {
-		super(sectors);
-	}
-	
-	/**
-	 * @see TspSolver#TspSolver(Set, List, boolean)
-	 */
-	public BasicOptimizedTspSolver(Set<Sector> sectors, List<List<Sector>> seeds, boolean useSeedsOnly){
-		super(sectors, seeds, useSeedsOnly);
-	}
-	
-	/**
-	 * @see TspSolver#TspSolver(Set, List)
-	 */
-	public BasicOptimizedTspSolver(Set<Sector> sectors, List<Constraint> constraints){
-		super(sectors, constraints);
+	public BasicOptimizedTspSolver(TspBuilder builder) {
+		super(builder);
 	}
 
 	/**
