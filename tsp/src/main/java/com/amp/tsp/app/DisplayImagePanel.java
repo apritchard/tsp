@@ -1,7 +1,6 @@
 package com.amp.tsp.app;
 
 import java.awt.Component;
-import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
@@ -26,6 +25,7 @@ import org.apache.log4j.Logger;
 
 import com.amp.tsp.mapping.Sector;
 import com.amp.tsp.parse.MapParser;
+import com.amp.tsp.parse.YamlPoint3d;
 import com.amp.tsp.prefs.ImageFileType;
 import com.amp.tsp.prefs.PrefName;
 
@@ -34,7 +34,7 @@ public class DisplayImagePanel extends JPanel{
 	private static final Logger logger = Logger.getLogger(DisplayImagePanel.class);
 
 	public DisplayImagePanel(final List<Sector> path, final BufferedImage image, int distance, 
-			final Map<String, Point> points, final List<String> startPoints, final List<String> endPoints, final List<String> warpPoints){
+			final Map<String, YamlPoint3d> points, final List<String> startPoints, final List<String> endPoints, final List<String> warpPoints){
 		setLayout(new MigLayout());
 		JLabel lblImage = new JLabel(new ImageIcon(image));
 		String pathDesc = "Optimal Path (" + distance + "px): " + path.toString();

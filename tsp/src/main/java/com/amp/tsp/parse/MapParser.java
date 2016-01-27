@@ -1,6 +1,5 @@
 package com.amp.tsp.parse;
 
-import java.awt.Point;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.net.URL;
@@ -123,8 +122,8 @@ public class MapParser {
 		return paths;
 	}
 	
-	public static YamlClickMap parseClickMap(URL url){
-		List<YamlClickMap> yamlClickMap = readYamlObjects(url, YamlClickMap.class);
+	public static YamlClickMap3d parseClickMap(URL url){
+		List<YamlClickMap3d> yamlClickMap = readYamlObjects(url, YamlClickMap3d.class);
 		return yamlClickMap.get(0);
 	}
 	
@@ -145,20 +144,20 @@ public class MapParser {
 		writeYamlObjects(path, yamlSectors);
 	}
 	
-	public static void writeClickMap(String path, Map<String, Point> points, List<String> startingPoints, List<String> endingPoints, List<String> warpPoints){
-		YamlClickMap cm = new YamlClickMap();
-		Map<String, YamlPoint> yamlPoints = new HashMap<>();
-		for(Entry<String,Point> point : points.entrySet()){
-			YamlPoint yp = new YamlPoint();
-			yp.x = (int)point.getValue().getX();
-			yp.y = (int)point.getValue().getY();
-			yamlPoints.put(point.getKey(), yp);
-		}
-		cm.points = yamlPoints;
+	public static void writeClickMap(String path, Map<String, YamlPoint3d> points, List<String> startingPoints, List<String> endingPoints, List<String> warpPoints){
+		YamlClickMap3d cm = new YamlClickMap3d();
+//		Map<String, YamlPoint> yamlPoints = new HashMap<>();
+//		for(Entry<String,Point> point : points.entrySet()){
+//			YamlPoint yp = new YamlPoint();
+//			yp.x = (int)point.getValue().getX();
+//			yp.y = (int)point.getValue().getY();
+//			yamlPoints.put(point.getKey(), yp);
+//		}
+		cm.points = points;
 		cm.startingPoints = startingPoints;
 		cm.endingPoints = endingPoints;
 		cm.warpPoints = warpPoints;
-		List<YamlClickMap> l = new ArrayList<>();
+		List<YamlClickMap3d> l = new ArrayList<>();
 		l.add(cm);
 		writeYamlObjects(path, l);
 	}

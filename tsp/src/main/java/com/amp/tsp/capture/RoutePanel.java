@@ -12,18 +12,20 @@ import java.util.Map;
 import javax.swing.JPanel;
 
 import com.amp.tsp.mapping.Sector;
+import com.amp.tsp.parse.YamlPoint3d;
 
 public class RoutePanel extends JPanel {
 	private static final long serialVersionUID = 1L;
-	private Map<String, Point> points;
+	private Map<String, YamlPoint3d> points3d;
 	private List<String> startingPoints;
 	private List<String> endingPoints;
 	private List<String> warpPoints;
 	private List<Sector> path;
 	
-	public RoutePanel(Map<String, Point> points, List<String> startingPoints, List<String> endingPoints, List<String> warpPoints, List<Sector> path){
+	public RoutePanel(Map<String, YamlPoint3d> points, List<String> startingPoints, List<String> endingPoints, List<String> warpPoints, List<Sector> path){
 		setBackground(new Color(0f, 0f, 0f, 0.1f));
-		this.points = points;
+//		this.points = points;
+		this.points3d = points;
 		this.startingPoints = startingPoints;
 		this.endingPoints = endingPoints;
 		this.warpPoints = warpPoints;
@@ -32,28 +34,29 @@ public class RoutePanel extends JPanel {
 	
 	public void paint(Graphics g){
 		super.paint(g);
-		DrawUtils.drawMap(g, points, startingPoints, endingPoints, warpPoints);
+//		DrawUtils.drawMap(g, points, startingPoints, endingPoints, warpPoints);
+		DrawUtils.drawMap3d(g, points3d, startingPoints, endingPoints, warpPoints);
 		
 		Graphics2D g2d = (Graphics2D)g;
 		
 		g2d.setStroke(new BasicStroke(4));
-		Point first = null;
-		Point second = null;
+		YamlPoint3d first = null;
+		YamlPoint3d second = null;
 		for(Sector s : path){
 			if(first == null){
-				first = points.get(s.getName());
+				first = points3d.get(s.getName());
 				continue;
 			}
-			second = points.get(s.getName());
+			second = points3d.get(s.getName());
 			if(warpPoints.contains(s.getName())){
 				g2d.setColor(Color.YELLOW);
 			} else {
 				g2d.setColor(Color.GRAY);
 			}
-			g2d.draw(new Line2D.Double(first, second));
+			g2d.draw(new Line2D.Double(first.x, first.y - first.z, second.x, second.y - second.z));
 			
-			double theta = Math.atan2(first.getY() - second.getY(), first.getX() - second.getX());
-			drawArrow(g2d, theta, second.getX(), second.getY());
+			double theta = Math.atan2((first.y - first.z) - (second.y - second.z), first.x - second.x);
+			drawArrow(g2d, theta, second.x, (second.y - second.z) );
 			
 			first = second;
 		}

@@ -18,17 +18,19 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import org.apache.log4j.Logger;
-
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 
+import org.apache.log4j.Logger;
+
 import com.amp.tsp.app.SelectionListener;
 import com.amp.tsp.mapping.Sector;
+import com.amp.tsp.mapping.TspUtilities;
 import com.amp.tsp.parse.MapParser;
-import com.amp.tsp.parse.YamlClickMap;
+import com.amp.tsp.parse.YamlClickMap3d;
 import com.amp.tsp.parse.YamlPoint;
+import com.amp.tsp.parse.YamlPoint3d;
 import com.amp.tsp.prefs.PrefName;
 
 
@@ -38,28 +40,26 @@ public class SelectionPicker extends BlankFrame {
 	
 	private PointListener pointListener;
 	
-	private Map<String, Point> points = new HashMap<>();
+	private Map<String, YamlPoint3d> points3d = new HashMap<>();
 	private List<String> startingPoints = new ArrayList<>();
 	private List<String> endingPoints = new ArrayList<>();
 	private List<String> warpPoints = new ArrayList<>();
 	
+	private YamlPoint3d clickCurrent;
+	
 	public static void main(String[] args) throws MalformedURLException {
 		SelectionPicker sp = new SelectionPicker(new SolveAndDisplayPointListener(
 				new SelectionListener(){public void finished(List<Sector> path, BufferedImage screenShot, int distance, 
-						Map<String, Point> points, List<String> seeds, List<String> endPoints, List<String> warpPoints) 
+						Map<String, YamlPoint3d> points, List<String> seeds, List<String> endPoints, List<String> warpPoints) 
 				{/*do nothing*/}}
 		));
 		
 		if(args.length >0){
-			YamlClickMap ycm = MapParser.parseClickMap(Paths.get(args[0]).toUri().toURL());
+			YamlClickMap3d ycm = MapParser.parseClickMap(Paths.get(args[0]).toUri().toURL());
 			sp.setStartingPoints(ycm.startingPoints);
 			sp.setEndingPoints(ycm.endingPoints);
 			sp.setWarpPoints(ycm.warpPoints);
-		
-			for(Entry<String, YamlPoint> point : ycm.points.entrySet()){
-				Point p = new Point(point.getValue().x, point.getValue().y);
-				sp.getPoints().put(point.getKey(), p);
-			}
+			sp.setPoints3d(ycm.points);
 		}
 		
 		sp.setVisible(true);
@@ -85,11 +85,11 @@ public class SelectionPicker extends BlankFrame {
 		});
 	}
 	
-	private boolean deleteIfExisting(Point p){
+	private boolean deleteIfExisting(YamlPoint3d p){
 		int deleteThreshold = 6;
-		for(Entry<String, Point> point : getPoints().entrySet()){
-			if(point.getValue().distance(p) < deleteThreshold){
-				getPoints().remove(point.getKey());
+		for(Entry<String, YamlPoint3d> point : getPoints3d().entrySet()){
+			if(TspUtilities.distance3d(point.getValue(), p) < deleteThreshold){
+				getPoints3d().remove(point.getKey());
 				getStartingPoints().remove(point.getKey());
 				getEndingPoints().remove(point.getKey());
 				return true;
@@ -134,13 +134,13 @@ public class SelectionPicker extends BlankFrame {
 	public void setWarpPoints(List<String> warpPoints) {
 		this.warpPoints = warpPoints == null ? new ArrayList<String>() : warpPoints;
 	}
-
-	public Map<String, Point> getPoints() {
-		return points;
+	
+	public Map<String, YamlPoint3d> getPoints3d() {
+		return points3d;
 	}
-
-	public void setPoints(Map<String, Point> points) {
-		this.points = points;
+	
+	public void setPoints3d(Map<String, YamlPoint3d> points3d){
+		this.points3d = points3d;
 	}
 
 	class DrawPanel extends JPanel {
@@ -153,17 +153,31 @@ public class SelectionPicker extends BlankFrame {
 		
 		public void paint(Graphics g){
 			super.paint(g);
-			DrawUtils.drawMap(g, points, startingPoints, endingPoints, warpPoints);
+//			DrawUtils.drawMap(g, points, startingPoints, endingPoints, warpPoints, clickDown, clickCurrent);
+			DrawUtils.drawMap3d(g, points3d, startingPoints, endingPoints, warpPoints, clickCurrent);
 		}
 	}
 	
 	class PointClickAdapter extends MouseAdapter {
 		
 		@Override
-		public void mouseClicked(MouseEvent e){
+		public void mousePressed(MouseEvent e) {
+			clickCurrent = new YamlPoint3d();
+			clickCurrent.x = e.getPoint().x;
+			clickCurrent.y = e.getPoint().y;
+		};
+		
+		@Override
+		public void mouseDragged(MouseEvent e) {
+			clickCurrent.z = e.getPoint().y > clickCurrent.y ? 0 : clickCurrent.y - e.getPoint().y; 
+			repaint();
+		}
+		
+		@Override
+		public void mouseReleased(MouseEvent e){
 			if(SwingUtilities.isRightMouseButton(e)){
-				logger.info("Points selected: " + getPoints() + " Starting: " + getStartingPoints() + " Ending: " + getEndingPoints() + " Warp: " + getWarpPoints());
-				pointListener.notifySelection(getPoints(), getStartingPoints(), getEndingPoints(), getWarpPoints());
+				logger.info("Points selected: " + getPoints3d() + " Starting: " + getStartingPoints() + " Ending: " + getEndingPoints() + " Warp: " + getWarpPoints());
+				pointListener.notifySelection(getPoints3d(), getStartingPoints(), getEndingPoints(), getWarpPoints());
 				setVisible(false);
 				dispose();
 			} else {
@@ -171,7 +185,9 @@ public class SelectionPicker extends BlankFrame {
 					switchMonitors();
 					return;
 				}
-				if(deleteIfExisting(e.getPoint())){
+
+				clickCurrent.z = e.getPoint().y > clickCurrent.y ? 0 : clickCurrent.y - e.getPoint().y;
+				if(deleteIfExisting(clickCurrent)){
 					repaint();
 					return;
 				}
@@ -179,7 +195,7 @@ public class SelectionPicker extends BlankFrame {
 				if(s == null){
 					return;
 				}
-				getPoints().put(s, e.getPoint());
+				getPoints3d().put(s, clickCurrent);
 				if(e.isShiftDown()){
 					getStartingPoints().add(s);
 					getEndingPoints().remove(s);
@@ -196,6 +212,7 @@ public class SelectionPicker extends BlankFrame {
 				} else {
 					getWarpPoints().remove(s);
 				}
+				clickCurrent = null;				
 				repaint();
 			} 
 		}

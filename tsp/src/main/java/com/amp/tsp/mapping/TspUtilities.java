@@ -9,8 +9,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
+
 import org.apache.log4j.Logger;
 
+import com.amp.tsp.parse.YamlPoint3d;
 import com.amp.tsp.prefs.PrefName;
 
 public class TspUtilities {
@@ -99,6 +101,13 @@ public class TspUtilities {
 		return shortestPaths;
 	}
 	
+	public static double distance3d(YamlPoint3d first, YamlPoint3d second){
+		double dx = first.x - second.x;
+		double dy = first.y - second.y;
+		double dz = first.z - second.z;
+		return Math.sqrt(dx * dx + dy * dy + dz * dz);
+	}
+	
 	
 	/**
 	 * Save each ordered list of Sectors as the current best subpaths following a given Sector.
@@ -135,10 +144,10 @@ public class TspUtilities {
 		return sb.toString();
 	}
 	
-	public static Set<Sector> pointsToSectors(Map<String, Point> points, List<String> warpPoints){
+	public static Set<Sector> pointsToSectors(Map<String, YamlPoint3d> points, List<String> warpPoints){
 		final int WARP_TIME = PrefName.PIXEL_COST_OF_WARP.getInt();
 		Set<Sector> sectors = new HashSet<>();
-		for(Entry<String, Point> entry : points.entrySet()){
+		for(Entry<String, YamlPoint3d> entry : points.entrySet()){
 			sectors.add(new Sector(entry.getKey()));
 		}
 		for(Sector s : sectors){
@@ -150,7 +159,7 @@ public class TspUtilities {
 				if(warpPoints.contains(s2.getName())){
 					distance = WARP_TIME;
 				} else {
-					distance =(int)points.get(s.getName()).distance(points.get(s2.getName())); 
+					distance = (int)distance3d(points.get(s.getName()), points.get(s2.getName())); 
 				}
 				s.addEdge(s2, distance);
 			}

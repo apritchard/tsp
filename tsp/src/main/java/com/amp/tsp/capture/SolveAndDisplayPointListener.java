@@ -23,6 +23,7 @@ import com.amp.tsp.mapping.TspSolution;
 import com.amp.tsp.mapping.TspSolver;
 import com.amp.tsp.mapping.TspUtilities;
 import com.amp.tsp.parse.MapParser;
+import com.amp.tsp.parse.YamlPoint3d;
 import com.amp.tsp.prefs.PrefName;
 
 public class SolveAndDisplayPointListener implements PointListener {
@@ -36,7 +37,7 @@ public class SolveAndDisplayPointListener implements PointListener {
 
 
 	@Override
-	public void notifySelection(final Map<String, Point> points, final List<String> startingPoints, final List<String> endingPoints, final List<String> warpPoints) {
+	public void notifySelection(final Map<String, YamlPoint3d> points, final List<String> startingPoints, final List<String> endingPoints, final List<String> warpPoints) {
 		if(points == null || points.isEmpty()){
 			selectionListener.finished(null, null, 0, null, null, null, null);
 			return;
@@ -71,10 +72,11 @@ public class SolveAndDisplayPointListener implements PointListener {
 		frame.setVisible(true);		
 	}
 	
-	private BufferedImage captureScreen(Map<String, Point> points){
+	private BufferedImage captureScreen(Map<String, YamlPoint3d> points){
 		Polygon poly = new Polygon();
-		for(Point p : points.values()){
+		for(YamlPoint3d p : points.values()){
 			poly.addPoint(p.x, p.y);
+			poly.addPoint(p.x, p.y - p.z);
 		}
 		Rectangle r = poly.getBounds();
 		int x = r.x - 40;

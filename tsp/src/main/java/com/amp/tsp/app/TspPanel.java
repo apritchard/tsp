@@ -21,9 +21,7 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JSlider;
-import javax.swing.JTextArea;
 import javax.swing.SwingUtilities;
-import javax.swing.UIManager;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
@@ -38,7 +36,9 @@ import com.amp.tsp.mapping.Sector;
 import com.amp.tsp.mapping.TspSolution;
 import com.amp.tsp.parse.MapParser;
 import com.amp.tsp.parse.YamlClickMap;
+import com.amp.tsp.parse.YamlClickMap3d;
 import com.amp.tsp.parse.YamlPoint;
+import com.amp.tsp.parse.YamlPoint3d;
 import com.amp.tsp.prefs.PrefName;
 
 public class TspPanel extends JPanel implements SelectionListener {
@@ -70,15 +70,11 @@ public class TspPanel extends JPanel implements SelectionListener {
 				getTopLevelAncestor().setVisible(false);
 				SelectionPicker picker = new SelectionPicker(new SolveAndDisplayPointListener(sl));
 				try{
-					YamlClickMap ycm = MapParser.parseClickMap(Paths.get(PrefName.LAST_MAP_LOCATION.get()).toUri().toURL());
+					YamlClickMap3d ycm = MapParser.parseClickMap(Paths.get(PrefName.LAST_MAP_LOCATION.get()).toUri().toURL());
 					picker.setStartingPoints(ycm.startingPoints);
 					picker.setEndingPoints(ycm.endingPoints);
 					picker.setWarpPoints(ycm.warpPoints);
-				
-					for(Entry<String, YamlPoint> point : ycm.points.entrySet()){
-						Point p = new Point(point.getValue().x, point.getValue().y);
-						picker.getPoints().put(point.getKey(), p);
-					}
+					picker.setPoints3d(ycm.points);
 				} catch (Exception ex){
 					logger.error("Unable to load last map: " + ex);
 					JOptionPane.showMessageDialog(null, "No previous map found! Either make a new map, change your last map location in preferences, or load a saved map.");
@@ -112,15 +108,11 @@ public class TspPanel extends JPanel implements SelectionListener {
 				getTopLevelAncestor().setVisible(false);
 				SelectionPicker picker = new SelectionPicker(new SolveAndDisplayPointListener(sl));
 				try{
-					YamlClickMap ycm = MapParser.parseClickMap(Paths.get(chooser.getSelectedFile().getAbsolutePath()).toUri().toURL());
+					YamlClickMap3d ycm = MapParser.parseClickMap(Paths.get(chooser.getSelectedFile().getAbsolutePath()).toUri().toURL());
 					picker.setStartingPoints(ycm.startingPoints);
 					picker.setEndingPoints(ycm.endingPoints);
 					picker.setWarpPoints(ycm.warpPoints);
-				
-					for(Entry<String, YamlPoint> point : ycm.points.entrySet()){
-						Point p = new Point(point.getValue().x, point.getValue().y);
-						picker.getPoints().put(point.getKey(), p);
-					}
+					picker.setPoints3d(ycm.points);
 				} catch (MalformedURLException mue){
 					logger.error("Unable to load map.", mue);
 				}
@@ -157,7 +149,7 @@ public class TspPanel extends JPanel implements SelectionListener {
 
 	@Override
 	public void finished(final List<Sector> path, final BufferedImage screenShot, final int distance, 
-			final Map<String, Point> points, final List<String> startPoints, final List<String> endPoints, final List<String> warpPoints) {
+			final Map<String, YamlPoint3d> points, final List<String> startPoints, final List<String> endPoints, final List<String> warpPoints) {
 		getTopLevelAncestor().setVisible(true);
 		
 		if(path == null || path.isEmpty()){
