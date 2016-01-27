@@ -2,6 +2,8 @@ package com.amp.tsp.capture;
 
 import java.awt.Color;
 import java.awt.Graphics;
+import java.awt.GraphicsDevice;
+import java.awt.GraphicsEnvironment;
 import java.awt.Point;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
@@ -15,6 +17,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+
 import org.apache.log4j.Logger;
 
 import javax.swing.JOptionPane;
@@ -26,6 +29,7 @@ import com.amp.tsp.mapping.Sector;
 import com.amp.tsp.parse.MapParser;
 import com.amp.tsp.parse.YamlClickMap;
 import com.amp.tsp.parse.YamlPoint;
+import com.amp.tsp.prefs.PrefName;
 
 
 public class SelectionPicker extends BlankFrame {
@@ -94,6 +98,19 @@ public class SelectionPicker extends BlankFrame {
 		return false;
 	}
 	
+	private void switchMonitors(){
+		int screen = PrefName.SCREEN_NUMBER.getInt();
+		GraphicsDevice[] gds = GraphicsEnvironment.getLocalGraphicsEnvironment().getScreenDevices();
+		screen = (screen + 1) % gds.length;
+		GraphicsDevice gd = gds[screen];
+		int width = gd.getDisplayMode().getWidth();
+		int height = gd.getDisplayMode().getHeight();
+		setLocation(gd.getDefaultConfiguration().getBounds().x, 0);
+		setSize(width, height);
+		PrefName.SCREEN_NUMBER.putInt(screen);
+		repaint();
+	}
+	
 	public List<String> getStartingPoints() {
 		return startingPoints;
 	}
@@ -150,6 +167,10 @@ public class SelectionPicker extends BlankFrame {
 				setVisible(false);
 				dispose();
 			} else {
+				if(e.isAltDown() && e.isShiftDown() && e.isControlDown()) {
+					switchMonitors();
+					return;
+				}
 				if(deleteIfExisting(e.getPoint())){
 					repaint();
 					return;

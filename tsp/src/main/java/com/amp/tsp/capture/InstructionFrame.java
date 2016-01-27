@@ -32,8 +32,8 @@ public class InstructionFrame extends JFrame {
 				+ "\nCtrl-click\tNode required at end of path (slow)"
 				+ "\nAlt-click\tNode may be warped to (edit cost in preferences)"
 				+ "\nRight-click\tSolve graph (press again to save solved graph)"
-				+ "\nCtrl-Alt-Shift-click\n\t\tSwitch map screen"
 				+ "\nEscape\tCancel map input"
+				+ "\nCtrl-Alt-Shift-click\n\tSwitch map screen"				
 				
 				+ "\n\nNodes may be either beginning or ending nodes and also a warp node (use alt-shift or alt-ctrl), but"
 				+ " cannot be both beginning and ending nodes at the same time. Graphs containing more than 25 nodes may"

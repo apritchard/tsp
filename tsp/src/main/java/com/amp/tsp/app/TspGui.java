@@ -54,7 +54,6 @@ public class TspGui extends JFrame {
 		int appWidth = PrefName.APP_WIDTH.getInt();
 		int appHeight = PrefName.APP_HEIGHT.getInt();
 		
-		System.out.println(appWidth + " " + appHeight);
 		setSize(appWidth, appHeight);
 		setLocation(appX, appY);
 		setTitle("Traveling Starship Solver");
