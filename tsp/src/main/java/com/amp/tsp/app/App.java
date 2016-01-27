@@ -11,6 +11,7 @@ import org.apache.log4j.Logger;
 
 import com.amp.tsp.mapping.MultiOptimizedNearestNeighborTspSolver;
 import com.amp.tsp.mapping.Sector;
+import com.amp.tsp.mapping.TspSolution;
 import com.amp.tsp.mapping.TspSolver;
 import com.amp.tsp.parse.MapParser;
 
@@ -39,8 +40,7 @@ public class App {
 //		URL seedFile = App.class.getClassLoader().getResource("seeds-season10-alpha.yaml");
 //		List<List<Sector>> seeds = MapParser.parseSeedFile(seedFile, sectors);
 		
-		TspSolver mw = new MultiOptimizedNearestNeighborTspSolver(3, sectors);
-		
+		TspSolver mw = TspSolution.forSectors(sectors).accuracy(3);
 		
 		StringBuilder sb = new StringBuilder();
 		sb.append("Sectors:").append(System.lineSeparator()).append(mw);

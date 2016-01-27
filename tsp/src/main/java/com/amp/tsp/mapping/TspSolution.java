@@ -23,9 +23,10 @@ public class TspSolution {
 	
 	public interface Complete {
 		public TspSolver accuracy(int accuracy);
+		public TspBuilder build();
 	}
 
-	static class TspBuilder implements HasSectors, HasSeeds, Complete {
+	public static class TspBuilder implements HasSectors, HasSeeds, Complete {
 		private Set<Sector> sectors;
 		private List<List<Sector>> seeds;
 		private boolean useSeedsOnly;
@@ -34,7 +35,12 @@ public class TspSolution {
 		TspBuilder(Set<Sector> sectors){
 			this.sectors = sectors;
 		}
-
+		
+		@Override
+		public TspBuilder build(){
+			return this;
+		}
+		
 		@Override
 		public TspSolver accuracy(int accuracy) {
 			if(accuracy >= MAX_ACCURACY){
@@ -81,7 +87,8 @@ public class TspSolution {
 
 		public List<Constraint> getConstraints() {
 			return constraints;
-		}			
+		}
+			
 	}
 
 }

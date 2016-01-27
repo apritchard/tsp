@@ -20,6 +20,7 @@ import com.amp.tsp.mapping.MultiTspSolver;
 import com.amp.tsp.mapping.NearestNeighborSolver;
 import com.amp.tsp.mapping.Sector;
 import com.amp.tsp.mapping.TspSolution;
+import com.amp.tsp.mapping.TspSolution.TspBuilder;
 import com.amp.tsp.mapping.TspSolver;
 import com.amp.tsp.mapping.TspUtilities;
 import com.amp.tsp.parse.MapParser;
@@ -43,6 +44,9 @@ public class CorrectnessTest {
 	
 	private Set<Sector> simpleSectors, simplePartialSectors, simpleAsymSectors;
 	private List<List<Sector>> simpleSeeds, simplePartialSeeds;
+	
+	private TspBuilder simpleBuilder, simplePartialBuilder, simpleAsymBuilder,
+		simpleSeedBuilder, simpleSeedOptionalBuilder, simplePartialSeedBuilder, simplePartialSeedOptionalBuilder;
 
 	@Before
 	public void initialize(){
@@ -58,6 +62,14 @@ public class CorrectnessTest {
 		
 		simpleSeeds = MapParser.parseSeedFile(seedsSimple, simpleSectors);
 		simplePartialSeeds = MapParser.parseSeedFile(seedsSimple, simpleSectors);
+		
+		simpleBuilder = TspSolution.forSectors(simpleSectors).build();
+		simplePartialBuilder = TspSolution.forSectors(simplePartialSectors).build();
+		simpleAsymBuilder = TspSolution.forSectors(simpleAsymSectors).build();
+		simpleSeedBuilder = TspSolution.forSectors(simpleSectors).usingSeeds(simpleSeeds).required().build();
+		simpleSeedOptionalBuilder = TspSolution.forSectors(simpleSectors).usingSeeds(simpleSeeds).optional().build();
+		simplePartialSeedBuilder = TspSolution.forSectors(simplePartialSectors).usingSeeds(simplePartialSeeds).required().build();
+		simplePartialSeedOptionalBuilder = TspSolution.forSectors(simplePartialSectors).usingSeeds(simplePartialSeeds).optional().build();
 	}
 	
 	@Test
@@ -97,79 +109,80 @@ public class CorrectnessTest {
 	
 	@Test
 	public void testSimpleTsp() {
-		testSolver(new BasicTspSolver(simpleSectors), SIMPLE_BOUND);
-		testSolver(new BasicTspSolver(simplePartialSectors), PARTIAL_BOUND);
-		testSolver(new BasicTspSolver(simpleAsymSectors), ASYM_BOUND);
-		testSolver(new BasicTspSolver(simpleSectors, simpleSeeds, false), SEEDS_BOUND);
-		testSolver(new BasicTspSolver(simpleSectors, simpleSeeds, true), SEEDS_ONLY_BOUND);
-		testSolver(new BasicTspSolver(simplePartialSectors, simplePartialSeeds, false), PARTIAL_BOUND);
-		testSolver(new BasicTspSolver(simplePartialSectors, simplePartialSeeds, true), PARTIAL_SEEDS_ONLY_BOUND);
+		
+		testSolver(new BasicTspSolver(simpleBuilder), SIMPLE_BOUND);
+		testSolver(new BasicTspSolver(simplePartialBuilder), PARTIAL_BOUND);
+		testSolver(new BasicTspSolver(simpleAsymBuilder), ASYM_BOUND);
+		testSolver(new BasicTspSolver(simpleSeedOptionalBuilder), SEEDS_BOUND);
+		testSolver(new BasicTspSolver(simpleSeedBuilder), SEEDS_ONLY_BOUND);
+		testSolver(new BasicTspSolver(simplePartialSeedOptionalBuilder), PARTIAL_BOUND);
+		testSolver(new BasicTspSolver(simplePartialSeedBuilder), PARTIAL_SEEDS_ONLY_BOUND);
 	}
 	
 	@Test
 	public void testSimpleOptimizedTsp() {
-		testSolver(new BasicOptimizedTspSolver(simpleSectors), SIMPLE_BOUND);
-		testSolver(new BasicOptimizedTspSolver(simplePartialSectors), PARTIAL_BOUND);
-		testSolver(new BasicOptimizedTspSolver(simpleAsymSectors), ASYM_BOUND);
-		testSolver(new BasicOptimizedTspSolver(simpleSectors, simpleSeeds, false), SEEDS_BOUND);
-		testSolver(new BasicOptimizedTspSolver(simpleSectors, simpleSeeds, true), SEEDS_ONLY_BOUND);
-		testSolver(new BasicOptimizedTspSolver(simplePartialSectors, simplePartialSeeds, false), PARTIAL_BOUND);
-		testSolver(new BasicOptimizedTspSolver(simplePartialSectors, simplePartialSeeds, true), PARTIAL_SEEDS_ONLY_BOUND);
+		testSolver(new BasicOptimizedTspSolver(simpleBuilder), SIMPLE_BOUND);
+		testSolver(new BasicOptimizedTspSolver(simplePartialBuilder), PARTIAL_BOUND);
+		testSolver(new BasicOptimizedTspSolver(simpleAsymBuilder), ASYM_BOUND);
+		testSolver(new BasicOptimizedTspSolver(simpleSeedOptionalBuilder), SEEDS_BOUND);
+		testSolver(new BasicOptimizedTspSolver(simpleSeedBuilder), SEEDS_ONLY_BOUND);
+		testSolver(new BasicOptimizedTspSolver(simplePartialSeedOptionalBuilder), PARTIAL_BOUND);
+		testSolver(new BasicOptimizedTspSolver(simplePartialSeedBuilder), PARTIAL_SEEDS_ONLY_BOUND);
 	}
 	
 	@Test
 	public void testSimpleTspMulti(){
-		testSolver(new MultiTspSolver(simpleSectors), SIMPLE_BOUND);
-		testSolver(new MultiTspSolver(simplePartialSectors), PARTIAL_BOUND);
-		testSolver(new MultiTspSolver(simpleAsymSectors), ASYM_BOUND);
-		testSolver(new MultiTspSolver(simpleSectors, simpleSeeds, false), SEEDS_BOUND);
-		testSolver(new MultiTspSolver(simpleSectors, simpleSeeds, true), SEEDS_ONLY_BOUND);
-		testSolver(new MultiTspSolver(simplePartialSectors, simplePartialSeeds, false), PARTIAL_BOUND);
-		testSolver(new MultiTspSolver(simplePartialSectors, simplePartialSeeds, true), PARTIAL_SEEDS_ONLY_BOUND);
+		testSolver(new MultiTspSolver(simpleBuilder), SIMPLE_BOUND);
+		testSolver(new MultiTspSolver(simplePartialBuilder), PARTIAL_BOUND);
+		testSolver(new MultiTspSolver(simpleAsymBuilder), ASYM_BOUND);
+		testSolver(new MultiTspSolver(simpleSeedOptionalBuilder), SEEDS_BOUND);
+		testSolver(new MultiTspSolver(simpleSeedBuilder), SEEDS_ONLY_BOUND);
+		testSolver(new MultiTspSolver(simplePartialSeedOptionalBuilder), PARTIAL_BOUND);
+		testSolver(new MultiTspSolver(simplePartialSeedBuilder), PARTIAL_SEEDS_ONLY_BOUND);
 	}
 	
 	@Test
 	public void testSimpleTspMultiOptimized(){
-		testSolver(new MultiOptimizedTspSolver(simpleSectors), SIMPLE_BOUND);
-		testSolver(new MultiOptimizedTspSolver(simplePartialSectors), PARTIAL_BOUND);
-		testSolver(new MultiOptimizedTspSolver(simpleAsymSectors), ASYM_BOUND);
-		testSolver(new MultiOptimizedTspSolver(simpleSectors, simpleSeeds, false), SEEDS_BOUND);
-		testSolver(new MultiOptimizedTspSolver(simpleSectors, simpleSeeds, true), SEEDS_ONLY_BOUND);
-		testSolver(new MultiOptimizedTspSolver(simplePartialSectors, simplePartialSeeds, false), PARTIAL_BOUND);
-		testSolver(new MultiOptimizedTspSolver(simplePartialSectors, simplePartialSeeds, true), PARTIAL_SEEDS_ONLY_BOUND);
+		testSolver(new MultiOptimizedTspSolver(simpleBuilder), SIMPLE_BOUND);
+		testSolver(new MultiOptimizedTspSolver(simplePartialBuilder), PARTIAL_BOUND);
+		testSolver(new MultiOptimizedTspSolver(simpleAsymBuilder), ASYM_BOUND);
+		testSolver(new MultiOptimizedTspSolver(simpleSeedOptionalBuilder), SEEDS_BOUND);
+		testSolver(new MultiOptimizedTspSolver(simpleSeedBuilder), SEEDS_ONLY_BOUND);
+		testSolver(new MultiOptimizedTspSolver(simplePartialSeedOptionalBuilder), PARTIAL_BOUND);
+		testSolver(new MultiOptimizedTspSolver(simplePartialSeedBuilder), PARTIAL_SEEDS_ONLY_BOUND);
 	}
 	
 	@Test
 	public void testNearestNeighbor(){
-		testSolver(new NearestNeighborSolver(3, simpleSectors), SIMPLE_BOUND);
-		testSolver(new NearestNeighborSolver(3, simplePartialSectors), PARTIAL_BOUND);
-		testSolver(new NearestNeighborSolver(3, simpleAsymSectors), ASYM_BOUND);
-		testSolver(new NearestNeighborSolver(3, simpleSectors, simpleSeeds, false), SEEDS_BOUND);
-		testSolver(new NearestNeighborSolver(3, simpleSectors, simpleSeeds, true), SEEDS_ONLY_BOUND);
-		testSolver(new NearestNeighborSolver(3, simplePartialSectors, simplePartialSeeds, false), PARTIAL_BOUND);
-		testSolver(new NearestNeighborSolver(3, simplePartialSectors, simplePartialSeeds, true), PARTIAL_SEEDS_ONLY_BOUND);
+		testSolver(new NearestNeighborSolver(simpleBuilder), SIMPLE_BOUND);
+		testSolver(new NearestNeighborSolver(simplePartialBuilder), PARTIAL_BOUND);
+		testSolver(new NearestNeighborSolver(simpleAsymBuilder), ASYM_BOUND);
+		testSolver(new NearestNeighborSolver(simpleSeedOptionalBuilder), SEEDS_BOUND);
+		testSolver(new NearestNeighborSolver(simpleSeedBuilder), SEEDS_ONLY_BOUND);
+		testSolver(new NearestNeighborSolver(simplePartialSeedOptionalBuilder), PARTIAL_BOUND);
+		testSolver(new NearestNeighborSolver(simplePartialSeedBuilder), PARTIAL_SEEDS_ONLY_BOUND);
 	}	
 	
 	@Test
 	public void testSimpleTspForkJoin(){
-		testSolver(new ForkJoinTspSolver(simpleSectors), SIMPLE_BOUND);
-		testSolver(new ForkJoinTspSolver(simplePartialSectors), PARTIAL_BOUND);
-		testSolver(new ForkJoinTspSolver(simpleAsymSectors), ASYM_BOUND);
-		testSolver(new ForkJoinTspSolver(simpleSectors, simpleSeeds, false), SEEDS_BOUND);
-		testSolver(new ForkJoinTspSolver(simpleSectors, simpleSeeds, true), SEEDS_ONLY_BOUND);
-		testSolver(new ForkJoinTspSolver(simplePartialSectors, simplePartialSeeds, false), PARTIAL_BOUND);
-		testSolver(new ForkJoinTspSolver(simplePartialSectors, simplePartialSeeds, true), PARTIAL_SEEDS_ONLY_BOUND);
+		testSolver(new ForkJoinTspSolver(simpleBuilder), SIMPLE_BOUND);
+		testSolver(new ForkJoinTspSolver(simplePartialBuilder), PARTIAL_BOUND);
+		testSolver(new ForkJoinTspSolver(simpleAsymBuilder), ASYM_BOUND);
+		testSolver(new ForkJoinTspSolver(simpleSeedOptionalBuilder), SEEDS_BOUND);
+		testSolver(new ForkJoinTspSolver(simpleSeedBuilder), SEEDS_ONLY_BOUND);
+		testSolver(new ForkJoinTspSolver(simplePartialSeedOptionalBuilder), PARTIAL_BOUND);
+		testSolver(new ForkJoinTspSolver(simplePartialSeedBuilder), PARTIAL_SEEDS_ONLY_BOUND);
 	}
 	
 	@Test
 	public void testLambda(){
-//		testSolver(new LambdaSolver(simpleSectors), SIMPLE_BOUND);
-//		testSolver(new LambdaSolver(simplePartialSectors), PARTIAL_BOUND);
-//		testSolver(new LambdaSolver(simpleAsymSectors), ASYM_BOUND);
-//		testSolver(new LambdaSolver(simpleSectors, simpleSeeds, false), SEEDS_BOUND);
-//		testSolver(new LambdaSolver(simpleSectors, simpleSeeds, true), SEEDS_ONLY_BOUND);
-		testSolver(new LambdaSolver(simplePartialSectors, simplePartialSeeds, false), PARTIAL_BOUND);
-		testSolver(new LambdaSolver(simplePartialSectors, simplePartialSeeds, true), PARTIAL_SEEDS_ONLY_BOUND);
+		testSolver(new LambdaSolver(simpleBuilder), SIMPLE_BOUND);
+		testSolver(new LambdaSolver(simplePartialBuilder), PARTIAL_BOUND);
+		testSolver(new LambdaSolver(simpleAsymBuilder), ASYM_BOUND);
+		testSolver(new LambdaSolver(simpleSeedOptionalBuilder), SEEDS_BOUND);
+		testSolver(new LambdaSolver(simpleSeedBuilder), SEEDS_ONLY_BOUND);
+		testSolver(new LambdaSolver(simplePartialSeedOptionalBuilder), PARTIAL_BOUND);
+		testSolver(new LambdaSolver(simplePartialSeedBuilder), PARTIAL_SEEDS_ONLY_BOUND);
 	}
 	
 	private void testSolver(TspSolver solver, int expectedBound){
