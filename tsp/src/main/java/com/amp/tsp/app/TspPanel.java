@@ -8,6 +8,8 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.net.MalformedURLException;
 import java.nio.file.Paths;
+import java.util.Dictionary;
+import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -15,6 +17,7 @@ import java.util.Map.Entry;
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JSlider;
@@ -31,6 +34,7 @@ import org.apache.log4j.Logger;
 import com.amp.tsp.capture.SelectionPicker;
 import com.amp.tsp.capture.SolveAndDisplayPointListener;
 import com.amp.tsp.mapping.Sector;
+import com.amp.tsp.mapping.TspSolution;
 import com.amp.tsp.parse.MapParser;
 import com.amp.tsp.parse.YamlClickMap;
 import com.amp.tsp.parse.YamlPoint;
@@ -147,7 +151,15 @@ public class TspPanel extends JPanel implements SelectionListener {
 	    taInstructions.setFont(UIManager.getFont("Label.font"));
 	    taInstructions.setBorder(UIManager.getBorder("Label.border"));
 	    
-	    JSlider sldrComplexity = new JSlider(1, 5, PrefName.ALGORITHM_ACCURACY.getInt());
+	    JSlider sldrComplexity = new JSlider(TspSolution.MIN_ACCURACY, TspSolution.MAX_ACCURACY, PrefName.ALGORITHM_ACCURACY.getInt());
+	    Dictionary<Integer, JLabel> labels = new Hashtable<>();
+	    labels.put(TspSolution.MIN_ACCURACY, new JLabel("Fast Calculation"));
+	    labels.put(TspSolution.MAX_ACCURACY, new JLabel("Optimal Route"));
+	    sldrComplexity.setLabelTable(labels);
+	    sldrComplexity.setMajorTickSpacing(1);
+	    sldrComplexity.setPaintLabels(true);
+	    sldrComplexity.setPaintTicks(true);
+	    
 		sldrComplexity.addChangeListener(new ChangeListener() {
 			@Override
 			public void stateChanged(ChangeEvent e) {
@@ -157,10 +169,12 @@ public class TspPanel extends JPanel implements SelectionListener {
 				}
 			}
 		});
+		
 		add(taInstructions, "wrap, growx, pushx");
 	    add(btnNewMap, "wrap");
 		add(btnLastMap, "wrap");
 		add(btnLoadMap, "wrap");
+		add(sldrComplexity, "growx");
 
 	}
 
