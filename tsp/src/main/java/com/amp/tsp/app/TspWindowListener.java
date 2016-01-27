@@ -9,9 +9,14 @@ import com.amp.tsp.prefs.PrefName;
 
 public class TspWindowListener 	implements WindowListener{
 	private JFrame frame;
+	private PrefName appX, appY, appWidth, appHeight;
 	
-	public TspWindowListener(JFrame frame){
+	public TspWindowListener(JFrame frame, PrefName appX, PrefName appY, PrefName appWidth, PrefName appHeight){
 		this.frame = frame;
+		this.appX = appX;
+		this.appY = appY;
+		this.appWidth = appWidth;
+		this.appHeight = appHeight;
 	}
 
 
@@ -21,10 +26,10 @@ public class TspWindowListener 	implements WindowListener{
 
 	@Override
 	public void windowClosing(WindowEvent e) {
-		PrefName.APP_X.putInt(frame.getX());
-		PrefName.APP_Y.putInt(frame.getY());
-		PrefName.APP_WIDTH.putInt(frame.getWidth());
-		PrefName.APP_HEIGHT.putInt(frame.getHeight());
+		appX.putInt(frame.getX());
+		appY.putInt(frame.getY());
+		appWidth.putInt(frame.getWidth());
+		appHeight.putInt(frame.getHeight());
 	}
 
 	@Override

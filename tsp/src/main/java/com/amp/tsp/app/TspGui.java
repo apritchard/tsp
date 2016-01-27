@@ -54,11 +54,12 @@ public class TspGui extends JFrame {
 		int appWidth = PrefName.APP_WIDTH.getInt();
 		int appHeight = PrefName.APP_HEIGHT.getInt();
 		
+		System.out.println(appWidth + " " + appHeight);
 		setSize(appWidth, appHeight);
 		setLocation(appX, appY);
 		setTitle("Traveling Starship Solver");
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		addWindowListener(new TspWindowListener(this));
+		addWindowListener(new TspWindowListener(this, PrefName.APP_X, PrefName.APP_Y, PrefName.APP_WIDTH, PrefName.APP_HEIGHT));
 		
 		setJMenuBar(buildMenuBar());
 		getContentPane().add(tspPanel);

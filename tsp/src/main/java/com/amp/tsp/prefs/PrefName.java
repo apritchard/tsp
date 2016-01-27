@@ -11,8 +11,12 @@ public enum PrefName {
 	LAST_SAVED_LOCATION("last-saved-location", PrefType.FILE, "clickMap.yaml", false),
 	APP_X("app-x", PrefType.INTEGER, 0, false),
 	APP_Y("app-y", PrefType.INTEGER, 0, false),
-	APP_WIDTH("app-width", PrefType.INTEGER, 640, false),
-	APP_HEIGHT("app-height", PrefType.INTEGER, 480, false),
+	APP_WIDTH("app-width", PrefType.INTEGER, 460, false),
+	APP_HEIGHT("app-height", PrefType.INTEGER, 310, false),
+	INSTRUCTION_X("instruction-x", PrefType.INTEGER, 0, false),
+	INSTRUCTION_Y("instruction-y", PrefType.INTEGER, 0, false),
+	INSTRUCTION_WIDTH("instruction-width", PrefType.INTEGER, 480, false),
+	INSTRUCTION_HEIGHT("instruction-height", PrefType.INTEGER, 168, false),
 	ALGORITHM_ACCURACY("algorithm-accuracy", PrefType.INTEGER, 3, false);
 	
 	private static final Preferences prefs = Preferences.userNodeForPackage(PreferencesPanel.class);	

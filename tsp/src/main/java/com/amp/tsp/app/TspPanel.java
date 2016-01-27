@@ -31,6 +31,7 @@ import net.miginfocom.swing.MigLayout;
 
 import org.apache.log4j.Logger;
 
+import com.amp.tsp.capture.InstructionFrame;
 import com.amp.tsp.capture.SelectionPicker;
 import com.amp.tsp.capture.SolveAndDisplayPointListener;
 import com.amp.tsp.mapping.Sector;
@@ -43,6 +44,7 @@ import com.amp.tsp.prefs.PrefName;
 public class TspPanel extends JPanel implements SelectionListener {
 	private static final long serialVersionUID = 1L;
 	private static final Logger logger = Logger.getLogger(TspPanel.class);
+	private static final JFrame instructionFrame = new InstructionFrame();
 	
 	public TspPanel(){
 		super();
@@ -57,6 +59,7 @@ public class TspPanel extends JPanel implements SelectionListener {
 				getTopLevelAncestor().setVisible(false);
 				SelectionPicker picker = new SelectionPicker(new SolveAndDisplayPointListener(sl));
 				picker.setVisible(true);
+				instructionFrame.setVisible(true);
 			}
 		});
 		
@@ -84,7 +87,7 @@ public class TspPanel extends JPanel implements SelectionListener {
 					return;
 				}
 				picker.setVisible(true);
-				
+				instructionFrame.setVisible(true);				
 			}
 		});
 		
@@ -122,35 +125,10 @@ public class TspPanel extends JPanel implements SelectionListener {
 					logger.error("Unable to load map.", mue);
 				}
 				picker.setVisible(true);
-				
+				instructionFrame.setVisible(true);			
 			}			
 		});
 
-		String instructions = "Press to create or load a map. This screen will disappear and your"
-				+ " primary monitor will tint, indicating recording is active. "
-				
-				+ "\nLeft click\tplace node on the map"
-				+ "\nShift-click\tNode required at beginning of path (fast)"
-				+ "\nCtrl-click\tNode required at end of path (slow)"
-				+ "\nAlt-click\tNode may be warped to (edit cost in preferences)"
-				+ "\nRight-click\tSolve graph (press again to save solved graph)"
-				+ "\nEscape\tCancel map input"
-				
-				+ "\n\nNodes may be either beginning or ending nodes and also a warp node (use alt-shift or alt-ctrl), but"
-				+ " cannot be both beginning and ending nodes at the same time. Graphs containing more than 25 nodes may"
-				+ " not finish in a reasonable amount of time. Ending nodes decrease performance.";
-		
-		
-		JTextArea taInstructions = new JTextArea();
-	    taInstructions.setText(instructions);
-	    taInstructions.setWrapStyleWord(true);
-	    taInstructions.setLineWrap(true);
-	    taInstructions.setOpaque(false);
-	    taInstructions.setEditable(false);
-	    taInstructions.setBackground(UIManager.getColor("Label.background"));
-	    taInstructions.setFont(UIManager.getFont("Label.font"));
-	    taInstructions.setBorder(UIManager.getBorder("Label.border"));
-	    
 	    JSlider sldrComplexity = new JSlider(TspSolution.MIN_ACCURACY, TspSolution.MAX_ACCURACY, PrefName.ALGORITHM_ACCURACY.getInt());
 	    Dictionary<Integer, JLabel> labels = new Hashtable<>();
 	    labels.put(TspSolution.MIN_ACCURACY, new JLabel("Fast Calculation"));
@@ -170,11 +148,10 @@ public class TspPanel extends JPanel implements SelectionListener {
 			}
 		});
 		
-		add(taInstructions, "wrap, growx, pushx");
-	    add(btnNewMap, "wrap");
-		add(btnLastMap, "wrap");
-		add(btnLoadMap, "wrap");
-		add(sldrComplexity, "growx");
+	    add(btnNewMap, "width 33%");
+		add(btnLastMap, "width 33%");
+		add(btnLoadMap, "width 33%, wrap");
+		add(sldrComplexity, "spanx, grow, wrap");
 
 	}
 
