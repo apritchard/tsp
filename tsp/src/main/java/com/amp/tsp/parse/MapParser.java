@@ -123,8 +123,26 @@ public class MapParser {
 	}
 	
 	public static YamlClickMap3d parseClickMap(URL url){
-		List<YamlClickMap3d> yamlClickMap = readYamlObjects(url, YamlClickMap3d.class);
-		return yamlClickMap.get(0);
+		YamlClickMap3d ycm3d = null;
+		try{
+			ycm3d = readYamlObjects(url, YamlClickMap3d.class).get(0);
+		} catch (ClassCastException cce){
+			//may fail if trying to load legacy clm
+			YamlClickMap ycm2d = readYamlObjects(url, YamlClickMap.class).get(0);
+			ycm3d = new YamlClickMap3d();
+			ycm3d.endingPoints = ycm2d.endingPoints;
+			ycm3d.startingPoints = ycm2d.startingPoints;
+			ycm3d.warpPoints = ycm2d.warpPoints;
+			ycm3d.points = new HashMap<>();
+			for(Entry<String, YamlPoint> entry : ycm2d.points.entrySet()){
+				YamlPoint3d yp3d = new YamlPoint3d();
+				yp3d.x = entry.getValue().x;
+				yp3d.y = entry.getValue().y;
+				yp3d.z = 0;
+				ycm3d.points.put(entry.getKey(), yp3d);
+			}
+		}
+		return ycm3d;
 	}
 	
 	public static void writeMapFile(String path, Set<Sector> sectors){
