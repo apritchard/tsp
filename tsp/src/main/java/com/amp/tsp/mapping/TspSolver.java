@@ -49,9 +49,11 @@ public abstract class TspSolver {
 				} else if (!constraint.getStarting().isEmpty() && constraint.getEnding().isEmpty()) {
 					//if only a starting, then use the seed-only approach
 					this.seeds.add(new TspNode(constraint.getStarting(), getBoundForPath(constraint.getStarting())));
+					this.useSeedsOnly = true;
 				} else if(!constraint.getStarting().isEmpty() && !constraint.getEnding().isEmpty()){
 					//both starting and ending constraint
 					this.seeds.add(new TspNode(constraint.getStarting(), getBoundForPath(constraint.getStarting()), constraint.getEnding()));
+					this.useSeedsOnly = true;
 				} else {
 					//neither starting nor ending nodes, skip
 					continue;
