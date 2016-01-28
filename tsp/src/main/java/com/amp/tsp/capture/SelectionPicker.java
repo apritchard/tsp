@@ -161,7 +161,8 @@ public class SelectionPicker extends BlankFrame {
 		
 		@Override
 		public void mousePressed(MouseEvent e) {
-			if(e.isAltDown() && e.isShiftDown() && e.isControlDown()) {
+			if(SwingUtilities.isRightMouseButton(e) || 
+					(e.isAltDown() && e.isShiftDown() && e.isControlDown())) {
 				return;
 			}
 			if(deleteIfExisting(e.getPoint())){
