@@ -44,7 +44,7 @@ public class TspGui extends JFrame {
 	private static final String JAR_NAME = "TravelingStarshipSolver.jar";
 	private static final String TEMP_JAR = "TempJar.jar";
 	private static final String RENAME_JAR = "OldTravelingStarshipSolver.jar";
-	public static final String CURRENT_VERSION = "1.1";
+	public static final String CURRENT_VERSION = "1.2";
 	
 	private final TspGui theGui;
 	
@@ -206,6 +206,7 @@ public class TspGui extends JFrame {
 		//delete temp jar and rename jar
 		deleteFile(TEMP_JAR);
 		deleteFile(RENAME_JAR);
+		PrefName.resetAll();
 		//start gui
 		TspGui gui = new TspGui();
 		gui.setVisible(true);

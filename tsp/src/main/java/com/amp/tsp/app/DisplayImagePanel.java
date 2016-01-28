@@ -33,6 +33,10 @@ public class DisplayImagePanel extends JPanel{
 	private static final long serialVersionUID = 1L;
 	private static final Logger logger = Logger.getLogger(DisplayImagePanel.class);
 
+	/**
+	 * Used after a route has been calculated to display a screen shot of the final route along with
+	 * the total distance traveled and text description of path used. 
+	 */	
 	public DisplayImagePanel(final List<Sector> path, final BufferedImage image, int distance, 
 			final Map<String, YamlPoint3d> points, final List<String> startPoints, final List<String> endPoints, final List<String> warpPoints){
 		setLayout(new MigLayout());

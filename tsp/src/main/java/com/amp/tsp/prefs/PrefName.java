@@ -12,7 +12,7 @@ public enum PrefName {
 	APP_X("app-x", PrefType.INTEGER, 0, false),
 	APP_Y("app-y", PrefType.INTEGER, 0, false),
 	APP_WIDTH("app-width", PrefType.INTEGER, 460, false),
-	APP_HEIGHT("app-height", PrefType.INTEGER, 310, false),
+	APP_HEIGHT("app-height", PrefType.INTEGER, 210, false),
 	INSTRUCTION_X("instruction-x", PrefType.INTEGER, 0, false),
 	INSTRUCTION_Y("instruction-y", PrefType.INTEGER, 0, false),
 	INSTRUCTION_WIDTH("instruction-width", PrefType.INTEGER, 480, false),
@@ -33,6 +33,10 @@ public enum PrefName {
 		this.type = type;
 		this.defaultValue = defaultValue;
 		this.editable = editable;
+	}
+	
+	public void reset(){
+		prefs.put(pathName, defaultValue.toString());
 	}
 	
 	public String path(){
@@ -69,6 +73,12 @@ public enum PrefName {
 		} else {
 			logger.info("Boolean requested from non-boolean preference value (" + defaultValue +") on " + toString());
 			return false;
+		}
+	}
+	
+	public static void resetAll(){
+		for(PrefName prefName : values()){
+			prefName.reset();
 		}
 	}
 	

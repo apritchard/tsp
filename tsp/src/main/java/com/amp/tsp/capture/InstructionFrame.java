@@ -26,8 +26,9 @@ public class InstructionFrame extends JFrame {
 		addWindowListener(new TspWindowListener(this, PrefName.INSTRUCTION_X, PrefName.INSTRUCTION_Y, PrefName.INSTRUCTION_WIDTH, PrefName.INSTRUCTION_HEIGHT));
 		JPanel panel = new JPanel();
 		panel.setLayout(new MigLayout());
-		String instructions = "Click on the greyed out screen to place nodes." + 
-				"\nLeft click\tplace node on the map"
+		String instructions = "Click on the greyed out screen to place nodes. Click and drag to change elevation if desired." + 
+				"\nLeft click\tPlace node on the map"
+				+ "\nClick + drag\tRaise elevation of node on map. Release to place."
 				+ "\nShift-click\tNode required at beginning of path (fast)"
 				+ "\nCtrl-click\tNode required at end of path (slow)"
 				+ "\nAlt-click\tNode may be warped to (edit cost in preferences)"
