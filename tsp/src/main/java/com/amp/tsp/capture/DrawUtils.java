@@ -5,6 +5,8 @@ import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.GraphicsDevice;
+import java.awt.GraphicsEnvironment;
 import java.awt.Point;
 import java.awt.RenderingHints;
 import java.util.List;
@@ -12,10 +14,22 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import com.amp.tsp.parse.YamlPoint3d;
+import com.amp.tsp.prefs.PrefName;
 
 public class DrawUtils {
 	private static final int radius = 9;
 	
+	public static GraphicsDevice getGraphicsDevice(){
+		int screen = PrefName.SCREEN_NUMBER.getInt();
+		GraphicsDevice[] gds = GraphicsEnvironment.getLocalGraphicsEnvironment().getScreenDevices();
+		GraphicsDevice gd = null;
+		if(screen >= 0 && screen < gds.length){
+			gd = gds[screen];
+		} else {
+			gd = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice();
+		}
+		return gd;
+	}
 	public static void drawMap3d(Graphics g, Map<String, YamlPoint3d> points,
 			List<String> startingPoints, List<String> endingPoints, List<String> warpPoints) {
 		drawMap3d(g, points, startingPoints, endingPoints, warpPoints, null);

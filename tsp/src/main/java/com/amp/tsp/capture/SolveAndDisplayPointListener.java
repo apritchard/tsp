@@ -1,7 +1,8 @@
 package com.amp.tsp.capture;
 
 import java.awt.AWTException;
-import java.awt.Point;
+import java.awt.GraphicsConfiguration;
+import java.awt.GraphicsDevice;
 import java.awt.Polygon;
 import java.awt.Rectangle;
 import java.awt.Robot;
@@ -49,8 +50,6 @@ public class SolveAndDisplayPointListener implements PointListener {
 		List<Constraint> constraints = TspUtilities.stringsToConstraints(startingPoints, endingPoints, sectors);
 		TspSolver solver = TspSolution.forSectors(sectors).usingConstraints(constraints).accuracy(PrefName.ALGORITHM_ACCURACY.getInt());
 		
-//		TspSolver solver = new MultiOptimizedTspSolver(sectors, TspUtilities.stringsToConstraints(startingPoints, endingPoints, sectors));
-//		TspSolver solver = new MultiOptimizedNearestNeighborTspSolver(3, sectors, TspUtilities.stringsToConstraints(startingPoints, endingPoints, sectors));
 		final List<Sector> path = solver.solve();
 		final int distance = solver.getBoundForPath(path);
 		
@@ -84,8 +83,13 @@ public class SolveAndDisplayPointListener implements PointListener {
 		int width = r.width + 80;
 		int height = r.height + 80;
 		try {
+			//have to do this kludge because Java8 robot no longer correctly behaves on consuming graphics device
+			//must manually offset
+			GraphicsDevice gd = DrawUtils.getGraphicsDevice();
+			GraphicsConfiguration gc = gd.getConfigurations()[0];
+			Rectangle screen = gc.getBounds();
 			Robot robot = new Robot();
-			Rectangle screenRect = new Rectangle(x,y,width,height);
+			Rectangle screenRect = new Rectangle(screen.x + x, screen.y + y,width,height);
 			BufferedImage img = robot.createScreenCapture(screenRect);
 			return img;
 		} catch (AWTException e){
