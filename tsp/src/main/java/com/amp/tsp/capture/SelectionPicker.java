@@ -26,10 +26,8 @@ import org.apache.log4j.Logger;
 
 import com.amp.tsp.app.SelectionListener;
 import com.amp.tsp.mapping.Sector;
-import com.amp.tsp.mapping.TspUtilities;
 import com.amp.tsp.parse.MapParser;
 import com.amp.tsp.parse.YamlClickMap3d;
-import com.amp.tsp.parse.YamlPoint;
 import com.amp.tsp.parse.YamlPoint3d;
 import com.amp.tsp.prefs.PrefName;
 
@@ -85,10 +83,11 @@ public class SelectionPicker extends BlankFrame {
 		});
 	}
 	
-	private boolean deleteIfExisting(YamlPoint3d p){
+	private boolean deleteIfExisting(Point p){
 		int deleteThreshold = 6;
 		for(Entry<String, YamlPoint3d> point : getPoints3d().entrySet()){
-			if(TspUtilities.distance3d(point.getValue(), p) < deleteThreshold){
+			Point top = new Point(point.getValue().x, point.getValue().y - point.getValue().z);
+			if(top.distance(p) < deleteThreshold) {
 				getPoints3d().remove(point.getKey());
 				getStartingPoints().remove(point.getKey());
 				getEndingPoints().remove(point.getKey());
@@ -162,6 +161,13 @@ public class SelectionPicker extends BlankFrame {
 		
 		@Override
 		public void mousePressed(MouseEvent e) {
+			if(e.isAltDown() && e.isShiftDown() && e.isControlDown()) {
+				return;
+			}
+			if(deleteIfExisting(e.getPoint())){
+				repaint();
+				return;
+			}
 			clickCurrent = new YamlPoint3d();
 			clickCurrent.x = e.getPoint().x;
 			clickCurrent.y = e.getPoint().y;
@@ -169,8 +175,10 @@ public class SelectionPicker extends BlankFrame {
 		
 		@Override
 		public void mouseDragged(MouseEvent e) {
-			clickCurrent.z = e.getPoint().y > clickCurrent.y ? 0 : clickCurrent.y - e.getPoint().y; 
-			repaint();
+			if(clickCurrent != null){	
+				clickCurrent.z = e.getPoint().y > clickCurrent.y ? 0 : clickCurrent.y - e.getPoint().y; 
+				repaint();
+			}
 		}
 		
 		@Override
@@ -184,13 +192,11 @@ public class SelectionPicker extends BlankFrame {
 				if(e.isAltDown() && e.isShiftDown() && e.isControlDown()) {
 					switchMonitors();
 					return;
+				} else if (clickCurrent == null){
+					return;
 				}
 
 				clickCurrent.z = e.getPoint().y > clickCurrent.y ? 0 : clickCurrent.y - e.getPoint().y;
-				if(deleteIfExisting(clickCurrent)){
-					repaint();
-					return;
-				}
 				String s = JOptionPane.showInputDialog(null, "Point Name:", "Point Name", JOptionPane.PLAIN_MESSAGE);
 				if(s == null){
 					return;

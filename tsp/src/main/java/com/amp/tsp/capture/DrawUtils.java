@@ -15,7 +15,6 @@ import com.amp.tsp.parse.YamlPoint3d;
 
 public class DrawUtils {
 	private static final int radius = 9;
-
 	
 	public static void drawMap3d(Graphics g, Map<String, YamlPoint3d> points,
 			List<String> startingPoints, List<String> endingPoints, List<String> warpPoints) {
@@ -60,7 +59,6 @@ public class DrawUtils {
 		g2d.setColor(Color.GRAY);
 		g2d.setStroke(new BasicStroke(2));
 		g2d.drawLine(bottom.x, bottom.y, top.x, top.y);
-		drawPoint(g2d, bottom, interior, exterior, null);
 		drawPoint(g2d, top, interior, exterior, textName);
 	}
 	
