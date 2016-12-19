@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import com.amp.tsp.mapping.SimulatedAnnealingTspSolver;
 import org.apache.log4j.Logger;
 import org.junit.Before;
 import org.junit.Test;
@@ -183,6 +184,17 @@ public class CorrectnessTest {
 		testSolver(new LambdaSolver(simpleSeedBuilder), SEEDS_ONLY_BOUND);
 		testSolver(new LambdaSolver(simplePartialSeedOptionalBuilder), PARTIAL_BOUND);
 		testSolver(new LambdaSolver(simplePartialSeedBuilder), PARTIAL_SEEDS_ONLY_BOUND);
+	}
+
+	@Test
+	public void testSimulatedAnnealing(){
+		testSolver(new SimulatedAnnealingTspSolver(simpleBuilder), SIMPLE_BOUND);
+		testSolver(new SimulatedAnnealingTspSolver(simplePartialBuilder), PARTIAL_BOUND);
+		testSolver(new SimulatedAnnealingTspSolver(simpleAsymBuilder), ASYM_BOUND);
+//		testSolver(new SimulatedAnnealingTspSolver(simpleSeedOptionalBuilder), SEEDS_BOUND);
+//		testSolver(new SimulatedAnnealingTspSolver(simpleSeedBuilder), SEEDS_ONLY_BOUND);
+//		testSolver(new SimulatedAnnealingTspSolver(simplePartialSeedOptionalBuilder), PARTIAL_BOUND);
+//		testSolver(new SimulatedAnnealingTspSolver(simplePartialSeedBuilder), PARTIAL_SEEDS_ONLY_BOUND);
 	}
 	
 	private void testSolver(TspSolver solver, int expectedBound){

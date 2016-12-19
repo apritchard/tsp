@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.logging.LogManager;
 
+import com.amp.tsp.mapping.SimulatedAnnealingTspSolver;
 import org.apache.log4j.Logger;
 
 import com.amp.tsp.mapping.MultiOptimizedNearestNeighborTspSolver;
@@ -41,7 +42,7 @@ public class App {
 //		List<List<Sector>> seeds = MapParser.parseSeedFile(seedFile, sectors);
 		
 		TspSolver mw = TspSolution.forSectors(sectors).accuracy(3);
-		
+
 		StringBuilder sb = new StringBuilder();
 		sb.append("Sectors:").append(System.lineSeparator()).append(mw);
 		logger.info(sb.toString());

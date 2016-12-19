@@ -14,6 +14,7 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import com.amp.tsp.mapping.SimulatedAnnealingTspSolver;
 import org.apache.log4j.Logger;
 import org.junit.Before;
 import org.junit.FixMethodOrder;
@@ -97,15 +98,16 @@ public class PerformanceTest {
 				};
 				
 		Map<String, Double> results = Stream.of(
-				new BasicTspSolver(moderateBuilder),
-				new BasicOptimizedTspSolver(moderateBuilder),
-				new MultiTspSolver(moderateBuilder),
-				new MultiOptimizedTspSolver(moderateBuilder),
-				new LambdaSolver(moderateBuilder),
-				new OptimizedLambdaSolver(moderateBuilder),
-				new ForkJoinTspSolver(moderateBuilder),
-				new NearestNeighborSolver(3, moderateBuilder),
-				new MultiOptimizedNearestNeighborTspSolver(3, moderateBuilder)
+//				new BasicTspSolver(moderateBuilder),
+//				new BasicOptimizedTspSolver(moderateBuilder),
+//				new MultiTspSolver(moderateBuilder),
+//				new MultiOptimizedTspSolver(moderateBuilder),
+//				new LambdaSolver(moderateBuilder),
+//				new OptimizedLambdaSolver(moderateBuilder),
+//				new ForkJoinTspSolver(moderateBuilder),
+//				new NearestNeighborSolver(3, moderateBuilder),
+//				new MultiOptimizedNearestNeighborTspSolver(3, moderateBuilder),
+				new SimulatedAnnealingTspSolver(moderateBuilder)
 				)
 			.collect(Collectors.toMap(classNameMapper, solveTimer));
 		
