@@ -1,16 +1,10 @@
 package com.amp.tsp.mapping;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.PriorityQueue;
-import java.util.Queue;
-import java.util.Set;
-import java.util.stream.IntStream;
-
+import com.amp.tsp.capture.ProgressFrame;
+import com.amp.tsp.mapping.TspSolution.TspBuilder;
 import org.apache.log4j.Logger;
 
-import com.amp.tsp.mapping.TspSolution.TspBuilder;
+import java.util.*;
 
 public abstract class TspSolver {
 	protected final Logger logger = Logger.getLogger(TspSolver.class); 
@@ -19,12 +13,18 @@ public abstract class TspSolver {
 	
 	protected  final List<TspNode> seeds; //each seed is a path used to initialize the search for an optimal path
 	protected  boolean useSeedsOnly; //if true, all solutions considered will derive from seed paths
+
+	protected ProgressFrame progressFrame;
 	
 	public Set<Sector> getSectors() {return sectors;}
 	public Map<Sector, Map<Sector, Integer>> getShortestPaths() {return shortestPaths;}
 	
 	public abstract List<Sector> solve();
-	
+
+	public void setProgressFrame(ProgressFrame progressFrame) {
+		this.progressFrame = progressFrame;
+	}
+
 	protected TspSolver(TspBuilder builder){
 		this.sectors = builder.getSectors();
 		this.shortestPaths = TspUtilities.calculateShortestPaths(sectors);

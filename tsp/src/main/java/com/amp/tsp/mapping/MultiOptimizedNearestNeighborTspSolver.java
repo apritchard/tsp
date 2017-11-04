@@ -20,7 +20,8 @@ import com.amp.tsp.mapping.TspSolution.TspBuilder;
 public class MultiOptimizedNearestNeighborTspSolver extends OptimizedTspSolver {
 
 	private final TspSolver theSolver = this; //for synchronization
-	
+
+	AtomicInteger bestBoundPathLength;
 	AtomicInteger bound;
 	AtomicReference<byte[]> bestPath;
 	Queue<TspNode2> queue;
@@ -91,7 +92,8 @@ public class MultiOptimizedNearestNeighborTspSolver extends OptimizedTspSolver {
 		queue = new PriorityBlockingQueue<>(TspNode2.queueFrom(getInitialNodes(), sectorMap));
 		bestPath = new AtomicReference<>();
 		bound = new AtomicInteger(Integer.MAX_VALUE);
-		
+		bestBoundPathLength = new AtomicInteger(0);
+
 		ExecutorService executor = Executors.newFixedThreadPool(numThreads);
 		for (int i = 0; i < numThreads; i++) {
 			TspCalculatorInt tspCalc = new TspCalculatorInt();
@@ -146,7 +148,7 @@ public class MultiOptimizedNearestNeighborTspSolver extends OptimizedTspSolver {
 				TspNode2 curr = queue.poll();
 				
 				if(count++ % 100000 == 0){
-					//save time by not tracking best path, use curr path instead
+					//save time by not tracking best path before it's complete, use curr path instead
 					logState(queue.size(), curr.getBound(), bestPath.get(), curr.getPath());
 				}
 				
@@ -164,7 +166,7 @@ public class MultiOptimizedNearestNeighborTspSolver extends OptimizedTspSolver {
 							logger.info("Cost " + curr.getBound() + " path found, saving");
 							logger.info(TspUtilities.routeString(TspUtilities.sectorList(curr.getPath(), sectorList)));
 							bestPath.set(curr.getPath());
-							bound.set(curr.getBound());					
+							bound.set(curr.getBound());
 						}
 						continue;
 					}
@@ -213,6 +215,10 @@ public class MultiOptimizedNearestNeighborTspSolver extends OptimizedTspSolver {
 						int newBound = getBoundForPath(newPath, usedSectorsSwap);
 						if(newBound <= bound.get()){
 							queue.add(new TspNode2(newBound, newPath, curr.getEnding(), curr.getLength() + 1));
+							if (progressFrame != null && curr.getLength() > bestBoundPathLength.get()) {
+								bestBoundPathLength.set(curr.getLength());
+								progressFrame.setProgress(curr.getLength()+1);
+							}
 						}
 						if (++cnt == nNearest){
 							break;

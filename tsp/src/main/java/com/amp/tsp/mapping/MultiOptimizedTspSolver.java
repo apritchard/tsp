@@ -1,5 +1,6 @@
 package com.amp.tsp.mapping;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -15,10 +16,13 @@ import java.util.concurrent.atomic.AtomicReference;
 
 import com.amp.tsp.mapping.TspSolution.TspBuilder;
 
+import javax.swing.*;
+
 public class MultiOptimizedTspSolver extends OptimizedTspSolver {
 
 	private final TspSolver theSolver = this; // for synchronization
 
+	AtomicInteger bestBoundPathLength;
 	AtomicInteger bound;
 	AtomicReference<byte[]> bestPath;
 	Queue<TspNode2> queue;
@@ -44,6 +48,7 @@ public class MultiOptimizedTspSolver extends OptimizedTspSolver {
 				getInitialNodes(), sectorMap));
 		bestPath = new AtomicReference<>();
 		bound = new AtomicInteger(Integer.MAX_VALUE);
+		bestBoundPathLength = new AtomicInteger(0);
 
 		ExecutorService executor = Executors.newFixedThreadPool(numThreads);
 		for (int i = 0; i < numThreads; i++) {
@@ -178,6 +183,14 @@ public class MultiOptimizedTspSolver extends OptimizedTspSolver {
 						if (newBound <= bound.get()) {
 							queue.add(new TspNode2(newBound, newPath, curr
 									.getEnding(), curr.getLength() + 1));
+							if (progressFrame != null && curr.getLength() > bestBoundPathLength.get()) {
+								bestBoundPathLength.set(curr.getLength());
+								try {
+									SwingUtilities.invokeAndWait(() -> progressFrame.setProgress(curr.getLength()+1));
+								} catch (Exception e) {
+									e.printStackTrace();
+								}
+							}
 						}
 					}
 				}

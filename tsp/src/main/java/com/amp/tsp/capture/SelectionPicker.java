@@ -1,10 +1,15 @@
 package com.amp.tsp.capture;
 
-import java.awt.Color;
-import java.awt.Graphics;
-import java.awt.GraphicsDevice;
-import java.awt.GraphicsEnvironment;
-import java.awt.Point;
+import com.amp.tsp.app.SelectionListener;
+import com.amp.tsp.mapping.Sector;
+import com.amp.tsp.parse.MapParser;
+import com.amp.tsp.parse.YamlClickMap3d;
+import com.amp.tsp.parse.YamlPoint3d;
+import com.amp.tsp.prefs.PrefName;
+import org.apache.log4j.Logger;
+
+import javax.swing.*;
+import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseAdapter;
@@ -17,19 +22,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.SwingUtilities;
-
-import org.apache.log4j.Logger;
-
-import com.amp.tsp.app.SelectionListener;
-import com.amp.tsp.mapping.Sector;
-import com.amp.tsp.parse.MapParser;
-import com.amp.tsp.parse.YamlClickMap3d;
-import com.amp.tsp.parse.YamlPoint3d;
-import com.amp.tsp.prefs.PrefName;
 
 
 public class SelectionPicker extends BlankFrame {
