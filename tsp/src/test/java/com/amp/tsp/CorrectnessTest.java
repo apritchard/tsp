@@ -10,6 +10,7 @@ import java.util.Set;
 import com.amp.tsp.mapping.SimulatedAnnealingTspSolver;
 import org.apache.log4j.Logger;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import com.amp.tsp.mapping.BasicOptimizedTspSolver;
@@ -187,6 +188,7 @@ public class CorrectnessTest {
 	}
 
 	@Test
+	@Ignore
 	public void testSimulatedAnnealing(){
 		testSolver(new SimulatedAnnealingTspSolver(simpleBuilder), SIMPLE_BOUND);
 		testSolver(new SimulatedAnnealingTspSolver(simplePartialBuilder), PARTIAL_BOUND);

@@ -18,6 +18,7 @@ import com.amp.tsp.mapping.SimulatedAnnealingTspSolver;
 import org.apache.log4j.Logger;
 import org.junit.Before;
 import org.junit.FixMethodOrder;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runners.MethodSorters;
 
@@ -48,6 +49,7 @@ import com.amp.tsp.parse.MapParser;
  *
  */
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
+@Ignore
 public class PerformanceTest {
 
 	private static final Logger logger = Logger.getLogger(PerformanceTest.class);
