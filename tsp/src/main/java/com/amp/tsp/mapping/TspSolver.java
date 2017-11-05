@@ -4,6 +4,7 @@ import com.amp.tsp.capture.ProgressFrame;
 import com.amp.tsp.mapping.TspSolution.TspBuilder;
 import org.apache.log4j.Logger;
 
+import javax.swing.*;
 import java.util.*;
 
 public abstract class TspSolver {
@@ -61,6 +62,16 @@ public abstract class TspSolver {
 			}			
 		}
 
+	}
+
+	protected void updateProgress(int progress){
+		if (progressFrame != null) {
+			try {
+				SwingUtilities.invokeAndWait(() -> progressFrame.setProgress(progress));
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
 	}
 	
 	public String toString(){

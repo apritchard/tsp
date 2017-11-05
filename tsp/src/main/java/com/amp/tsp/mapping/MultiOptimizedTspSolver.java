@@ -103,21 +103,16 @@ public class MultiOptimizedTspSolver extends OptimizedTspSolver {
 			while (!queue.isEmpty()) {
 				TspNode2 curr = queue.poll();
 
-				if (count++ % 100000 == 0) {
-					// save time by not tracking best path, use curr path
-					// instead
-					logState(queue.size(), curr.getBound(), bestPath.get(),
-							curr.getPath());
-				}
+//				if (count++ % 100000 == 0) {
+//					// save time by not tracking best path, use curr path instead
+//					logState(queue.size(), curr.getBound(), bestPath.get(), curr.getPath());
+//				}
 
-				// this part is pretty cheap and cannot be interleaved with
-				// other threads, so just synchronize it all
+				// this part is pretty cheap and cannot be interleaved with other threads, so just synchronize it all
 				synchronized (theSolver) {
-					// we're not going to have anything better than our current
-					// at this point, so return
+					// we're not going to have anything better than our current at this point, so return
 					if (curr.getBound() > bound.get()) {
-						logger.info("Searched all bounds less than " + bound
-								+ ", exiting");
+//						logger.info("Searched all bounds less than " + bound + ", exiting");
 						return;
 					}
 
@@ -125,10 +120,8 @@ public class MultiOptimizedTspSolver extends OptimizedTspSolver {
 					// so set it as our new best
 					if (curr.getLength() == numSectors) {
 						if (curr.getBound() < bound.get()) {
-							logger.info("Cost " + curr.getBound()
-									+ " path found, saving");
-							logger.info(TspUtilities.routeString(TspUtilities
-									.sectorList(curr.getPath(), sectorList)));
+							logger.info("Cost " + curr.getBound() + " path found, saving");
+							logger.info(TspUtilities.routeString(TspUtilities.sectorList(curr.getPath(), sectorList)));
 							bestPath.set(curr.getPath());
 							bound.set(curr.getBound());
 						}
@@ -145,8 +138,7 @@ public class MultiOptimizedTspSolver extends OptimizedTspSolver {
 				// handle case in which an ending is specified
 				if (curr.getEnding() != null) {
 
-					// always mark ending sectors as used even if not a complete
-					// path
+					// always mark ending sectors as used even if not a complete path
 					for (int s : curr.getEnding()) {
 						usedSectors[s] = true;
 					}
@@ -157,14 +149,9 @@ public class MultiOptimizedTspSolver extends OptimizedTspSolver {
 							curr.addNode(s);
 						}
 						synchronized (theSolver) {
-							int currBound = getBoundForPath(curr.getPath(),
-									usedSectorsSwap);
+							int currBound = getBoundForPath(curr.getPath(), usedSectorsSwap);
 							if (currBound < bound.get()) {
-								logger.info("Full path ("
-										+ currBound
-										+ ") "
-										+ TspUtilities.routeString(
-												curr.getPath(), sectorList));
+//								logger.info("Full path (" + currBound+ ") "+ TspUtilities.routeString(curr.getPath(), sectorList));
 								bestPath.set(curr.getPath());
 								bound.set(currBound);
 							}
@@ -176,20 +163,14 @@ public class MultiOptimizedTspSolver extends OptimizedTspSolver {
 				// Add all next steps to queue (which will sort them by bound)
 				for (byte i = 1; i <= numSectors; i++) {
 					if (!usedSectors[i]) {
-						byte[] newPath = Arrays.copyOf(curr.getPath(),
-								numSectors);
+						byte[] newPath = Arrays.copyOf(curr.getPath(), numSectors);
 						newPath[curr.getLength()] = i;
 						int newBound = getBoundForPath(newPath, usedSectorsSwap);
 						if (newBound <= bound.get()) {
-							queue.add(new TspNode2(newBound, newPath, curr
-									.getEnding(), curr.getLength() + 1));
-							if (progressFrame != null && curr.getLength() > bestBoundPathLength.get()) {
+							queue.add(new TspNode2(newBound, newPath, curr.getEnding(), curr.getLength() + 1));
+							if (curr.getLength() > bestBoundPathLength.get()) {
 								bestBoundPathLength.set(curr.getLength());
-								try {
-									SwingUtilities.invokeAndWait(() -> progressFrame.setProgress(curr.getLength()+1));
-								} catch (Exception e) {
-									e.printStackTrace();
-								}
+								updateProgress(curr.getLength()+1);
 							}
 						}
 					}

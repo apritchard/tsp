@@ -5,11 +5,8 @@ import static org.junit.Assert.assertEquals;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.net.URL;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.Map.Entry;
-import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -108,8 +105,8 @@ public class PerformanceTest {
 //				new OptimizedLambdaSolver(moderateBuilder),
 //				new ForkJoinTspSolver(moderateBuilder),
 //				new NearestNeighborSolver(3, moderateBuilder),
-//				new MultiOptimizedNearestNeighborTspSolver(3, moderateBuilder),
-				new SimulatedAnnealingTspSolver(moderateBuilder)
+				new MultiOptimizedNearestNeighborTspSolver(3, moderateBuilder)
+//				new SimulatedAnnealingTspSolver(moderateBuilder)
 				)
 			.collect(Collectors.toMap(classNameMapper, solveTimer));
 		
@@ -280,6 +277,30 @@ public class PerformanceTest {
 		}
 		sb.append("Moderate actual: ").append(MODERATE_MIN_BOUND).append(" Long actual: ").append(LONG_MIN_BOUND).append(" Beta actual: ").append(BETA_MIN_BOUND);
 		logger.info(sb.toString());
+	}
+
+	@Test
+	public void test90MultiOptimizedPerformanceMetric(){
+		TspSolver longSolver = new MultiOptimizedTspSolver(longBuilder);
+		TspSolver betaSolver = new MultiOptimizedTspSolver(betaBuilder);
+
+		long start, total;
+		List<Long> times;
+		int numRuns = 10;
+
+		times = new ArrayList<>();
+		total = 0;
+		for(int i = 0; i < numRuns; i++){
+			start = System.currentTimeMillis();
+			List<Sector> path = betaSolver.solve();
+			assertEquals("Incorrect bound for beta optimized", BETA_MIN_BOUND, betaSolver.getBoundForPath(path));
+			start = System.currentTimeMillis() - start;
+			total += start;
+			times.add(start);
+		}
+		long average = total / numRuns;
+		logger.info(String.format("Total(%d) Avg(%d) %s", total, average, Arrays.toString(times.toArray())));
+
 	}
 	
 }
